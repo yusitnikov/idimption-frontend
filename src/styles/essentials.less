@@ -1,0 +1,32 @@
+@font-size: 14px;
+@line-height: 1.15;
+@line-height-px: round(@font-size * @line-height);
+@block-vertical-padding: 15px;
+@block-horizontal-padding: 15px;
+@block-padding: @block-vertical-padding @block-horizontal-padding;
+@block-margin: 5px;
+@block-border-color: #ccc;
+@input-vertical-padding: 5px;
+@input-horizontal-padding: @block-horizontal-padding;
+@input-padding: @input-vertical-padding @input-horizontal-padding;
+@input-full-height: @input-vertical-padding * 2 + @line-height-px;
+@button-full-height: 2px + @input-full-height;
+@button-distance: 10px;
+
+.block-margin() {
+  margin-top: @block-margin;
+  margin-bottom: @block-margin;
+}
+
+.basic-block(@padding) {
+  box-sizing: border-box;
+  width: 100%;
+  padding: @padding;
+  border: 1px solid @block-border-color;
+  border-radius: 3px;
+}
+
+.form-label-padding() {
+  padding-top: @input-vertical-padding;
+  padding-bottom: @input-vertical-padding;
+}
