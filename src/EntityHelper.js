@@ -1,18 +1,6 @@
 import Vue from "vue";
 import store from "./store";
 
-export function getPrimaryKey(row, tableName, useId = true) {
-  if (useId && row.id) {
-    return row.id.toString();
-  }
-  let keyParts = [];
-  // noinspection JSUnresolvedVariable
-  for (const fieldName of store.state.schema[tableName].primaryFields) {
-    keyParts.push(row[fieldName]);
-  }
-  return keyParts.join("-");
-}
-
 function getDisplayTextByProperty(row, tableName, propertyName) {
   // noinspection JSUnresolvedVariable
   const { fields, fieldsInfo } = store.state.schema[tableName];
@@ -69,6 +57,7 @@ export function isChild(child, row, tableName, data) {
   if (child.id === row.id) {
     return true;
   }
+  // noinspection JSUnresolvedVariable
   data = data || store.state.data;
   const rowFullId = getRowFullId(row, data[tableName]).join(">");
   const childFullId = getRowFullId(child, data[tableName]).join(">");
@@ -79,7 +68,12 @@ export function cloneRow(row) {
   return Object.assign({}, row);
 }
 
-Vue.filter("primaryKey", getPrimaryKey);
+export function resolveGuid(id) {
+  console.log("resolving guids", id.toString(), store.state.guids);
+  // noinspection JSUnresolvedVariable
+  return store.state.guids[id.toString()] || id;
+}
+
 Vue.filter("rowsByForeignKey", getRowsByForeignKey);
 Vue.filter("displayText", getDisplayText);
 Vue.filter("additionalInfoText", getAdditionalInfoText);

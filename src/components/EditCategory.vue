@@ -8,16 +8,20 @@
       </FormRow>
     </template>
     <FormRow label="Summary">
-      <TextInput v-model="row.summary" />
+      <TextInput :value="row.summary" @input="summary => update({ summary })" />
     </FormRow>
     <FormRow label="Description">
-      <TextAreaInput v-model="row.description" />
+      <TextAreaInput
+        :value="row.description"
+        @input="description => update({ description })"
+      />
     </FormRow>
     <FormRow label="Parent">
       <!--suppress JSUnresolvedVariable -->
       <EntitySelect
         :transitionsList="transitionsList"
-        v-model="row.parentId"
+        :value="row.parentId"
+        @change="parentId => update({ parentId })"
         :filter="isAllowedParent"
         tableName="category"
         allowEmpty
@@ -32,7 +36,7 @@ import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
 import EntitySelect from "./EntitySelect";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { isChild, cloneRow } from "../EntityHelper";
+import { isChild } from "../EntityHelper";
 import Guid from "guid";
 
 export default {
@@ -42,15 +46,6 @@ export default {
     TextInput,
     TextAreaInput,
     EntitySelect
-  },
-  data: function() {
-    return {
-      row: cloneRow(this.savedRow)
-    };
-  },
-  created() {
-    const method = this.isCreating ? "addRow" : "updateRow";
-    this.transitionsList[method]("category", this.row);
   },
   props: {
     transitionsList: {
@@ -63,6 +58,9 @@ export default {
     }
   },
   computed: {
+    row() {
+      return this.transitionsList.applyToRow("category", this.savedRow);
+    },
     isCreating() {
       return Guid.isGuid(this.row.id);
     }
@@ -70,6 +68,9 @@ export default {
   methods: {
     isAllowedParent(category) {
       return !isChild(category, this.savedRow, "category");
+    },
+    update(updates) {
+      this.transitionsList.updateRow("category", this.savedRow.id, updates);
     }
   }
 };

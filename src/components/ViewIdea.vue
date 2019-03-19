@@ -29,7 +29,7 @@ export default {
     remove() {
       this[DELETE_ROW_ACTION]({
         tableName: "idea",
-        row: this.row
+        id: this.row.id
       });
     }
   }

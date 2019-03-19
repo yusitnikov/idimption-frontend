@@ -34,12 +34,22 @@ export default {
     },
     value: [String, Guid],
     allowAdd: Boolean,
-    allowEmpty: Boolean
+    allowEmpty: Boolean,
+    selectFirstOnEmpty: Boolean
   },
   data() {
     return {
       text: ""
     };
+  },
+  mounted() {
+    if (this.selectFirstOnEmpty && !this.value) {
+      // noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
+      const firstEnabledOption = this.enabledRows[0];
+      if (firstEnabledOption) {
+        this.onSelect(firstEnabledOption.id, false);
+      }
+    }
   },
   computed: {
     selectedOption() {
@@ -95,6 +105,9 @@ export default {
         });
       }
       return rows;
+    },
+    enabledRows() {
+      return this.rows.filter(row => !row.disabled && row.onClick);
     }
   },
   methods: {
@@ -104,11 +117,13 @@ export default {
     blur() {
       this.$refs.el.blur();
     },
-    onSelect(value) {
+    onSelect(value, blur = true) {
       this.$emit("change", value);
       this.$emit("input", value);
       this.text = "";
-      this.$nextTick(() => this.blur());
+      if (blur) {
+        this.$nextTick(() => this.blur());
+      }
     },
     onCreate() {
       this.$emit("create", this.trimmedText);

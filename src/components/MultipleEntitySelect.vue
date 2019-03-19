@@ -1,14 +1,10 @@
 <template>
   <div class="multiple-entity-select">
-    <span
-      v-for="row in selectedForeignRows"
-      :key="row | primaryKey(tableName)"
-      class="view-tag"
-    >
+    <span v-for="row in selectedRows" :key="row.id.toString()" class="view-tag">
       <span v-for="selectFieldName in selectFieldNames" :key="selectFieldName">
         {{ getFieldDisplayText(selectFieldName, row[selectFieldName]) }}
       </span>
-      <Button class="small" @click="() => removeRow(row)">X</Button>
+      <Button class="small" @click="() => removeRow(row.id)">X</Button>
     </span>
     <span class="add-tag">
       <template v-if="adding">
@@ -46,7 +42,6 @@ import EntityTransitionsList from "../EntityTransitionsList";
 import Button from "./Button";
 import EntitySelect from "./EntitySelect";
 import {
-  getPrimaryKey,
   getDisplayText,
   getRowById,
   getForeignTableName
@@ -94,12 +89,6 @@ export default {
       return this.updatedData[this.tableName].filter(
         row => row[this.parentFieldName] === this.parentId
       );
-    },
-    selectedForeignRows() {
-      return this.selectedRows.map(row => ({
-        ...row,
-        primaryKey: getPrimaryKey(row, this.tableName)
-      }));
     },
     selectedIdsMap() {
       let map = {};
@@ -182,8 +171,8 @@ export default {
       this.transitionsList.addRow(this.tableName, row);
       this.startAdd();
     },
-    removeRow(row) {
-      this.transitionsList.deleteRow(this.tableName, row);
+    removeRow(id) {
+      this.transitionsList.deleteRow(this.tableName, id);
     }
   }
 };

@@ -21,17 +21,22 @@
       </FormRow>
     </template>
     <FormRow label="Summary">
-      <TextInput v-model="row.summary" />
+      <TextInput :value="row.summary" @input="summary => update({ summary })" />
     </FormRow>
     <FormRow label="Description">
-      <TextAreaInput v-model="row.description" />
+      <TextAreaInput
+        :value="row.description"
+        @input="description => update({ description })"
+      />
     </FormRow>
     <FormRow label="Status">
       <!--suppress JSUnresolvedVariable -->
       <EntitySelect
         :transitionsList="transitionsList"
-        v-model="row.statusId"
+        :value="row.statusId"
+        @change="statusId => update({ statusId })"
         tableName="ideastatus"
+        selectFirstOnEmpty
       />
     </FormRow>
     <FormRow label="Tags">
@@ -76,23 +81,13 @@ import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
 import EntitySelect from "./EntitySelect";
 import MultipleEntitySelect from "./MultipleEntitySelect";
-import EntityTransitionsList from "../EntityTransitionsList";
 import IdeaComments from "./IdeaComments";
-import { cloneRow } from "../EntityHelper";
-import Guid from "guid";
 import DateTime from "./DateTime";
+import EntityTransitionsList from "../EntityTransitionsList";
+import Guid from "guid";
 
 export default {
   name: "EditIdea",
-  data: function() {
-    return {
-      row: cloneRow(this.savedRow)
-    };
-  },
-  created() {
-    const method = this.isCreating ? "addRow" : "updateRow";
-    this.transitionsList[method]("idea", this.row);
-  },
   props: {
     transitionsList: {
       type: EntityTransitionsList,
@@ -104,6 +99,9 @@ export default {
     }
   },
   computed: {
+    row() {
+      return this.transitionsList.applyToRow("idea", this.savedRow);
+    },
     isCreating() {
       return Guid.isGuid(this.row.id);
     }
@@ -116,6 +114,11 @@ export default {
     MultipleEntitySelect,
     EntitySelect,
     IdeaComments
+  },
+  methods: {
+    update(updates) {
+      this.transitionsList.updateRow("idea", this.savedRow.id, updates);
+    }
   }
 };
 </script>

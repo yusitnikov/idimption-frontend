@@ -22,7 +22,7 @@ import { APPLY_TRANSITIONS_ACTION, DELETE_ROW_ACTION } from "../store";
 import Button from "../components/Button";
 import EditCategory from "../components/EditCategory";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { getRowById, cloneRow } from "../EntityHelper";
+import { getRowById, resolveGuid } from "../EntityHelper";
 import Guid from "guid";
 
 // noinspection JSUnusedGlobalSymbols
@@ -30,34 +30,31 @@ export default {
   name: "Category",
   data() {
     return {
-      row: null,
+      id: null,
       transitionsList: new EntityTransitionsList()
     };
   },
   created() {
-    if (this.isCreating) {
-      this.row = {
-        id: Guid.create()
-      };
+    // noinspection JSUnresolvedVariable
+    this.id = this.$route.params.id;
+    if (this.id === "add") {
+      this.id = Guid.create();
       this.transitionsList.addRow("category", this.row);
-    } else if (this.savedRow) {
-      this.row = cloneRow(this.savedRow);
-      this.transitionsList.updateRow("category", this.row);
     }
   },
   computed: {
     ...mapState(["data"]),
-    id() {
-      // noinspection JSUnresolvedVariable
-      const id = this.$route.params.id;
-      return id === "add" ? null : id;
-    },
     isCreating() {
-      return this.id === null;
+      return Guid.isGuid(this.id);
     },
-    savedRow() {
+    row() {
       if (this.isCreating) {
-        return null;
+        return {
+          id: this.id,
+          summary: "",
+          description: "",
+          parentId: null
+        };
       } else {
         return getRowById(this.data.category, this.id);
       }
@@ -65,14 +62,17 @@ export default {
   },
   methods: {
     ...mapActions([APPLY_TRANSITIONS_ACTION, DELETE_ROW_ACTION]),
-    save() {
-      this[APPLY_TRANSITIONS_ACTION](this.transitionsList);
+    async save() {
+      await this[APPLY_TRANSITIONS_ACTION](this.transitionsList);
+      await this.$nextTick();
+      this.id = resolveGuid(this.id);
     },
     remove() {
       this[DELETE_ROW_ACTION]({
         tableName: "category",
-        row: this.row
+        id: this.id
       });
+      this.$router.push("/category");
     }
   },
   components: { EditCategory, Button }

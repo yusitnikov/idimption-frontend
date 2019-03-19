@@ -5,6 +5,7 @@
     :value="value"
     :allowAdd="allowAdd"
     :allowEmpty="allowEmpty"
+    :selectFirstOnEmpty="selectFirstOnEmpty"
     @focus="$emit('focus')"
     @blur="$emit('blur')"
     @change="$event => $emit('change', $event)"
@@ -31,6 +32,7 @@ export default {
     },
     allowAdd: Boolean,
     allowEmpty: Boolean,
+    selectFirstOnEmpty: Boolean,
     filter: Function,
     tableName: {
       type: String,

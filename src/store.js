@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import Guid from "guid";
 import EntityTransitionsList from "./EntityTransitionsList";
 
 Vue.use(Vuex);
@@ -39,6 +40,7 @@ const store = new Vuex.Store({
     loaders: {},
     schema: null,
     data: null,
+    guids: {},
     dataVersion: 0,
     windowSize: getWindowSize()
   },
@@ -59,9 +61,13 @@ const store = new Vuex.Store({
     [SET_SCHEMA_MUTATION](state, schema) {
       state.schema = schema;
     },
-    [SET_DATA_MUTATION](state, data) {
+    [SET_DATA_MUTATION](state, { data, guids = {} }) {
       console.log("Set data");
       state.data = data;
+      state.guids = {
+        ...state.guids,
+        ...guids
+      };
       state.dataVersion = state.dataVersion + 1;
       console.log("Data version is", state.dataVersion);
     },
@@ -132,17 +138,18 @@ const store = new Vuex.Store({
     },
     async [ADD_ROW_ACTION]({ dispatch }, { tableName, row }) {
       let transitionsList = new EntityTransitionsList();
+      row.id = row.id || Guid.create();
       transitionsList.addRow(tableName, row);
       return dispatch(APPLY_TRANSITIONS_ACTION, transitionsList);
     },
-    async [UPDATE_ROW_ACTION]({ dispatch }, { tableName, row }) {
+    async [UPDATE_ROW_ACTION]({ dispatch }, { tableName, id, updates }) {
       let transitionsList = new EntityTransitionsList();
-      transitionsList.updateRow(tableName, row);
+      transitionsList.updateRow(tableName, id, updates);
       return dispatch(APPLY_TRANSITIONS_ACTION, transitionsList);
     },
-    async [DELETE_ROW_ACTION]({ dispatch }, { tableName, row }) {
+    async [DELETE_ROW_ACTION]({ dispatch }, { tableName, id }) {
       let transitionsList = new EntityTransitionsList();
-      transitionsList.deleteRow(tableName, row);
+      transitionsList.deleteRow(tableName, id);
       return dispatch(APPLY_TRANSITIONS_ACTION, transitionsList);
     }
   }
