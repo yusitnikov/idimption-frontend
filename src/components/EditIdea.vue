@@ -20,15 +20,11 @@
         </template>
       </FormRow>
     </template>
-    <FormRow label="Summary">
-      <TextInput :value="row.summary" @input="summary => update({ summary })" />
-    </FormRow>
-    <FormRow label="Description">
-      <TextAreaInput
-        :value="row.description"
-        @input="description => update({ description })"
-      />
-    </FormRow>
+    <EditCommonTextFields
+      tableName="idea"
+      :row="row"
+      :transitionsList="transitionsList"
+    />
     <FormRow label="Status">
       <!--suppress JSUnresolvedVariable -->
       <EntitySelect
@@ -77,8 +73,7 @@
 
 <script>
 import FormRow from "./FormRow";
-import TextInput from "./TextInput";
-import TextAreaInput from "./TextAreaInput";
+import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
 import MultipleEntitySelect from "./MultipleEntitySelect";
 import IdeaComments from "./IdeaComments";
@@ -109,8 +104,7 @@ export default {
   components: {
     DateTime,
     FormRow,
-    TextInput,
-    TextAreaInput,
+    EditCommonTextFields,
     MultipleEntitySelect,
     EntitySelect,
     IdeaComments
