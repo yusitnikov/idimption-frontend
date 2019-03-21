@@ -6,12 +6,14 @@ import EntityTransitionsList from "./EntityTransitionsList";
 
 Vue.use(Vuex);
 
+const SET_USER_MUTATION = "SET_USER";
 const ADD_LOADER_MUTATION = "ADD_LOADER";
 const REMOVE_LOADER_MUTATION = "REMOVE_LOADER";
 const SET_SCHEMA_MUTATION = "SET_SCHEMA";
 const SET_DATA_MUTATION = "SET_DATA";
 const SET_WINDOW_SIZE_MUTATION = "SET_WINDOW_SIZE";
 
+export const SET_USER_ACTION = "SET_USER";
 export const CALL_API_ACTION = "ADD_LOADER";
 export const FETCH_SCHEMA_ACTION = "FETCH_SCHEMA";
 export const FETCH_DATA_ACTION = "FETCH_DATA";
@@ -37,6 +39,7 @@ window.addEventListener("resize", () => {
 // noinspection JSValidateTypes
 const store = new Vuex.Store({
   state: {
+    userId: localStorage.userId || null,
     loaders: {},
     schema: null,
     data: null,
@@ -49,6 +52,9 @@ const store = new Vuex.Store({
     ready: state => state.schema && state.data
   },
   mutations: {
+    [SET_USER_MUTATION](state, userId) {
+      localStorage.userId = state.userId = userId;
+    },
     [ADD_LOADER_MUTATION](state, { id, loader, essential }) {
       Vue.set(state.loaders, id, {
         loader,
@@ -76,11 +82,15 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    [SET_USER_ACTION]({ commit }, userId) {
+      commit(SET_USER_MUTATION, userId);
+    },
     async [CALL_API_ACTION](
-      { commit },
-      { url, formData, essential, returnsData = true }
+      { state, commit },
+      { url, formData = {}, essential, returnsData = true }
     ) {
       const id = ++loaderAutoIncrementId;
+      formData.userId = state.userId;
       // noinspection ES6ModulesDependencies, JSUnresolvedVariable
       const loader = axios.post(
         process.env.VUE_APP_API_URL + url,

@@ -28,6 +28,7 @@
           :tableName="getFieldTableName(addField)"
           :filter="canSelectRow"
           :allowAdd="allowAdd"
+          :addComponent="addComponent"
           @blur="onAddTagSelectBlur"
           ref="addSelect"
         />
@@ -44,7 +45,8 @@ import EntitySelect from "./EntitySelect";
 import {
   getDisplayText,
   getRowById,
-  getForeignTableName
+  getForeignTableName,
+  createRow
 } from "../EntityHelper";
 import Guid from "guid";
 
@@ -69,6 +71,7 @@ export default {
       required: true
     },
     allowAdd: Boolean,
+    addComponent: Object,
     transitionsList: {
       type: EntityTransitionsList,
       required: true
@@ -163,11 +166,10 @@ export default {
       }
     },
     addRow() {
-      let row = {
-        id: Guid.create(),
+      let row = createRow(this.tableName, {
         [this.parentFieldName]: this.parentId,
         ...this.addValues
-      };
+      });
       this.transitionsList.addRow(this.tableName, row);
       this.startAdd();
     },

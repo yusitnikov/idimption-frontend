@@ -53,6 +53,7 @@ export default {
   top: @margin;
   right: @margin;
   bottom: @margin;
+  z-index: 1;
 }
 
 .popup-form {

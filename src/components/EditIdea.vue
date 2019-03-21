@@ -53,6 +53,7 @@
         :selectFieldNames="['categoryId']"
         :transitionsList="transitionsList"
         allowAdd
+        :addComponent="editCategoryComponent"
       />
     </FormRow>
     <FormRow label="Relations">
@@ -79,6 +80,7 @@ import MultipleEntitySelect from "./MultipleEntitySelect";
 import IdeaComments from "./IdeaComments";
 import DateTime from "./DateTime";
 import EntityTransitionsList from "../EntityTransitionsList";
+import EditCategory from "./EditCategory";
 import Guid from "guid";
 
 export default {
@@ -99,6 +101,9 @@ export default {
     },
     isCreating() {
       return Guid.isGuid(this.row.id);
+    },
+    editCategoryComponent() {
+      return EditCategory;
     }
   },
   components: {

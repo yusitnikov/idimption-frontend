@@ -1,24 +1,27 @@
-import store from "./store";
+import store, { APPLY_TRANSITIONS_ACTION } from "./store";
 import { EntityTransition } from "./EntityTransition";
 
 export default class EntityTransitionsList {
   transitions;
   migratedDataCache;
   cachedDataVersion;
-  constructor() {
+  autoSave;
+  constructor(autoSave = false) {
     console.log("Construct EntityTransitionsList");
     this.transitions = [];
     this.migratedDataCache = null;
     this.cachedDataVersion = null;
+    this.autoSave = autoSave;
   }
   findTransitionByRowId(tableName, id) {
     for (const transition of this.transitions) {
-      if (transition.tableName === tableName && transition.row.id === id) {
+      if (transition.tableName === tableName && transition.id === id) {
         return transition;
       }
     }
     return null;
   }
+  // noinspection JSUnusedGlobalSymbols
   findTransitionByRow(tableName, row) {
     return this.findTransitionByRowId(tableName, row.id);
   }
@@ -29,10 +32,15 @@ export default class EntityTransitionsList {
   reset() {
     this.transitions = [];
     this.clearMigratedDataCache();
+    return this;
   }
   addRow(tableName, row) {
     this.transitions.push(new EntityTransition("add", tableName, row));
+    if (this.autoSave) {
+      this.save();
+    }
     this.clearMigratedDataCache();
+    return this;
   }
   updateRow(tableName, id, updates) {
     const existingTransition = this.findTransitionByRowId(tableName, id);
@@ -46,7 +54,11 @@ export default class EntityTransitionsList {
         ...updates
       };
     }
+    if (this.autoSave) {
+      this.save();
+    }
     this.clearMigratedDataCache();
+    return this;
   }
   deleteRow(tableName, id) {
     const existingTransition = this.findTransitionByRowId(tableName, id);
@@ -58,7 +70,15 @@ export default class EntityTransitionsList {
     } else {
       existingTransition.type = "delete";
     }
+    if (this.autoSave) {
+      this.save();
+    }
     this.clearMigratedDataCache();
+    return this;
+  }
+  save() {
+    // noinspection JSUnresolvedFunction
+    return store.dispatch(APPLY_TRANSITIONS_ACTION, this);
   }
   clearMigratedDataCache() {
     this.migratedDataCache = null;
@@ -83,7 +103,7 @@ export default class EntityTransitionsList {
       if (transition.type === "add") {
         transitionsMap[tableName].add.push(transition);
       } else {
-        transitionsMap[tableName].other[transition.row.id] = transition;
+        transitionsMap[tableName].other[transition.id] = transition;
       }
     }
 
@@ -124,7 +144,7 @@ export default class EntityTransitionsList {
   }
   applyToRow(tableName, row) {
     for (const transition of this.transitions) {
-      if (transition.tableName === tableName && transition.row.id === row.id) {
+      if (transition.tableName === tableName && transition.id === row.id) {
         if (transition.type === "delete") {
           return null;
         }

@@ -18,11 +18,11 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { APPLY_TRANSITIONS_ACTION, DELETE_ROW_ACTION } from "../store";
+import { DELETE_ROW_ACTION } from "../store";
 import Button from "../components/Button";
 import EditCategory from "../components/EditCategory";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { getRowById, resolveGuid } from "../EntityHelper";
+import { getRowById, createRow, resolveGuid } from "../EntityHelper";
 import Guid from "guid";
 
 // noinspection JSUnusedGlobalSymbols
@@ -49,21 +49,16 @@ export default {
     },
     row() {
       if (this.isCreating) {
-        return {
-          id: this.id,
-          summary: "",
-          description: "",
-          parentId: null
-        };
+        return createRow("category", { id: this.id });
       } else {
         return getRowById(this.data.category, this.id);
       }
     }
   },
   methods: {
-    ...mapActions([APPLY_TRANSITIONS_ACTION, DELETE_ROW_ACTION]),
+    ...mapActions([DELETE_ROW_ACTION]),
     async save() {
-      await this[APPLY_TRANSITIONS_ACTION](this.transitionsList);
+      await this.transitionsList.save();
       await this.$nextTick();
       this.id = resolveGuid(this.id);
     },

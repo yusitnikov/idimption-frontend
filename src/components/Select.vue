@@ -2,7 +2,8 @@
   <BasicSearchBox
     class="select"
     v-model="text"
-    :placeholder="selectedOption && selectedOption.text"
+    :placeholder="(selectedOption && selectedOption.text) || emptyPlaceholder"
+    :ignoreEvents="ignoreEvents"
     @focus="$emit('focus')"
     @blur="$emit('blur')"
     @keydown="onKeyDown"
@@ -24,18 +25,41 @@ import BasicSearchBox from "./BasicSearchBox";
 import Guid from "guid";
 import { getKeyCodeByEvent } from "../misc";
 
+const commonProps = {
+  value: [String, Guid],
+  allowAdd: Boolean,
+  allowAddEmpty: Boolean,
+  addLabel: {
+    type: String,
+    default: "Add new"
+  },
+  allowEmpty: Boolean,
+  emptyLabel: {
+    type: String,
+    default: "No value"
+  },
+  emptyPlaceholder: {
+    type: String,
+    default: ""
+  },
+  selectFirstOnEmpty: Boolean,
+  noOptionsLabel: {
+    type: String,
+    default: "No options"
+  },
+  ignoreEvents: Boolean
+};
+
 export default {
   name: "Select",
   components: { BasicSearchBox },
+  commonProps,
   props: {
     options: {
       type: Array,
       required: true
     },
-    value: [String, Guid],
-    allowAdd: Boolean,
-    allowEmpty: Boolean,
-    selectFirstOnEmpty: Boolean
+    ...commonProps
   },
   data() {
     return {
@@ -72,7 +96,7 @@ export default {
       if (this.allowEmpty && !trimmedText) {
         rows.push({
           id: "",
-          text: "No value",
+          text: this.emptyLabel,
           onClick: () => this.onSelect("")
         });
       }
@@ -92,15 +116,15 @@ export default {
       if (this.allowAdd) {
         rows.push({
           id: "create",
-          text: "Add new" + (trimmedText ? " (" + trimmedText + ")" : ""),
-          disabled: !trimmedText || textUsed,
+          text: this.addLabel + (trimmedText ? " (" + trimmedText + ")" : ""),
+          disabled: (!trimmedText && !this.allowAddEmpty) || textUsed,
           onClick: () => this.onCreate()
         });
       }
       if (!rows.length) {
         rows.push({
           id: "noop",
-          text: "No options",
+          text: this.noOptionsLabel,
           disabled: true
         });
       }
@@ -117,18 +141,19 @@ export default {
     blur() {
       this.$refs.el.blur();
     },
-    onSelect(value, blur = true) {
-      this.$emit("change", value);
-      this.$emit("input", value);
+    reset(blur = true) {
       this.text = "";
       if (blur) {
         this.$nextTick(() => this.blur());
       }
     },
+    onSelect(value, blur = true) {
+      this.$emit("change", value);
+      this.$emit("input", value);
+      this.reset(blur);
+    },
     onCreate() {
       this.$emit("create", this.trimmedText);
-      this.text = "";
-      this.$nextTick(() => this.blur());
     },
     onKeyDown(ev) {
       console.log(ev, getKeyCodeByEvent(ev));

@@ -3,6 +3,21 @@
     <div id="loader" v-if="loading">Loading...</div>
     <div v-if="ready">
       <div id="nav">
+        <div id="auth">
+          <EntitySelect
+            tableName="user"
+            allowEmpty
+            emptyLabel="Anonymous"
+            emptyPlaceholder="Anonymous"
+            allowAdd
+            addField="name"
+            addLabel="Register"
+            :addComponent="editUserComponent"
+            :value="userId"
+            @change="setUser"
+          />
+        </div>
+
         <router-link to="/idea">Ideas</router-link> |
         <router-link to="/category">Categories</router-link>
       </div>
@@ -12,13 +27,23 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
+import { SET_USER_ACTION } from "./store";
+import EntitySelect from "./components/EntitySelect";
+import EditUser from "./components/EditUser";
 
 export default {
   name: "App",
+  components: { EntitySelect },
   computed: {
-    ...mapState(["loaders"]),
-    ...mapGetters(["loading", "ready"])
+    ...mapState(["loaders", "userId"]),
+    ...mapGetters(["loading", "ready"]),
+    editUserComponent() {
+      return EditUser;
+    }
+  },
+  methods: {
+    ...mapActions({ setUser: SET_USER_ACTION })
   }
 };
 </script>
@@ -36,6 +61,12 @@ export default {
 
 #nav {
   padding: 30px;
+
+  #auth {
+    float: right;
+    width: 200px;
+  }
+
   a {
     font-weight: bold;
     color: #2c3e50;

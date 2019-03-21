@@ -1,5 +1,6 @@
 import Vue from "vue";
 import store from "./store";
+import Guid from "guid";
 
 function getDisplayTextByProperty(row, tableName, propertyName) {
   // noinspection JSUnresolvedVariable
@@ -25,6 +26,11 @@ export function getAdditionalInfoText(row, tableName) {
 export function getRowById(tableData, id) {
   const rows = tableData.filter(row => row.id === id);
   return rows[0] || null;
+}
+
+export function isNewRow(row, tableName) {
+  // noinspection JSUnresolvedVariable
+  return !getRowById(store.state.data[tableName], row.id);
 }
 
 export function getRowsByForeignKey(row, foreignKey, data) {
@@ -68,8 +74,25 @@ export function cloneRow(row) {
   return Object.assign({}, row);
 }
 
+export function createRow(tableName, data) {
+  // noinspection JSUnresolvedVariable
+  const tableSchema = store.state.schema[tableName];
+  let row = {};
+  // noinspection JSUnresolvedVariable
+  for (const fieldName of tableSchema.fields) {
+    // noinspection JSUnresolvedVariable
+    row[fieldName] = tableSchema.fieldsInfo[fieldName].default;
+  }
+  if (row.id === null) {
+    row.id = Guid.create();
+  }
+  return {
+    ...row,
+    ...data
+  };
+}
+
 export function resolveGuid(id) {
-  console.log("resolving guids", id.toString(), store.state.guids);
   // noinspection JSUnresolvedVariable
   return store.state.guids[id.toString()] || id;
 }

@@ -24,7 +24,8 @@ export default {
   components: { TextInput },
   props: {
     value: [String, Guid],
-    placeholder: String
+    placeholder: String,
+    ignoreEvents: Boolean
   },
   data() {
     return {
@@ -59,11 +60,19 @@ export default {
       this.opened = true;
     },
     onClick(ev) {
+      if (this.ignoreEvents) {
+        return;
+      }
+
       if (!this.$el.contains(ev.target)) {
         this.blur();
       }
     },
     onKeyDown(ev) {
+      if (this.ignoreEvents) {
+        return;
+      }
+
       if (this.opened) {
         switch (getKeyCodeByEvent(ev)) {
           case "ArrowUp":
