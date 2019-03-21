@@ -70,7 +70,7 @@ export default {
 }
 
 .description {
-  margin-top: 0.5em;
+  margin-top: @paragraph-margin;
   font-size: 19px;
 }
 </style>

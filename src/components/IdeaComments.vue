@@ -1,11 +1,11 @@
 <template>
   <div class="idea-comments">
     <div v-for="row in rows" class="comment" :key="row.id">
-      <!-- TODO: userId, createdAt, updatedAt -->
       <!-- TODO: remove, edit -->
       <!-- TODO: shortcut to reply -->
       <!-- TODO: collapse replies when too much -->
-      {{ row.message }}
+      <div class="from-at"><EntityFromAt :row="row" showUser /></div>
+      <div class="message multi-line">{{ row.message }}</div>
       <div class="replies">
         <IdeaComments :ideaId="ideaId" :parentId="row.id" />
       </div>
@@ -25,12 +25,13 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import { ADD_ROW_ACTION } from "../store";
+import EntityFromAt from "./EntityFromAt";
 import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
 
 export default {
   name: "IdeaComments",
-  components: { TextAreaInput, Button },
+  components: { EntityFromAt, TextAreaInput, Button },
   props: {
     ideaId: {
       type: String,
@@ -75,6 +76,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 @import "../styles/essentials";
+
+.from-at {
+  font-weight: bold;
+  margin-bottom: @paragraph-margin;
+}
 
 .replies {
   padding-left: 100px;
