@@ -1,4 +1,3 @@
-import Vue from "vue";
 import store from "./store";
 import Guid from "guid";
 
@@ -96,7 +95,3 @@ export function resolveGuid(id) {
   // noinspection JSUnresolvedVariable
   return store.state.guids[id.toString()] || id;
 }
-
-Vue.filter("rowsByForeignKey", getRowsByForeignKey);
-Vue.filter("displayText", getDisplayText);
-Vue.filter("additionalInfoText", getAdditionalInfoText);

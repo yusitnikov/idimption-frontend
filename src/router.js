@@ -1,5 +1,9 @@
 import Vue from "vue";
 import Router from "vue-router";
+import Ideas from "./views/Ideas";
+import Idea from "./views/Idea";
+import Categories from "./views/Categories";
+import Category from "./views/Category";
 
 Vue.use(Router);
 
@@ -14,24 +18,22 @@ export default new Router({
     {
       path: "/idea",
       name: "ideas",
-      component: () => import(/* webpackChunkName: "Ideas" */ "./views/Ideas")
+      component: Ideas
     },
     {
       path: "/idea/:id",
       name: "idea",
-      component: () => import(/* webpackChunkName: "Idea" */ "./views/Idea")
+      component: Idea
     },
     {
       path: "/category",
       name: "categories",
-      component: () =>
-        import(/* webpackChunkName: "Categories" */ "./views/Categories")
+      component: Categories
     },
     {
       path: "/category/:id",
       name: "category",
-      component: () =>
-        import(/* webpackChunkName: "Category" */ "./views/Category")
+      component: Category
     }
   ]
 });
