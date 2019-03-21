@@ -51,7 +51,11 @@ export default {
 <style lang="less">
 @import "styles/essentials";
 
-* {
+body,
+input,
+textarea,
+select,
+button {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -74,17 +78,6 @@ export default {
       color: #42b983;
     }
   }
-}
-
-h2 {
-  margin: 0;
-  font-size: @button-full-height / @line-height;
-}
-
-h3 {
-  margin-top: @block-margin;
-  margin-bottom: 0;
-  font-size: 19px;
 }
 
 .block {

@@ -11,7 +11,6 @@
 import IdeaList from "../components/IdeaList";
 import Button from "../components/Button";
 
-// noinspection JSUnusedGlobalSymbols
 export default {
   name: "Ideas",
   components: {

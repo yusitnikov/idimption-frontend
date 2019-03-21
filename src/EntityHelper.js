@@ -22,14 +22,18 @@ export function getAdditionalInfoText(row, tableName) {
   return getDisplayTextByProperty(row, tableName, "additionalInfoField");
 }
 
-export function getRowById(tableData, id) {
+export function getRowById(tableDataOrName, id, create = false) {
+  // noinspection JSUnresolvedVariable
+  const tableData =
+    typeof tableDataOrName === "string"
+      ? store.state.data[tableDataOrName]
+      : tableDataOrName;
   const rows = tableData.filter(row => row.id === id);
-  return rows[0] || null;
+  return rows[0] || (create ? createRow(tableDataOrName, { id }) : null);
 }
 
 export function isNewRow(row, tableName) {
-  // noinspection JSUnresolvedVariable
-  return !getRowById(store.state.data[tableName], row.id);
+  return !getRowById(tableName, row.id);
 }
 
 export function getRowsByForeignKey(row, foreignKey, data) {

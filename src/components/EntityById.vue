@@ -1,0 +1,39 @@
+<template>
+  <fragment>
+    <slot
+      :row="row"
+      :displayText="displayText"
+      :additionalInfoText="additionalInfoText"
+    />
+  </fragment>
+</template>
+
+<script>
+import {
+  getRowById,
+  getDisplayText,
+  getAdditionalInfoText
+} from "../EntityHelper";
+
+export default {
+  name: "EditEntityId",
+  props: {
+    tableName: {
+      type: String,
+      required: true
+    },
+    id: String
+  },
+  computed: {
+    row() {
+      return getRowById(this.tableName, this.id);
+    },
+    displayText() {
+      return this.row ? getDisplayText(this.row, this.tableName) : null;
+    },
+    additionalInfoText() {
+      return this.row ? getAdditionalInfoText(this.row, this.tableName) : null;
+    }
+  }
+};
+</script>

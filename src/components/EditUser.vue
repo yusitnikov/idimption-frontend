@@ -1,53 +1,31 @@
 <template>
-  <fragment>
-    <FormRow label="Login" :text="!isCreating">
-      <TextInput
-        v-if="isCreating"
-        :value="row.id"
-        @input="id => update({ id })"
-      />
-      <template v-else>{{ row.id }}</template>
+  <EditEntity
+    tableName="user"
+    :transitionsList="transitionsList"
+    :savedRow="savedRow"
+    v-slot="{ row, isCreating, update }"
+  >
+    <FormRow label="Login" v-if="isCreating">
+      <TextInput :value="row.id" @input="id => update({ id })" />
     </FormRow>
     <FormRow label="Name">
       <TextInput :value="row.name" @input="name => update({ name })" />
     </FormRow>
-  </fragment>
+  </EditEntity>
 </template>
 
 <script>
+import EditEntity from "./EditEntity";
 import FormRow from "./FormRow";
 import TextInput from "./TextInput";
-import EntityTransitionsList from "../EntityTransitionsList";
-import { isNewRow } from "../EntityHelper";
 
 export default {
   name: "EditUser",
   components: {
+    EditEntity,
     FormRow,
     TextInput
   },
-  props: {
-    transitionsList: {
-      type: EntityTransitionsList,
-      required: true
-    },
-    savedRow: {
-      type: Object,
-      required: true
-    }
-  },
-  computed: {
-    row() {
-      return this.transitionsList.applyToRow("user", this.savedRow);
-    },
-    isCreating() {
-      return isNewRow(this.savedRow, "user");
-    }
-  },
-  methods: {
-    update(updates) {
-      this.transitionsList.updateRow("user", this.savedRow.id, updates);
-    }
-  }
+  props: EditEntity.commonProps
 };
 </script>

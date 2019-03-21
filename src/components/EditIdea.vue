@@ -1,25 +1,11 @@
 <template>
-  <fragment>
-    <template v-if="!isCreating">
-      <FormRow label="ID" text>{{ row.id }}</FormRow>
-      <!--suppress JSUnresolvedVariable -->
-      <FormRow v-if="row.referenceId" label="Reference ID" text>
-        {{ row.referenceId }}
-      </FormRow>
-      <!--suppress JSUnresolvedVariable -->
-      <FormRow label="Created by" text>
-        {{ row.userId }}
-        at
-        <!--suppress JSUnresolvedVariable -->
-        <DateTime :value="row.createdAt" />
-        <!--suppress JSUnresolvedVariable -->
-        <template v-if="row.updatedAt !== row.createdAt">
-          updated at
-          <!--suppress JSUnresolvedVariable -->
-          <DateTime :value="row.updatedAt" />
-        </template>
-      </FormRow>
-    </template>
+  <EditEntity
+    tableName="idea"
+    :transitionsList="transitionsList"
+    :savedRow="savedRow"
+    showUser
+    v-slot="{ row, isCreating, update }"
+  >
     <EditCommonTextFields
       tableName="idea"
       :row="row"
@@ -69,54 +55,32 @@
     <FormRow label="Comments" text v-if="!isCreating">
       <IdeaComments :ideaId="row.id" />
     </FormRow>
-  </fragment>
+  </EditEntity>
 </template>
 
 <script>
+import EditEntity from "./EditEntity";
 import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
 import MultipleEntitySelect from "./MultipleEntitySelect";
 import IdeaComments from "./IdeaComments";
-import DateTime from "./DateTime";
-import EntityTransitionsList from "../EntityTransitionsList";
 import EditCategory from "./EditCategory";
-import { isNewRow } from "../EntityHelper";
 
 export default {
   name: "EditIdea",
   components: {
-    DateTime,
+    EditEntity,
     FormRow,
     EditCommonTextFields,
     MultipleEntitySelect,
     EntitySelect,
     IdeaComments
   },
-  props: {
-    transitionsList: {
-      type: EntityTransitionsList,
-      required: true
-    },
-    savedRow: {
-      type: Object,
-      required: true
-    }
-  },
+  props: EditEntity.commonProps,
   computed: {
-    row() {
-      return this.transitionsList.applyToRow("idea", this.savedRow);
-    },
-    isCreating() {
-      return isNewRow(this.savedRow, "idea");
-    },
     editCategoryComponent() {
       return EditCategory;
-    }
-  },
-  methods: {
-    update(updates) {
-      this.transitionsList.updateRow("idea", this.savedRow.id, updates);
     }
   }
 };

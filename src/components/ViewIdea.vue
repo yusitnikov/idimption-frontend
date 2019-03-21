@@ -1,40 +1,18 @@
 <template>
-  <div class="view-idea block">
-    <Button align="right" @click="remove">Remove</Button>
-    <Button align="right" @click="edit">Edit</Button>
-    <h2>#{{ row.id }} {{ row.summary }}</h2>
-    <h3 v-if="row.description" class="multi-line">{{ row.description }}</h3>
-  </div>
+  <ViewEntity tableName="idea" :row="row" showUser />
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { DELETE_ROW_ACTION } from "../store";
-import Button from "./Button";
+import ViewEntity from "./ViewEntity";
 
 export default {
   name: "ViewIdea",
-  components: { Button },
+  components: { ViewEntity },
   props: {
     row: {
       type: Object,
       required: true
     }
-  },
-  methods: {
-    ...mapActions([DELETE_ROW_ACTION]),
-    edit() {
-      this.$router.push("/idea/" + this.row.id);
-    },
-    remove() {
-      this[DELETE_ROW_ACTION]({
-        tableName: "idea",
-        id: this.row.id
-      });
-    }
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>
