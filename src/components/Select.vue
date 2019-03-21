@@ -11,7 +11,7 @@
   >
     <div
       v-for="row in rows"
-      :class="{ disabled: row.disabled }"
+      :class="{ item: true, enabled: !row.disabled, disabled: row.disabled }"
       @click="() => !row.disabled && row.onClick && row.onClick()"
       :key="row.id.toString()"
     >
@@ -162,9 +162,29 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less">
-.disabled {
-  color: #ccc;
+<style lang="less">
+@import "../styles/essentials";
+
+.select {
+  .popup {
+    padding: @input-vertical-padding / 2 0;
+  }
+
+  .item {
+    padding: @input-vertical-padding / 2 @input-horizontal-padding;
+
+    &.selected,
+    &:hover {
+      background: #eee;
+    }
+
+    &.enabled {
+      cursor: pointer;
+    }
+
+    &.disabled {
+      color: #ccc;
+    }
+  }
 }
 </style>

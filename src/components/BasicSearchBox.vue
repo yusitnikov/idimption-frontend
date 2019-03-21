@@ -116,6 +116,9 @@ export default {
     z-index: 1;
     background: white;
     border: 1px solid @block-border-color;
+    margin-top: 2px;
+    max-height: 300px;
+    overflow-y: auto;
 
     &.hidden {
       display: none;
