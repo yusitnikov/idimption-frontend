@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-category">
+  <fragment>
     <template v-if="!isCreating">
       <FormRow label="ID" text>{{ row.id }}</FormRow>
       <!--suppress JSUnresolvedVariable -->
@@ -23,7 +23,7 @@
         allowEmpty
       />
     </FormRow>
-  </div>
+  </fragment>
 </template>
 
 <script>
@@ -32,7 +32,7 @@ import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { isChild } from "../EntityHelper";
-import Guid from "guid";
+import { isNewRow } from "../EntityHelper";
 
 export default {
   name: "EditCategory",
@@ -56,7 +56,7 @@ export default {
       return this.transitionsList.applyToRow("category", this.savedRow);
     },
     isCreating() {
-      return Guid.isGuid(this.row.id);
+      return isNewRow(this.savedRow, "category");
     }
   },
   methods: {
@@ -69,6 +69,3 @@ export default {
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>

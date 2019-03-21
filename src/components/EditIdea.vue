@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-idea">
+  <fragment>
     <template v-if="!isCreating">
       <FormRow label="ID" text>{{ row.id }}</FormRow>
       <!--suppress JSUnresolvedVariable -->
@@ -69,7 +69,7 @@
     <FormRow label="Comments" text v-if="!isCreating">
       <IdeaComments :ideaId="row.id" />
     </FormRow>
-  </div>
+  </fragment>
 </template>
 
 <script>
@@ -81,10 +81,18 @@ import IdeaComments from "./IdeaComments";
 import DateTime from "./DateTime";
 import EntityTransitionsList from "../EntityTransitionsList";
 import EditCategory from "./EditCategory";
-import Guid from "guid";
+import { isNewRow } from "../EntityHelper";
 
 export default {
   name: "EditIdea",
+  components: {
+    DateTime,
+    FormRow,
+    EditCommonTextFields,
+    MultipleEntitySelect,
+    EntitySelect,
+    IdeaComments
+  },
   props: {
     transitionsList: {
       type: EntityTransitionsList,
@@ -100,19 +108,11 @@ export default {
       return this.transitionsList.applyToRow("idea", this.savedRow);
     },
     isCreating() {
-      return Guid.isGuid(this.row.id);
+      return isNewRow(this.savedRow, "idea");
     },
     editCategoryComponent() {
       return EditCategory;
     }
-  },
-  components: {
-    DateTime,
-    FormRow,
-    EditCommonTextFields,
-    MultipleEntitySelect,
-    EntitySelect,
-    IdeaComments
   },
   methods: {
     update(updates) {
@@ -121,6 +121,3 @@ export default {
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>

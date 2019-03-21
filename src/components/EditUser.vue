@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-user">
+  <fragment>
     <FormRow label="Login" :text="!isCreating">
       <TextInput
         v-if="isCreating"
@@ -11,7 +11,7 @@
     <FormRow label="Name">
       <TextInput :value="row.name" @input="name => update({ name })" />
     </FormRow>
-  </div>
+  </fragment>
 </template>
 
 <script>
@@ -51,6 +51,3 @@ export default {
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>
