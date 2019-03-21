@@ -148,9 +148,10 @@ export default {
         const selectFieldName = this.selectFieldNames[index];
         if (!this.addValues[selectFieldName]) {
           this.addField = selectFieldName;
-          this.$nextTick(() => {
+          // use setTimeout instead of $nextTick to do focus() after bubbling onClick
+          setTimeout(() => {
             this.$refs.addSelect.focus();
-          });
+          }, 1);
           return true;
         }
       }
