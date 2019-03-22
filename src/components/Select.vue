@@ -2,17 +2,24 @@
   <BasicSearchBox
     class="select"
     v-model="text"
-    :placeholder="(selectedOption && selectedOption.text) || emptyPlaceholder"
+    @input="bringSelectedItemToFocus"
+    :placeholder="(chosenOption && chosenOption.text) || emptyPlaceholder"
     :ignoreEvents="ignoreEvents"
-    @focus="$emit('focus')"
-    @blur="$emit('blur')"
+    @focus="onFocus"
+    @blur="onBlur"
     @keydown="onKeyDown"
     ref="el"
   >
     <div
-      v-for="row in rows"
-      :class="{ item: true, enabled: !row.disabled, disabled: row.disabled }"
+      v-for="(row, index) in rows"
+      :class="{
+        item: true,
+        enabled: !row.disabled,
+        disabled: row.disabled,
+        selected: index === selectedRowIndex
+      }"
       @click="() => !row.disabled && row.onClick && row.onClick()"
+      ref="items"
       :key="row.id.toString()"
     >
       {{ row.text }}
@@ -63,7 +70,8 @@ export default {
   },
   data() {
     return {
-      text: ""
+      text: "",
+      selectedValue: null
     };
   },
   mounted() {
@@ -76,7 +84,7 @@ export default {
     }
   },
   computed: {
-    selectedOption() {
+    chosenOption() {
       for (const option of this.options) {
         if (option.id === this.value) {
           return option;
@@ -132,9 +140,28 @@ export default {
     },
     enabledRows() {
       return this.rows.filter(row => !row.disabled && row.onClick);
+    },
+    selectedRowIndex() {
+      const { rows, selectedValue } = this;
+      for (let index = 0; index < rows.length; index++) {
+        if (rows[index].id === selectedValue) {
+          return index;
+        }
+      }
+
+      return 0;
     }
   },
   methods: {
+    onFocus() {
+      this.$emit("focus");
+      this.selectedValue = this.value;
+      this.bringSelectedItemToFocus();
+    },
+    onBlur() {
+      this.$emit("blur");
+      this.reset(false);
+    },
     focus() {
       this.$refs.el.focus();
     },
@@ -147,6 +174,17 @@ export default {
         this.$nextTick(() => this.blur());
       }
     },
+    async bringSelectedItemToFocus() {
+      await this.$nextTick;
+      if (this.rows.length) {
+        const item = this.$refs.items[this.selectedRowIndex];
+        if (item.scrollIntoViewIfNeeded) {
+          item.scrollIntoViewIfNeeded();
+        } else {
+          item.scrollIntoView();
+        }
+      }
+    },
     onSelect(value, blur = true) {
       this.$emit("change", value);
       this.$emit("input", value);
@@ -156,7 +194,40 @@ export default {
       this.$emit("create", this.trimmedText);
     },
     onKeyDown(ev) {
-      console.log(ev, getKeyCodeByEvent(ev));
+      const { rows, selectedRowIndex } = this;
+      const selectedRow = rows[selectedRowIndex];
+      const setSelectedIndex = index => {
+        if (rows.length) {
+          index = (index + rows.length) % rows.length;
+          this.selectedValue = rows[index].id;
+          this.bringSelectedItemToFocus();
+        }
+      };
+      // TODO: support PageUp / PageDown
+      switch (getKeyCodeByEvent(ev)) {
+        case "ArrowUp":
+          ev.preventDefault();
+          setSelectedIndex(selectedRowIndex - 1);
+          break;
+        case "ArrowDown":
+          ev.preventDefault();
+          setSelectedIndex(selectedRowIndex + 1);
+          break;
+        case "Home":
+          ev.preventDefault();
+          setSelectedIndex(0);
+          break;
+        case "End":
+          ev.preventDefault();
+          setSelectedIndex(-1);
+          break;
+        case "Enter":
+          ev.preventDefault();
+          if (selectedRow && !selectedRow.disabled && selectedRow.onClick) {
+            selectedRow.onClick();
+          }
+          break;
+      }
     }
   }
 };
@@ -173,8 +244,10 @@ export default {
   .item {
     padding: @input-vertical-padding / 2 @input-horizontal-padding;
 
-    &.selected,
     &:hover {
+      background: #f8f8f8;
+    }
+    &.selected {
       background: #eee;
     }
 
