@@ -68,14 +68,13 @@ const store = new Vuex.Store({
       state.schema = schema;
     },
     [SET_DATA_MUTATION](state, { data, guids = {} }) {
-      console.log("Set data");
       state.data = data;
       state.guids = {
         ...state.guids,
         ...guids
       };
+      // don't use increment operator, cause the reactivity system needs explicit assignment
       state.dataVersion = state.dataVersion + 1;
-      console.log("Data version is", state.dataVersion);
     },
     [SET_WINDOW_SIZE_MUTATION](state, size) {
       state.windowSize = size;

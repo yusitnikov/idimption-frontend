@@ -7,7 +7,6 @@ export default class EntityTransitionsList {
   cachedDataVersion;
   autoSave;
   constructor(autoSave = false) {
-    console.log("Construct EntityTransitionsList");
     this.transitions = [];
     this.migratedDataCache = null;
     this.cachedDataVersion = null;
@@ -89,7 +88,6 @@ export default class EntityTransitionsList {
     if (this.migratedDataCache && this.cachedDataVersion === dataVersion) {
       return this.migratedDataCache;
     }
-    console.log("Recalculate migrated data");
     // Build the transitions map: by tableName, type and row primary key
     let transitionsMap = {};
     for (const transition of this.transitions) {
