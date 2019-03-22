@@ -49,6 +49,10 @@ export default {
 </script>
 
 <style lang="less">
+@import "assets/fontawesome/less/fontawesome";
+@import "assets/fontawesome/less/regular";
+@import "assets/fontawesome/less/solid";
+@import "assets/fontawesome/less/brands";
 @import "styles/essentials";
 
 body,

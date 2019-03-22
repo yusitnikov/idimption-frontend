@@ -8,8 +8,9 @@
         <EntityFromAt :row="row" :showUser="showUser" />
       </span>
     </div>
+    <div class="additional-info"><slot /></div>
     <!-- eslint-disable-next-line -->
-    <div v-if="additionalInfoText" class="description multi-line">{{ additionalInfoText }}</div>
+    <div v-if="additionalInfoText" class="additional-info multi-line">{{ additionalInfoText }}</div>
   </div>
 </template>
 
@@ -69,8 +70,8 @@ export default {
   }
 }
 
-.description {
+.additional-info {
   margin-top: @paragraph-margin;
-  font-size: 19px;
+  /*font-size: 19px;*/
 }
 </style>

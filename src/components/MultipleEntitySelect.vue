@@ -1,11 +1,18 @@
 <template>
   <div class="multiple-entity-select">
-    <span v-for="row in selectedRows" :key="row.id.toString()" class="view-tag">
-      <span v-for="selectFieldName in selectFieldNames" :key="selectFieldName">
-        {{ getFieldDisplayText(selectFieldName, row[selectFieldName]) }}
-      </span>
-      <Button class="small" @click="() => removeRow(row.id)">X</Button>
-    </span>
+    <MultipleEntityDisplay
+      :tableName="tableName"
+      :parentFieldName="parentFieldName"
+      :parentId="parentId"
+      :fieldNames="selectFieldNames"
+      :transitionsList="transitionsList"
+    >
+      <template #after="{ linkRow }">
+        <!--suppress JSUnresolvedVariable -->
+        <Button class="small" @click="() => removeRow(linkRow.id)">X</Button>
+      </template>
+    </MultipleEntityDisplay>
+
     <span class="add-tag">
       <template v-if="adding">
         <span
@@ -15,9 +22,14 @@
           <span
             v-if="selectFieldName !== addField && addValues[selectFieldName]"
           >
-            {{
-              getFieldDisplayText(selectFieldName, addValues[selectFieldName])
-            }}
+            <ForeignEntityById
+              :tableName="tableName"
+              :fieldName="selectFieldName"
+              :id="addValues[selectFieldName]"
+              v-slot="{ displayText }"
+            >
+              {{ displayText }}
+            </ForeignEntityById>
           </span>
         </span>
         <EntitySelect
@@ -40,19 +52,21 @@
 
 <script>
 import EntityTransitionsList from "../EntityTransitionsList";
+import MultipleEntityDisplay from "./MultipleEntityDisplay";
 import Button from "./Button";
 import EntitySelect from "./EntitySelect";
-import {
-  getDisplayText,
-  getRowById,
-  getForeignTableName,
-  createRow
-} from "../EntityHelper";
+import { getForeignTableName, createRow } from "../EntityHelper";
 import Guid from "guid";
+import ForeignEntityById from "./ForeignEntityById";
 
 export default {
   name: "MultipleEntitySelect",
-  components: { EntitySelect, Button },
+  components: {
+    ForeignEntityById,
+    MultipleEntityDisplay,
+    EntitySelect,
+    Button
+  },
   props: {
     tableName: {
       type: String,
@@ -108,13 +122,6 @@ export default {
   methods: {
     getFieldTableName(fieldName) {
       return getForeignTableName(this.tableName, fieldName);
-    },
-    getFieldDisplayText(fieldName, fieldValue) {
-      const tableName = this.getFieldTableName(fieldName);
-      return getDisplayText(
-        getRowById(this.updatedData[tableName], fieldValue),
-        tableName
-      );
     },
     canSelectRow(row) {
       if (
@@ -181,8 +188,7 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less">
+<style lang="less">
 @import "../styles/essentials";
 
 .multiple-entity-select {

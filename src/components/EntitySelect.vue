@@ -1,7 +1,7 @@
 <template>
   <fragment>
     <Select
-      class="entity-select"
+      :class="['entity-select', passThroughClassName]"
       :options="rows"
       :value="value"
       :allowAdd="allowAdd"
@@ -64,11 +64,18 @@ export default {
   },
   data() {
     return {
+      dom: null,
       addTransitionsList: new EntityTransitionsList(),
       addFormRow: null
     };
   },
+  mounted() {
+    this.dom = this.$el;
+  },
   computed: {
+    passThroughClassName() {
+      return this.dom ? this.dom.className : "";
+    },
     updatedData() {
       return this.transitionsList.applyToState();
     },
