@@ -16,7 +16,7 @@ import {
 } from "../EntityHelper";
 
 export default {
-  name: "EditEntityId",
+  name: "EntityById",
   props: {
     tableName: {
       type: String,
