@@ -9,7 +9,7 @@
     >
       <template #after="{ linkRow }">
         <!--suppress JSUnresolvedVariable -->
-        <Button class="small" @click="() => removeRow(linkRow.id)">X</Button>
+        <Button class="small" @click="() => removeRow(linkRow)">X</Button>
       </template>
     </MultipleEntityDisplay>
 
@@ -181,8 +181,8 @@ export default {
       this.transitionsList.addRow(this.tableName, row);
       this.startAdd();
     },
-    removeRow(id) {
-      this.transitionsList.deleteRow(this.tableName, id);
+    removeRow(row) {
+      this.transitionsList.deleteRow(this.tableName, row);
     }
   }
 };

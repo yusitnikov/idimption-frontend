@@ -65,7 +65,7 @@ export default {
     remove() {
       this[DELETE_ROW_ACTION]({
         tableName: this.tableName,
-        id: this.id
+        row: this.row
       });
       this.$router.push("/" + this.tableName);
     }

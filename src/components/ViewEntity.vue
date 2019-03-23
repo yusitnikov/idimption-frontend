@@ -51,7 +51,7 @@ export default {
     remove() {
       this[DELETE_ROW_ACTION]({
         tableName: this.tableName,
-        id: this.row.id
+        row: this.row
       });
     }
   }

@@ -156,9 +156,9 @@ const store = new Vuex.Store({
       transitionsList.updateRow(tableName, id, updates);
       return dispatch(APPLY_TRANSITIONS_ACTION, transitionsList);
     },
-    async [DELETE_ROW_ACTION]({ dispatch }, { tableName, id }) {
+    async [DELETE_ROW_ACTION]({ dispatch }, { tableName, row }) {
       let transitionsList = new EntityTransitionsList();
-      transitionsList.deleteRow(tableName, id);
+      transitionsList.deleteRow(tableName, row);
       return dispatch(APPLY_TRANSITIONS_ACTION, transitionsList);
     }
   }

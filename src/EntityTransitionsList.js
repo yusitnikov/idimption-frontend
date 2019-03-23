@@ -1,5 +1,6 @@
 import store, { APPLY_TRANSITIONS_ACTION } from "./store";
 import { EntityTransition } from "./EntityTransition";
+import Guid from "guid";
 
 export default class EntityTransitionsList {
   transitions;
@@ -21,10 +22,6 @@ export default class EntityTransitionsList {
     return null;
   }
   // noinspection JSUnusedGlobalSymbols
-  findTransitionByRow(tableName, row) {
-    return this.findTransitionByRowId(tableName, row.id);
-  }
-  // noinspection JSUnusedGlobalSymbols
   isEmpty() {
     return this.transitions.length === 0;
   }
@@ -33,12 +30,16 @@ export default class EntityTransitionsList {
     this.clearMigratedDataCache();
     return this;
   }
-  addRow(tableName, row) {
-    this.transitions.push(new EntityTransition("add", tableName, row));
+  _onTransitionsChanged() {
     if (this.autoSave) {
       this.save();
     }
     this.clearMigratedDataCache();
+    return this;
+  }
+  addRow(tableName, row) {
+    this.transitions.push(new EntityTransition("add", tableName, row));
+    this._onTransitionsChanged();
     return this;
   }
   updateRow(tableName, id, updates) {
@@ -53,26 +54,69 @@ export default class EntityTransitionsList {
         ...updates
       };
     }
-    if (this.autoSave) {
-      this.save();
-    }
-    this.clearMigratedDataCache();
+    this._onTransitionsChanged();
     return this;
   }
-  deleteRow(tableName, id) {
-    const existingTransition = this.findTransitionByRowId(tableName, id);
+  deleteRow(tableName, row) {
+    const existingTransition = this.findTransitionByRowId(tableName, row.id);
     if (!existingTransition) {
-      this.transitions.push(new EntityTransition("delete", tableName, { id }));
+      this.transitions.push(new EntityTransition("delete", tableName, row));
     } else if (existingTransition.type === "add") {
       // remove existingTransition from the array
       this.transitions.splice(this.transitions.indexOf(existingTransition), 1);
     } else {
       existingTransition.type = "delete";
     }
-    if (this.autoSave) {
-      this.save();
+    this._onTransitionsChanged();
+    return this;
+  }
+  syncRelationTableRows(
+    tableName,
+    parentFieldName,
+    parentId,
+    selectFieldName,
+    selectedIds
+  ) {
+    const selectedIdsMap = {};
+    for (const id of selectedIds) {
+      selectedIdsMap[id] = true;
     }
-    this.clearMigratedDataCache();
+
+    for (let index = this.transitions.length; index >= 0; index--) {
+      const transition = this.transitions[index];
+
+      if (
+        transition.tableName !== tableName ||
+        transition.row[parentFieldName] !== parentId
+      ) {
+        continue;
+      }
+
+      const selectValue = transition.row[selectFieldName];
+      const isSelected = selectedIdsMap[selectValue];
+      // Remove the transition if it's not relevant anymore
+      if (transition.type === (isSelected ? "delete" : "add")) {
+        // remove the transition
+        this.transitions.splice(index, 1);
+      }
+
+      // Mark that the selected ID was processed
+      selectedIdsMap[selectValue] = false;
+    }
+
+    for (const id of selectedIds) {
+      if (selectedIdsMap[id]) {
+        this.transitions.push(
+          new EntityTransition("add", tableName, {
+            id: Guid.create(),
+            [parentFieldName]: parentId,
+            [selectFieldName]: id
+          })
+        );
+      }
+    }
+
+    this._onTransitionsChanged();
     return this;
   }
   save() {
@@ -81,6 +125,7 @@ export default class EntityTransitionsList {
   }
   clearMigratedDataCache() {
     this.migratedDataCache = null;
+    return this;
   }
   applyToState() {
     // noinspection JSUnresolvedVariable
