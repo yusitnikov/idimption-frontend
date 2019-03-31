@@ -71,6 +71,14 @@ const store = new Vuex.Store({
     verifiedEmail: () => {
       const { isUserVerified } = require("./auth");
       return isUserVerified();
+    },
+    isAdmin: () => {
+      const { isUserAdmin } = require("./auth");
+      return isUserAdmin();
+    },
+    canEditUsersData: () => {
+      const { canUserEditUsersData } = require("./auth");
+      return canUserEditUsersData;
     }
   },
   mutations: {

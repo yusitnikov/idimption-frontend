@@ -24,7 +24,7 @@
 
 <script>
 import { showNotification } from "../storeProxy";
-import { getUserId, isUserVerified } from "../auth";
+import { getUserId, isUserVerified, canUserEditUsersData } from "../auth";
 import { validateAllInputs } from "../misc";
 import Button from "../components/Button";
 import EntityTransitionsList from "../EntityTransitionsList";
@@ -94,7 +94,7 @@ export default {
           return true;
         }
         const hasUserField = getTableFieldInfo(this.tableName, "userId");
-        if (hasUserField && this.row.userId !== getUserId()) {
+        if (hasUserField && !canUserEditUsersData(this.row.userId)) {
           return true;
         }
       }

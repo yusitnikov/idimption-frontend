@@ -15,6 +15,16 @@ export function isUserVerified() {
   return user ? user.verifiedEmail == 1 : false;
 }
 
+export function isUserAdmin() {
+  const user = getUser();
+  // noinspection JSUnresolvedVariable,EqualityComparisonWithCoercionJS
+  return user ? user.verifiedEmail == 1 && user.isAdmin == 1 : false;
+}
+
+export function canUserEditUsersData(userId) {
+  return isUserAdmin() || (isUserVerified() && getUserId() === userId);
+}
+
 export function sendVerificationEmail(userId, resetPassword) {
   return callApi("/auth/sendVerificationEmail.php", { userId, resetPassword });
 }
