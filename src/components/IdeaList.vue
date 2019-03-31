@@ -1,17 +1,17 @@
 <template>
   <div class="idea-list">
-    <ViewIdea v-for="row in tableRows" :row="row" :key="row.id" />
+    <IdeaBlock v-for="row in tableRows" :row="row" :key="row.id" />
     <div v-if="!tableRows.length">No rows.</div>
   </div>
 </template>
 
 <script>
 import { getTableData } from "../storeProxy";
-import ViewIdea from "./ViewIdea";
+import IdeaBlock from "./IdeaBlock";
 
 export default {
   name: "IdeaList",
-  components: { ViewIdea },
+  components: { IdeaBlock },
   props: {
     filter: Function
   },
@@ -26,6 +26,3 @@ export default {
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>

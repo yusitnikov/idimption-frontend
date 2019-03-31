@@ -29,7 +29,7 @@ import {
 } from "../EntityHelper";
 
 export default {
-  name: "ViewEntity",
+  name: "EntityBlock",
   components: { Button, EntityFromAt },
   props: {
     tableName: {

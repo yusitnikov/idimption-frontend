@@ -1,7 +1,7 @@
 <template>
   <div class="category-list">
     <div v-for="row in tableRows" :key="row.id">
-      <ViewCategory :row="row" />
+      <CategoryBlock :row="row" />
       <CategoryList class="children" :parentId="row.id" :filter="filter" />
     </div>
     <div v-if="!tableRows.length && !parentId">No rows.</div>
@@ -10,11 +10,11 @@
 
 <script>
 import { getTableData } from "../storeProxy";
-import ViewCategory from "./ViewCategory";
+import CategoryBlock from "./CategoryBlock";
 
 export default {
   name: "CategoryList",
-  components: { ViewCategory },
+  components: { CategoryBlock },
   props: {
     parentId: {
       type: String,
@@ -36,7 +36,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .children {
   padding-left: 50px;

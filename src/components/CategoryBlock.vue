@@ -1,14 +1,14 @@
 <template>
-  <ViewEntity tableName="category" :row="row" :readOnly="!verifiedEmail" />
+  <EntityBlock tableName="category" :row="row" :readOnly="!verifiedEmail" />
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import ViewEntity from "./ViewEntity";
+import EntityBlock from "./EntityBlock";
 
 export default {
-  name: "ViewCategory",
-  components: { ViewEntity },
+  name: "CategoryBlock",
+  components: { EntityBlock },
   computed: {
     ...mapGetters(["verifiedEmail"])
   },

@@ -1,22 +1,22 @@
 <template>
-  <ViewEntity
+  <EntityBlock
     tableName="idea"
     :row="row"
     showUser
     :readOnly="!verifiedEmail || row.userId !== userId"
   >
     <IdeaPropsLine :row="row" />
-  </ViewEntity>
+  </EntityBlock>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import ViewEntity from "./ViewEntity";
+import EntityBlock from "./EntityBlock";
 import IdeaPropsLine from "./IdeaPropsLine";
 
 export default {
-  name: "ViewIdea",
-  components: { IdeaPropsLine, ViewEntity },
+  name: "IdeaBlock",
+  components: { IdeaPropsLine, EntityBlock },
   computed: {
     ...mapState(["userId"]),
     ...mapGetters(["verifiedEmail"])
