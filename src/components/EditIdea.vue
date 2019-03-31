@@ -7,16 +7,19 @@
     showUser
     v-slot="{ row, isCreating, update }"
   >
-    <div class="readonly" v-if="readOnly">
+    <div
+      :class="{ readonly: true, 'next-section-start': showHeader }"
+      v-if="readOnly"
+    >
       <IdeaPropsLine :row="row" />
 
       <!-- eslint-disable-next-line -->
       <div class="description multi-line">{{ row.description || "No description provided." }}</div>
 
-      <h2>Comments</h2>
+      <h2 class="next-section-start">Comments</h2>
       <IdeaComments :ideaId="row.id" key="comments" />
     </div>
-    <div class="editable" v-else>
+    <div :class="{ editable: true, 'next-section-start': showHeader }" v-else>
       <EditCommonTextFields
         tableName="idea"
         :row="row"
@@ -34,7 +37,7 @@
         />
       </FormRow>
 
-      <FormRow label="Tags">
+      <FormRow class="next-section-start" label="Tags">
         <MultipleEntitySelect
           tableName="ideatag"
           parentFieldName="ideaId"
@@ -65,7 +68,7 @@
         />
       </FormRow>
 
-      <FormRow label="Comments" text v-if="!isCreating">
+      <FormRow class="next-section-start" label="Comments" v-if="!isCreating">
         <IdeaComments :ideaId="row.id" key="comments" />
       </FormRow>
     </div>

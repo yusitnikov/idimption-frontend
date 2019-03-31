@@ -10,12 +10,14 @@
 @block-margin: 5px;
 @block-border-color: #ccc;
 @input-vertical-padding: 5px;
+@form-label-padding: @input-vertical-padding + 1px;
 @input-horizontal-padding: @block-horizontal-padding;
 @input-padding: @input-vertical-padding @input-horizontal-padding;
 @input-full-height: @input-vertical-padding * 2 + @line-height-px;
 @button-full-height: 2px + @input-full-height;
 @button-distance: 10px;
-@paragraph-margin: 0.5em;
+@paragraph-margin: @font-size / 2;
+@section-margin: 30px;
 @one-line-block-inner-height: 2 * @block-vertical-padding + @line-height-px;
 @one-line-block-height: 2px + @one-line-block-inner-height;
 @textarea-min-height: 2px + 2 * @input-vertical-padding + 2 * @line-height-px;
@@ -40,11 +42,13 @@
   blockMargin: unit(@block-margin);
   blockBorderColor: @block-border-color;
   inputVerticalPadding: unit(@input-vertical-padding);
+  formLabelPadding: unit(@form-label-padding);
   inputHorizontalPadding: unit(@input-horizontal-padding);
   inputFullHeight: unit(@input-full-height);
   buttonFullHeight: unit(@button-full-height);
   buttonDistance: unit(@button-distance);
   paragraphMargin: unit(@paragraph-margin);
+  sectionMargin: unit(@section-margin);
   oneLineBlockInnerHeight: unit(@one-line-block-inner-height);
   oneLineBlockHeight: unit(@one-line-block-height);
   textAreaMinHeight: unit(@textarea-min-height);
@@ -75,8 +79,8 @@
 }
 
 .form-label-padding() {
-  padding-top: @input-vertical-padding;
-  padding-bottom: @input-vertical-padding;
+  padding-top: @form-label-padding;
+  padding-bottom: @form-label-padding;
 }
 
 .fullscreen(@z-index, @margin: 0) {

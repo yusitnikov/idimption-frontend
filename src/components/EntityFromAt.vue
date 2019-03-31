@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div class="entity-from-at line">
     <template v-if="showUser">
       from
       <EntityById tableName="user" :id="row.userId" v-slot="{ displayText }">
@@ -18,7 +18,7 @@
       <!--suppress JSUnresolvedVariable -->
       <DateTime :value="row.updatedAt" />
     </template>
-  </fragment>
+  </div>
 </template>
 
 <script>
@@ -37,3 +37,10 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="less">
+.entity-from-at {
+  font-weight: bold;
+  color: #888;
+}
+</style>

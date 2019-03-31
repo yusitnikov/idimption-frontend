@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    :class="['button', 'input', align]"
+    :class="['button', 'input', 'button-' + align]"
     :disabled="disabled"
     @click="onClick"
   >
@@ -22,7 +22,7 @@ export default {
   methods: {
     onClick(event) {
       event.preventDefault();
-      this.$emit("click");
+      this.$emit("click", event);
     }
   }
 };

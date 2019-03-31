@@ -1,6 +1,8 @@
 <template>
   <div class="idea-comments">
-    <div class="no-rows" v-if="!rows.length && !parentId">No comments.</div>
+    <div class="line no-rows" v-if="!rows.length && !parentId">
+      No comments.
+    </div>
 
     <AddIdeaComment class="line" :ideaId="ideaId" v-if="!parentId" />
 
@@ -11,9 +13,7 @@
       <EntityById tableName="user" :id="row.userId" v-slot="{ avatarUrl }">
         <UserAvatarBlock :userId="row.userId" :avatarUrl="avatarUrl">
           <div class="header">
-            <div class="line from-at">
-              <EntityFromAt :row="row" showUser />
-            </div>
+            <EntityFromAt :row="row" showUser />
             <div class="line multi-line">{{ row.message }}</div>
 
             <AddIdeaComment class="line" :ideaId="ideaId" :parentId="row.id" />
@@ -66,20 +66,12 @@ export default {
 <style scoped lang="less">
 @import "../styles/essentials";
 
-.line {
-  margin-bottom: @paragraph-margin;
-}
-
 .no-rows {
-  .block-margin;
+  padding-top: @form-label-padding;
 }
 
 .header {
   min-height: @avatar-size;
-}
-
-.from-at {
-  font-weight: bold;
 }
 
 .replies {

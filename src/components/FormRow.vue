@@ -22,10 +22,14 @@ export default {
 <style scoped lang="less">
 @import "../styles/essentials";
 
-@label-width: 200px;
+@label-width: 110px;
 
 .form-row {
   .block-margin;
+
+  &.next-section-start {
+    margin-top: @section-margin;
+  }
 }
 
 .label {

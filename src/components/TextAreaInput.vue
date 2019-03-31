@@ -19,7 +19,6 @@
     >
     </textarea>
 
-    <!--suppress HtmlUnknownTag, CheckEmptyScriptTag -->
     <InputValidation />
   </div>
 </template>

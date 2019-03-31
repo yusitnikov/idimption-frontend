@@ -6,7 +6,7 @@
     :readOnly="!canEditUsersData(row.userId)"
   >
     <template slot="additionalInfo">
-      <IdeaPropsLine :row="row" />
+      <IdeaPropsLine :row="row" :showStatus="showStatus" />
     </template>
 
     <template #details="{ transitionsList, readOnly }">
@@ -36,6 +36,10 @@ export default {
     row: {
       type: Object,
       required: true
+    },
+    showStatus: {
+      type: Boolean,
+      default: true
     }
   }
 };

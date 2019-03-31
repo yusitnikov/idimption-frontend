@@ -2,7 +2,7 @@
   <div class="edit-entity">
     <template v-if="showHeader && !isCreating">
       <h1>[{{ savedRow.id }}] {{ savedDisplayText }}</h1>
-      <h3><EntityFromAt :row="row" :showUser="showUser" /></h3>
+      <EntityFromAt :row="row" :showUser="showUser" />
     </template>
     <slot v-bind="row" :row="row" :isCreating="isCreating" :update="update" />
   </div>

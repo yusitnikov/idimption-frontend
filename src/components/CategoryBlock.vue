@@ -1,5 +1,10 @@
 <template>
-  <EntityBlock tableName="category" :row="row" :readOnly="!verifiedEmail">
+  <EntityBlock
+    tableName="category"
+    :row="row"
+    :readOnly="!verifiedEmail"
+    :expandable="verifiedEmail"
+  >
     <template #details="{ transitionsList, readOnly }">
       <EditCategory
         :savedRow="row"

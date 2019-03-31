@@ -6,11 +6,14 @@
     :showHeader="showHeader"
     v-slot="{ row, update }"
   >
-    <div class="readonly" v-if="readOnly">
+    <div
+      :class="{ readonly: true, 'next-section-start': showHeader }"
+      v-if="readOnly"
+    >
       <!-- eslint-disable-next-line -->
       <div class="description multi-line">{{ row.description || "No description provided." }}</div>
     </div>
-    <div class="editable" v-else>
+    <div :class="{ editable: true, 'next-section-start': showHeader }" v-else>
       <EditCommonTextFields
         tableName="category"
         :row="row"

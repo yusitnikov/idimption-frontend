@@ -63,13 +63,14 @@
       <router-view />
 
       <PopupForm
-        class="app-popup"
         title="Login"
+        :priority="1000"
         @save="doLogin"
         @close="cancelPopup"
         v-if="popupAction === 'login'"
       >
-        <div class="line multi-line" v-if="popupText">{{ popupText }}</div>
+        <!-- eslint-disable-next-line -->
+        <div class="line multi-line first-section" v-if="popupText">{{ popupText }}</div>
 
         <FormRow label="Login (email)">
           <TextInput
@@ -89,25 +90,26 @@
           />
         </FormRow>
 
-        <div class="line">
+        <div class="line next-section-start">
           Don't have an account yet?
           <Button @click="switchToRegister">Register</Button>
         </div>
 
-        <div class="line">
+        <div class="line next-section-start">
           Forgot password?
           <Button @click="switchToResetPassword">Restore</Button>
         </div>
       </PopupForm>
 
       <PopupForm
-        class="app-popup"
         title="Register"
+        :priority="1000"
         @save="doRegister"
         @close="cancelPopup"
         v-if="popupAction === 'register'"
       >
-        <div class="line multi-line" v-if="popupText">{{ popupText }}</div>
+        <!-- eslint-disable-next-line -->
+        <div class="line multi-line first-section" v-if="popupText">{{ popupText }}</div>
 
         <FormRow label="Name">
           <TextInput v-model="popupUserName" @input="resetPopupError" />
@@ -130,20 +132,21 @@
           />
         </FormRow>
 
-        <div class="line">
+        <div class="line next-section-start">
           Already have an account?
           <Button @click="switchToLogin">Login</Button>
         </div>
       </PopupForm>
 
       <PopupForm
-        class="app-popup"
         title="Restore password"
+        :priority="1000"
         @save="doResetPassword"
         @close="cancelPopup"
         v-if="popupAction === 'reset-password'"
       >
-        <div class="line multi-line" v-if="popupText">{{ popupText }}</div>
+        <!-- eslint-disable-next-line -->
+        <div class="line multi-line first-section" v-if="popupText">{{ popupText }}</div>
 
         <FormRow label="Login (email)">
           <TextInput
@@ -156,6 +159,8 @@
         </FormRow>
       </PopupForm>
     </template>
+
+    <portal-target name="popups" />
   </div>
 </template>
 
@@ -400,15 +405,21 @@ button {
   }
 }
 
-.app-popup {
-  .line {
-    .block-margin;
-  }
-}
-
 .block {
   .basic-block(@block-padding);
   .block-margin;
+}
+
+.line {
+  margin-bottom: @paragraph-margin;
+}
+
+.next-section-start {
+  margin-top: @section-margin;
+}
+
+.first-section {
+  margin-bottom: @section-margin;
 }
 
 .input {
@@ -434,20 +445,20 @@ button {
       opacity: 0.7;
     }
 
-    &.left {
-      margin-right: @button-distance;
-    }
-
-    &.right {
-      float: right;
-      margin-left: @button-distance;
-    }
-
     &.small {
       padding-left: @input-vertical-padding;
       padding-right: @input-vertical-padding;
     }
   }
+}
+
+.button-left {
+  margin-right: @button-distance;
+}
+
+.button-right {
+  float: right;
+  margin-left: @button-distance;
 }
 
 .single-line {

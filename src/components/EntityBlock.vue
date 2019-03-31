@@ -1,47 +1,42 @@
 <template>
-  <div class="view-entity block">
-    <div class="summary-actions">
-      <!-- eslint-disable-next-line -->
-      <router-link :to="pageUrl">Open</router-link>
-      <Button align="right" @click="remove" v-if="!readOnly">
-        Remove
-      </Button>
-    </div>
+  <div
+    :class="{ 'entity-block': true, block: true, expandable }"
+    @click="showDetails"
+  >
+    <ButtonLink align="right" plain @click="remove" v-if="!readOnly">
+      <Icon type="trash-alt" />
+    </ButtonLink>
+    <ButtonLink align="right" :href="pageUrl" @click="stopPropagation">
+      <Icon type="external-link-alt" />
+    </ButtonLink>
 
-    <div class="summary" @click="toggleExpanded">
-      <Icon class="square" :type="expanded ? 'caret-down' : 'caret-right'" />
-      [{{ row.id }}] {{ displayText }}
-      <span class="summary-from-at">
-        <EntityFromAt :row="row" :showUser="showUser" />
-      </span>
-    </div>
+    <div class="line summary">[{{ row.id }}] {{ displayText }}</div>
 
-    <div class="additional-info" v-if="!expanded">
+    <EntityFromAt :row="row" :showUser="showUser" />
+
+    <div class="line additional-info">
       <slot name="additionalInfo" />
     </div>
 
-    <div class="details" v-if="expanded">
+    <PopupForm
+      :title="displayText"
+      @save="save"
+      @close="hideDetails"
+      v-if="expanded"
+    >
       <slot
         name="details"
         :transitionsList="transitionsList"
         :readOnly="readOnly"
       />
-
-      <div class="details-footer" v-if="!readOnly">
-        <Button @click="save">Save</Button>
-
-        <Button @click="remove">Remove</Button>
-
-        <!-- eslint-disable-next-line -->
-        <router-link :to="pageUrl">Open</router-link>
-      </div>
-    </div>
+    </PopupForm>
   </div>
 </template>
 
 <script>
 import { validateAllInputs } from "../misc";
-import Button from "./Button";
+import ButtonLink from "./ButtonLink";
+import PopupForm from "./PopupForm";
 import Icon from "./Icon";
 import EntityFromAt from "./EntityFromAt";
 import EntityTransitionsList from "../EntityTransitionsList";
@@ -49,7 +44,7 @@ import { getDisplayText, deleteRow } from "../EntityHelper";
 
 export default {
   name: "EntityBlock",
-  components: { Button, Icon, EntityFromAt },
+  components: { ButtonLink, PopupForm, Icon, EntityFromAt },
   props: {
     tableName: {
       type: String,
@@ -60,6 +55,10 @@ export default {
       required: true
     },
     readOnly: Boolean,
+    expandable: {
+      type: Boolean,
+      default: true
+    },
     showUser: Boolean
   },
   data() {
@@ -77,16 +76,26 @@ export default {
     }
   },
   methods: {
-    toggleExpanded() {
-      this.expanded = !this.expanded;
+    showDetails() {
+      if (this.expandable) {
+        this.expanded = true;
+      }
     },
-    save() {
+    hideDetails() {
+      this.expanded = false;
+    },
+    stopPropagation(event) {
+      event.stopPropagation();
+    },
+    async save() {
       if (!validateAllInputs(this)) {
         return;
       }
-      this.transitionsList.save();
+      await this.transitionsList.save();
+      this.hideDetails();
     },
-    remove() {
+    remove(event) {
+      this.stopPropagation(event);
       deleteRow(this.tableName, this.row);
     }
   }
@@ -96,27 +105,16 @@ export default {
 <style scoped lang="less">
 @import "../styles/essentials";
 
-.summary-actions {
-  float: right;
-  line-height: @button-full-height;
-}
+.entity-block.block {
+  padding-bottom: @block-vertical-padding - @paragraph-margin;
 
-.summary {
-  cursor: pointer;
-  font-size: @button-full-height / @line-height;
-
-  .summary-from-at {
-    font-size: @font-size;
+  &.expandable {
+    cursor: pointer;
   }
 }
 
-.additional-info,
-.details,
-.details-footer {
-  margin-top: @paragraph-margin;
-}
-
-.description {
+.summary {
   font-size: 120%;
+  font-weight: bold;
 }
 </style>

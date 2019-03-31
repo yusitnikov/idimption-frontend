@@ -1,19 +1,23 @@
 <template>
-  <div class="popup-form">
-    <div class="background" @click="$emit('close')"></div>
-    <div class="window">
-      <div class="header">
-        {{ title }}
-      </div>
-      <div class="body">
-        <slot></slot>
-      </div>
-      <div class="footer">
-        <Button align="right" @click="save">{{ okLabel }}</Button>
-        <Button align="right" @click="$emit('close')">{{ cancelLabel }}</Button>
+  <portal to="popups" :order="priority">
+    <div :class="['popup-form', ($el && $el.className) || '']">
+      <div class="background" @click="$emit('close')"></div>
+      <div class="window">
+        <div class="header">
+          {{ title }}
+        </div>
+        <div class="body">
+          <slot></slot>
+        </div>
+        <div class="footer">
+          <Button align="right" @click="save">{{ okLabel }}</Button>
+          <Button align="right" @click="$emit('close')">{{
+            cancelLabel
+          }}</Button>
+        </div>
       </div>
     </div>
-  </div>
+  </portal>
 </template>
 
 <script>
@@ -27,6 +31,10 @@ export default {
     title: {
       type: String,
       required: true
+    },
+    priority: {
+      type: Number,
+      default: 1
     },
     okLabel: {
       type: String,

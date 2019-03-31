@@ -11,7 +11,6 @@
       ref="input"
     />
 
-    <!--suppress HtmlUnknownTag, CheckEmptyScriptTag -->
     <InputValidation />
   </div>
 </template>

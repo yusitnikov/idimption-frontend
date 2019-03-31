@@ -1,7 +1,9 @@
 <template>
   <div class="edit-entity-page">
     <div v-if="showBack">
-      <router-link :to="'/' + tableName">&lt; Back</router-link>
+      <ButtonLink :href="'/' + tableName"
+        ><Icon type="chevron-left" /> Back</ButtonLink
+      >
     </div>
     <template v-if="row">
       <slot
@@ -9,7 +11,7 @@
         :transitionsList="transitionsList"
         :readOnly="readOnly"
       />
-      <div class="footer" v-if="!readOnly">
+      <div class="footer next-section-start" v-if="!readOnly">
         <Button @click="save">Save</Button>
         <Button @click="remove" v-if="allowRemove && !isCreating">
           Remove
@@ -27,6 +29,8 @@ import { showNotification } from "../storeProxy";
 import { getUserId, isUserVerified, canUserEditUsersData } from "../auth";
 import { validateAllInputs } from "../misc";
 import Button from "../components/Button";
+import ButtonLink from "../components/ButtonLink";
+import Icon from "../components/Icon";
 import EntityTransitionsList from "../EntityTransitionsList";
 import {
   getTableFieldInfo,
@@ -38,7 +42,7 @@ import Guid from "guid";
 
 export default {
   name: "EditEntityPage",
-  components: { Button },
+  components: { Button, ButtonLink, Icon },
   props: {
     tableName: {
       type: String,

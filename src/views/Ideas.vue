@@ -6,7 +6,7 @@
         Add new idea
       </Button>
     </div>
-    <IdeaList />
+    <IdeaPanel />
   </div>
 </template>
 
@@ -14,11 +14,11 @@
 import { mapState, mapGetters } from "vuex";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
-import IdeaList from "../components/IdeaList";
+import IdeaPanel from "../components/IdeaPanel";
 
 export default {
   name: "Ideas",
-  components: { Icon, Button, IdeaList },
+  components: { Icon, Button, IdeaPanel },
   computed: {
     ...mapState(["userId"]),
     ...mapGetters(["verifiedEmail"])

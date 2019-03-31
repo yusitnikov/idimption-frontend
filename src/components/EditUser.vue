@@ -49,7 +49,7 @@
       noValidation
       v-if="!isCreating"
     />
-    <FormRow label="New password">
+    <FormRow class="next-section-start" label="New password">
       <TextInput
         type="password"
         autocomplete="off"
@@ -59,7 +59,7 @@
         @input="password => update({ password })"
       />
     </FormRow>
-    <FormRow label="Confirm password">
+    <FormRow label="Confirm pass">
       <TextInput
         type="password"
         autocomplete="off"

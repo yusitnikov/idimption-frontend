@@ -3,6 +3,7 @@
     <h1>User profile</h1>
 
     <EditEntityPage
+      class="next-section-start"
       tableName="user"
       :forcedId="userId"
       :showBack="false"

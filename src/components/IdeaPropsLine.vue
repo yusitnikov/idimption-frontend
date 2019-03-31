@@ -1,6 +1,6 @@
 <template>
   <div class="idea-props-line">
-    <Tag iconClass="tasks" iconTitle="Status">
+    <Tag iconClass="tasks" iconTitle="Status" v-if="showStatus">
       <EntityById tableName="ideastatus" :id="row.statusId" />
     </Tag>
 
@@ -45,6 +45,10 @@ export default {
     row: {
       type: Object,
       required: true
+    },
+    showStatus: {
+      type: Boolean,
+      default: true
     }
   }
 };
