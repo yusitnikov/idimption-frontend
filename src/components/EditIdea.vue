@@ -3,11 +3,12 @@
     tableName="idea"
     :transitionsList="transitionsList"
     :savedRow="savedRow"
+    :showHeader="showHeader"
     showUser
     v-slot="{ row, isCreating, update }"
   >
     <div class="readonly" v-if="readOnly">
-      <IdeaPropsLine class="marks" :row="row" />
+      <IdeaPropsLine :row="row" />
 
       <!-- eslint-disable-next-line -->
       <div class="description multi-line">{{ row.description || "No description provided." }}</div>
@@ -108,10 +109,6 @@ export default {
 
 <style scoped lang="less">
 .readonly {
-  .marks {
-    margin: 10px 0;
-  }
-
   .description {
     margin: 20px 0;
     font-size: 120%;

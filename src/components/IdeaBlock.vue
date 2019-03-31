@@ -5,7 +5,18 @@
     showUser
     :readOnly="!canEditUsersData(row.userId)"
   >
-    <IdeaPropsLine :row="row" />
+    <template slot="additionalInfo">
+      <IdeaPropsLine :row="row" />
+    </template>
+
+    <template #details="{ transitionsList, readOnly }">
+      <EditIdea
+        :savedRow="row"
+        :transitionsList="transitionsList"
+        :readOnly="readOnly"
+        :showHeader="false"
+      />
+    </template>
   </EntityBlock>
 </template>
 
@@ -13,10 +24,11 @@
 import { mapGetters } from "vuex";
 import EntityBlock from "./EntityBlock";
 import IdeaPropsLine from "./IdeaPropsLine";
+import EditIdea from "./EditIdea";
 
 export default {
   name: "IdeaBlock",
-  components: { IdeaPropsLine, EntityBlock },
+  components: { EntityBlock, IdeaPropsLine, EditIdea },
   computed: {
     ...mapGetters(["canEditUsersData"])
   },

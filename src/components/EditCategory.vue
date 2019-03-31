@@ -3,6 +3,7 @@
     tableName="category"
     :transitionsList="transitionsList"
     :savedRow="savedRow"
+    :showHeader="showHeader"
     v-slot="{ row, update }"
   >
     <div class="readonly" v-if="readOnly">

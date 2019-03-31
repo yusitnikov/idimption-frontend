@@ -49,3 +49,9 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="less">
+.idea-props-line {
+  margin: 10px 0;
+}
+</style>

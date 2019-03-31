@@ -13,3 +13,12 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="less">
+@import "../styles/essentials";
+
+.square {
+  width: @line-height-px;
+  text-align: center;
+}
+</style>
