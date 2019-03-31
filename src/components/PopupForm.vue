@@ -9,7 +9,7 @@
         <slot></slot>
       </div>
       <div class="footer">
-        <Button align="right" @click="$emit('save')">{{ okLabel }}</Button>
+        <Button align="right" @click="save">{{ okLabel }}</Button>
         <Button align="right" @click="$emit('close')">{{ cancelLabel }}</Button>
       </div>
     </div>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { focusFirstInput, validateAllInputs } from "../misc";
 import Button from "./Button";
 
 export default {
@@ -35,6 +36,16 @@ export default {
       type: String,
       default: "Cancel"
     }
+  },
+  mounted() {
+    focusFirstInput(this);
+  },
+  methods: {
+    async save() {
+      if (validateAllInputs(this)) {
+        this.$emit("save");
+      }
+    }
   }
 };
 </script>
@@ -43,35 +54,30 @@ export default {
 <style scoped lang="less">
 @import "../styles/essentials";
 
-@header-height: 50px;
-@footer-height: 50px;
+@header-height: 2 * @block-vertical-padding + @line-height-px;
+@footer-height: 2 * @block-vertical-padding + @button-full-height;
 @header-footer-background-color: #eee;
 
-.fullscreen(@margin: 0) {
-  position: fixed;
-  left: @margin;
-  top: @margin;
-  right: @margin;
-  bottom: @margin;
-  z-index: 1;
+.fullscreen-popup(@margin: 0) {
+  .fullscreen(@z-index-popup-form, @margin);
 }
 
 .popup-form {
-  .fullscreen();
+  .fullscreen-popup;
 
   .background {
-    .fullscreen();
+    .fullscreen-popup;
 
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: @popup-background-color;
   }
 
   .window {
-    .fullscreen(50px);
+    .fullscreen-popup(50px);
 
     border: 1px solid @block-border-color;
     background-color: #fff;
 
-    div {
+    > div {
       position: absolute;
       left: 0;
       right: 0;

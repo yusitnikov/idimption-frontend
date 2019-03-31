@@ -1,59 +1,345 @@
 <template>
   <div id="app">
-    <div id="loader" v-if="loading">Loading...</div>
-    <div v-if="ready">
+    <div id="loader" v-if="loading">
+      <Icon class="loader-icon" type="hourglass-half" />
+      <div class="loader-label">Loading...</div>
+    </div>
+
+    <div id="notifications" v-if="notifications.length">
+      <Alert
+        v-for="notification in notifications"
+        :type="notification.type"
+        :class="[
+          'notification',
+          notification.visible ? 'notification-visible' : 'notification-hidden'
+        ]"
+        allowClose
+        :style="{ top: notification.top }"
+        @close="() => hideNotification(notification.id)"
+        :key="notification.id"
+      >
+        {{ notification.message }}
+      </Alert>
+    </div>
+
+    <template v-if="ready">
       <div id="nav">
         <div id="auth">
-          <EntitySelect
-            tableName="user"
-            allowEmpty
-            emptyLabel="Anonymous"
-            emptyPlaceholder="Anonymous"
-            allowAdd
-            addField="name"
-            addLabel="Register"
-            :addComponent="editUserComponent"
-            :value="userId"
-            @change="setUser"
-          />
+          Welcome,
+          <EntityById tableName="user" :id="userId" v-slot="{ displayText }">
+            {{ displayText || "Guest" }}
+          </EntityById>
+          <Button @click="openLogin" v-if="!userId">
+            <Icon type="sign-in-alt" />
+            Login
+          </Button>
+          <Button @click="doLogout" v-if="userId">
+            <Icon type="sign-out-alt" />
+            Logout
+          </Button>
         </div>
 
-        <router-link to="/idea">Ideas</router-link> |
+        <router-link to="/idea">Ideas</router-link>
+        |
         <router-link to="/category">Categories</router-link>
+        <template v-if="userId">
+          |
+          <router-link to="/profile">My Profile</router-link>
+        </template>
       </div>
+
+      <Alert type="warning" v-if="userId && !verifiedEmail">
+        <template v-if="!verificationEmailSent">
+          Please verify your email.
+          <Button @click="sendVerificationEmail">
+            Send verification code
+          </Button>
+        </template>
+        <template v-else>
+          Verification code sent, please check your email.
+        </template>
+      </Alert>
+
       <router-view />
-    </div>
+
+      <PopupForm
+        class="app-popup"
+        title="Login"
+        @save="doLogin"
+        @close="cancelPopup"
+        v-if="popupAction === 'login'"
+      >
+        <div class="line multi-line" v-if="popupText">{{ popupText }}</div>
+
+        <FormRow label="Login (email)">
+          <TextInput
+            v-model="popupUserId"
+            @input="resetPopupError"
+            isEmail
+            key="login"
+          />
+        </FormRow>
+        <FormRow label="Password">
+          <TextInput
+            type="password"
+            v-model="popupPassword"
+            @input="resetPopupError"
+            :validationMessage="popupError"
+            key="password"
+          />
+        </FormRow>
+
+        <div class="line">
+          Don't have an account yet?
+          <Button @click="switchToRegister">Register</Button>
+        </div>
+
+        <div class="line">
+          Forgot password?
+          <Button @click="switchToResetPassword">Restore</Button>
+        </div>
+      </PopupForm>
+
+      <PopupForm
+        class="app-popup"
+        title="Register"
+        @save="doRegister"
+        @close="cancelPopup"
+        v-if="popupAction === 'register'"
+      >
+        <div class="line multi-line" v-if="popupText">{{ popupText }}</div>
+
+        <FormRow label="Name">
+          <TextInput v-model="popupUserName" @input="resetPopupError" />
+        </FormRow>
+        <FormRow label="Login (email)">
+          <TextInput
+            v-model="popupUserId"
+            @input="resetPopupError"
+            isEmail
+            key="login"
+          />
+        </FormRow>
+        <FormRow label="Password">
+          <TextInput
+            type="password"
+            v-model="popupPassword"
+            @input="resetPopupError"
+            :validationMessage="popupError"
+            key="password"
+          />
+        </FormRow>
+
+        <div class="line">
+          Already have an account?
+          <Button @click="switchToLogin">Login</Button>
+        </div>
+      </PopupForm>
+
+      <PopupForm
+        class="app-popup"
+        title="Restore password"
+        @save="doResetPassword"
+        @close="cancelPopup"
+        v-if="popupAction === 'reset-password'"
+      >
+        <div class="line multi-line" v-if="popupText">{{ popupText }}</div>
+
+        <FormRow label="Login (email)">
+          <TextInput
+            v-model="popupUserId"
+            @input="resetPopupError"
+            isEmail
+            :validationMessage="popupError"
+            key="login"
+          />
+        </FormRow>
+      </PopupForm>
+    </template>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex";
-import { SET_USER_ACTION } from "./store";
-import EntitySelect from "./components/EntitySelect";
-import EditUser from "./components/EditUser";
+import { mapState, mapGetters } from "vuex";
+import {
+  login,
+  register,
+  logout,
+  showNotification,
+  hideNotification,
+  openPopup,
+  switchPopupAction,
+  closePopup
+} from "./storeProxy";
+import { sendVerificationEmail } from "./auth";
+import Icon from "./components/Icon";
+import Alert from "./components/Alert";
+import EntityById from "./components/EntityById";
+import Button from "./components/Button";
+import PopupForm from "./components/PopupForm";
+import FormRow from "./components/FormRow";
+import TextInput from "./components/TextInput";
+// noinspection ES6CheckImport
+import {
+  bodyMargin,
+  oneLineBlockHeight,
+  blockMargin
+} from "./styles/essentials.less";
 
 export default {
   name: "App",
-  components: { EntitySelect },
+  components: {
+    Icon,
+    Alert,
+    EntityById,
+    Button,
+    PopupForm,
+    FormRow,
+    TextInput
+  },
+  data() {
+    return {
+      verificationEmailSent: false,
+      popupError: "",
+      popupUserId: "",
+      popupPassword: "",
+      popupUserName: ""
+    };
+  },
   computed: {
-    ...mapState(["loaders", "userId"]),
-    ...mapGetters(["loading", "ready"]),
-    editUserComponent() {
-      return EditUser;
+    ...mapState([
+      "ready",
+      "userId",
+      "popupAction",
+      "popupText",
+      "popupSaveCallback",
+      "popupCancelCallback"
+    ]),
+    ...mapGetters(["loading", "visibleNotifications", "verifiedEmail"]),
+    notifications() {
+      let index = 0;
+      let notifications = [];
+      for (const notification of this.visibleNotifications) {
+        if (!notification.visible) {
+          --index;
+        }
+        notifications.push({
+          ...notification,
+          top:
+            Number(bodyMargin) +
+            (Number(oneLineBlockHeight) + Number(blockMargin)) * index +
+            "px"
+        });
+        ++index;
+      }
+      return notifications;
     }
   },
   methods: {
-    ...mapActions({ setUser: SET_USER_ACTION })
+    resetPopup() {
+      this.popupError = "";
+      this.popupUserId = "";
+      this.popupPassword = "";
+      this.popupUserName = "";
+    },
+    resetPopupError() {
+      this.popupError = "";
+    },
+    switchPopupAction(action) {
+      this.resetPopup();
+      switchPopupAction(action);
+    },
+    openLogin() {
+      openPopup("login");
+    },
+    switchToRegister() {
+      this.switchPopupAction("register");
+    },
+    switchToLogin() {
+      this.switchPopupAction("login");
+    },
+    switchToResetPassword() {
+      this.switchPopupAction("reset-password");
+    },
+    async doLogin() {
+      try {
+        await login(this.popupUserId, this.popupPassword);
+        this.verificationEmailSent = false;
+        this.savePopupIfVerified();
+      } catch (exception) {
+        this.popupError = exception.message;
+      }
+    },
+    async doRegister() {
+      try {
+        await register(
+          this.popupUserId,
+          this.popupPassword,
+          this.popupUserName
+        );
+        // Don't call savePopup(), cause still not verified the email
+        this.cancelPopup();
+        this.verificationEmailSent = true;
+      } catch (exception) {
+        this.popupError = exception.message;
+      }
+    },
+    doLogout() {
+      logout();
+      this.verificationEmailSent = false;
+      this.$router.push("/");
+    },
+    async doResetPassword() {
+      try {
+        await sendVerificationEmail(this.popupUserId, true);
+        // Don't call savePopup(), cause still not logged in
+        this.cancelPopup();
+        showNotification("Verification code sent, please check your email.");
+      } catch (exception) {
+        this.popupError = exception.message;
+      }
+    },
+    sendVerificationEmail() {
+      sendVerificationEmail(this.userId, false);
+      this.verificationEmailSent = true;
+    },
+    async savePopupIfVerified() {
+      await this.$nextTick();
+      if (this.verifiedEmail) {
+        this.savePopup();
+      } else {
+        this.cancelPopup();
+      }
+    },
+    savePopup() {
+      if (this.popupSaveCallback) {
+        this.popupSaveCallback();
+      }
+      this.closePopup();
+    },
+    cancelPopup() {
+      if (this.popupCancelCallback) {
+        this.popupCancelCallback();
+      }
+      this.closePopup();
+    },
+    closePopup() {
+      closePopup();
+      this.resetPopup();
+    },
+    hideNotification
   }
 };
 </script>
 
 <style lang="less">
 @import "assets/fontawesome/less/fontawesome";
-@import "assets/fontawesome/less/regular";
 @import "assets/fontawesome/less/solid";
-@import "assets/fontawesome/less/brands";
 @import "styles/essentials";
+
+body {
+  margin: @body-margin;
+}
 
 body,
 input,
@@ -67,12 +353,42 @@ button {
   line-height: @line-height;
 }
 
+#loader {
+  .fullscreen(@z-index-loader);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: @popup-background-color;
+  color: green;
+
+  .loader-icon {
+    font-size: 100px;
+  }
+
+  .loader-label {
+    font-size: 30px;
+    margin-top: 20px;
+  }
+}
+
+#notifications .alert.notification {
+  position: fixed;
+  z-index: @z-index-notifications;
+  right: @body-margin;
+  margin: 0;
+  transition: all @notification-animation-timeout;
+
+  &.notification-hidden {
+    opacity: 0;
+  }
+}
+
 #nav {
   padding: 30px;
 
   #auth {
     float: right;
-    width: 200px;
   }
 
   a {
@@ -81,6 +397,12 @@ button {
     &.router-link-active {
       color: #42b983;
     }
+  }
+}
+
+.app-popup {
+  .line {
+    .block-margin;
   }
 }
 
@@ -93,6 +415,39 @@ button {
   .basic-block(@input-padding);
 
   outline: none;
+
+  &.button {
+    width: auto;
+    min-width: @button-full-height;
+    background: #ddd;
+
+    &:not(:disabled) {
+      &:hover,
+      &:focus,
+      &:active {
+        background: #ccc;
+      }
+    }
+
+    &:disabled {
+      background: #fff;
+      opacity: 0.7;
+    }
+
+    &.left {
+      margin-right: @button-distance;
+    }
+
+    &.right {
+      float: right;
+      margin-left: @button-distance;
+    }
+
+    &.small {
+      padding-left: @input-vertical-padding;
+      padding-right: @input-vertical-padding;
+    }
+  }
 }
 
 .single-line {

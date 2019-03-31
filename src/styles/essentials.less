@@ -1,5 +1,6 @@
 @fa-font-path: "../webfonts";
 
+@body-margin: 10px;
 @font-size: 14px;
 @line-height: 1.15;
 @line-height-px: round(@font-size * @line-height);
@@ -15,15 +16,59 @@
 @button-full-height: 2px + @input-full-height;
 @button-distance: 10px;
 @paragraph-margin: 0.5em;
+@one-line-block-inner-height: 2 * @block-vertical-padding + @line-height-px;
+@one-line-block-height: 2px + @one-line-block-inner-height;
+@textarea-min-height: 2px + 2 * @input-vertical-padding + 2 * @line-height-px;
+@notification-animation-timeout: 400ms;
+@avatar-size: 2 * @button-full-height + @block-margin;
+@avatar-distance: @button-distance;
+@popup-background-color: rgba(0, 0, 0, 0.2);
 
-.block-margin() {
+@z-index-dropdown-popup: 1;
+@z-index-popup-form: 2;
+@z-index-notifications: 3;
+@z-index-loader: 4;
+
+//noinspection CssInvalidPseudoSelector,CssUnknownProperty
+:export {
+  bodyMargin: unit(@body-margin);
+  fontSize: unit(@font-size);
+  lineHeight: unit(@line-height);
+  lineHeightPx: unit(@line-height-px);
+  blockVerticalPadding: unit(@block-vertical-padding);
+  blockHorizontalPadding: unit(@block-horizontal-padding);
+  blockMargin: unit(@block-margin);
+  blockBorderColor: @block-border-color;
+  inputVerticalPadding: unit(@input-vertical-padding);
+  inputHorizontalPadding: unit(@input-horizontal-padding);
+  inputFullHeight: unit(@input-full-height);
+  buttonFullHeight: unit(@button-full-height);
+  buttonDistance: unit(@button-distance);
+  paragraphMargin: unit(@paragraph-margin);
+  oneLineBlockInnerHeight: unit(@one-line-block-inner-height);
+  oneLineBlockHeight: unit(@one-line-block-height);
+  textAreaMinHeight: unit(@textarea-min-height);
+  notificationAnimationTimeout: unit(@notification-animation-timeout);
+  avatarSize: unit(@avatar-size);
+  avatarDistance: unit(@avatar-distance);
+}
+
+.block-margin-top() {
   margin-top: @block-margin;
+}
+
+.block-margin-bottom() {
   margin-bottom: @block-margin;
 }
 
-.basic-block(@padding) {
+.block-margin() {
+  .block-margin-top;
+  .block-margin-bottom;
+}
+
+.basic-block(@padding, @width: 100%) {
   box-sizing: border-box;
-  width: 100%;
+  width: @width;
   padding: @padding;
   border: 1px solid @block-border-color;
   border-radius: 3px;
@@ -32,4 +77,13 @@
 .form-label-padding() {
   padding-top: @input-vertical-padding;
   padding-bottom: @input-vertical-padding;
+}
+
+.fullscreen(@z-index, @margin: 0) {
+  position: fixed;
+  left: @margin;
+  top: @margin;
+  right: @margin;
+  bottom: @margin;
+  z-index: @z-index;
 }

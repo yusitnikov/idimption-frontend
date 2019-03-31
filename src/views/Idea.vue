@@ -1,6 +1,14 @@
 <template>
-  <EditEntityPage tableName="idea" v-slot="{ row, transitionsList }">
-    <EditIdea :savedRow="row" :transitionsList="transitionsList" />
+  <EditEntityPage
+    tableName="idea"
+    allowAnonymous
+    v-slot="{ row, transitionsList, readOnly }"
+  >
+    <EditIdea
+      :savedRow="row"
+      :transitionsList="transitionsList"
+      :readOnly="readOnly"
+    />
   </EditEntityPage>
 </template>
 

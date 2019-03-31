@@ -1,7 +1,12 @@
 <template>
   <div class="view-entity block">
-    <Button align="right" @click="remove">Remove</Button>
-    <Button align="right" @click="edit">Edit</Button>
+    <Button align="right" @click="remove" v-if="!readOnly">
+      Remove
+    </Button>
+    <Button align="right" @click="navigate">
+      {{ readOnly ? "View" : "Edit" }}
+    </Button>
+
     <div class="summary">
       [{{ row.id }}] {{ displayText }}
       <span class="summary-from-at">
@@ -10,16 +15,18 @@
     </div>
     <div class="additional-info"><slot /></div>
     <!-- eslint-disable-next-line -->
-    <div v-if="additionalInfoText" class="additional-info multi-line">{{ additionalInfoText }}</div>
+    <div v-if="additionalInfoText" class="description additional-info multi-line">{{ additionalInfoText }}</div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { DELETE_ROW_ACTION } from "../store";
 import Button from "./Button";
 import EntityFromAt from "./EntityFromAt";
-import { getDisplayText, getAdditionalInfoText } from "../EntityHelper";
+import {
+  getDisplayText,
+  getAdditionalInfoText,
+  deleteRow
+} from "../EntityHelper";
 
 export default {
   name: "ViewEntity",
@@ -33,6 +40,7 @@ export default {
       type: Object,
       required: true
     },
+    readOnly: Boolean,
     showUser: Boolean
   },
   computed: {
@@ -44,21 +52,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions([DELETE_ROW_ACTION]),
-    edit() {
+    navigate() {
       this.$router.push("/" + this.tableName + "/" + this.row.id);
     },
     remove() {
-      this[DELETE_ROW_ACTION]({
-        tableName: this.tableName,
-        row: this.row
-      });
+      deleteRow(this.tableName, this.row);
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 @import "../styles/essentials";
 
@@ -72,6 +75,9 @@ export default {
 
 .additional-info {
   margin-top: @paragraph-margin;
-  /*font-size: 19px;*/
+}
+
+.description {
+  font-size: 120%;
 }
 </style>

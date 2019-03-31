@@ -8,7 +8,7 @@
     @focus="onFocus"
     @blur="onBlur"
     @keydown="onKeyDown"
-    ref="el"
+    ref="input"
   >
     <div
       v-for="(row, index) in rows"
@@ -163,10 +163,10 @@ export default {
       this.reset(false);
     },
     focus() {
-      this.$refs.el.focus();
+      this.$refs.input.focus();
     },
     blur() {
-      this.$refs.el.blur();
+      this.$refs.input.blur();
     },
     reset(blur = true) {
       this.text = "";

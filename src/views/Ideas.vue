@@ -1,21 +1,27 @@
 <template>
   <div class="ideas">
-    <div>
-      <Button @click="add">Add new idea</Button>
+    <div v-if="!userId || verifiedEmail">
+      <Button @click="add">
+        <Icon type="plus" />
+        Add new idea
+      </Button>
     </div>
     <IdeaList />
   </div>
 </template>
 
 <script>
-import IdeaList from "../components/IdeaList";
+import { mapState, mapGetters } from "vuex";
+import Icon from "../components/Icon";
 import Button from "../components/Button";
+import IdeaList from "../components/IdeaList";
 
 export default {
   name: "Ideas",
-  components: {
-    IdeaList,
-    Button
+  components: { Icon, Button, IdeaList },
+  computed: {
+    ...mapState(["userId"]),
+    ...mapGetters(["verifiedEmail"])
   },
   methods: {
     add() {

@@ -7,6 +7,7 @@
       <TextAreaInput
         :value="row.description"
         @input="description => update({ description })"
+        allowEmpty
       />
     </FormRow>
   </div>

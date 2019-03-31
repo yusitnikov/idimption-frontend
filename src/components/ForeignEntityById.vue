@@ -6,11 +6,14 @@
       v-slot="{ row, displayText, additionalInfoText }"
     >
       <slot
+        v-bind="row"
         :foreignTableName="foreignTableName"
         :row="row"
         :displayText="displayText"
         :additionalInfoText="additionalInfoText"
-      />
+      >
+        {{ displayText }}
+      </slot>
     </EntityById>
   </fragment>
 </template>

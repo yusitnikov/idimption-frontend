@@ -1,9 +1,11 @@
 <template>
   <span class="multiple-entity-display">
-    <span
+    <Tag
       v-for="linkRow in linkRows"
       :key="linkRow.id.toString()"
-      :class="['view-tag', 'view-tag--' + tableName]"
+      :class="'tag--' + tableName"
+      :iconClass="iconClass"
+      :iconTitle="iconTitle"
     >
       <slot name="before" :linkRow="linkRow" />
       <span v-for="fieldName in fieldNames" :key="fieldName">
@@ -26,19 +28,21 @@
         </ForeignEntityById>
       </span>
       <slot name="after" :linkRow="linkRow" />
-    </span>
+    </Tag>
   </span>
 </template>
 
 <script>
 import ForeignEntityById from "./ForeignEntityById";
+import Tag from "./Tag";
 import EntityTransitionsList from "../EntityTransitionsList";
 import Guid from "guid";
 
 export default {
   name: "MultipleEntityDisplay",
-  components: { ForeignEntityById },
+  components: { ForeignEntityById, Tag },
   props: {
+    ...Tag.props,
     tableName: {
       type: String,
       required: true

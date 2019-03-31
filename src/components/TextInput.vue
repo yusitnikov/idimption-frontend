@@ -1,33 +1,31 @@
 <template>
-  <input
-    type="text"
-    class="text-input input"
-    :value="value"
-    :placeholder="placeholder"
-    @change="$event => $emit('change', $event.target.value)"
-    @input="$event => $emit('input', $event.target.value)"
-    @focus="$emit('focus')"
-    @blur="$emit('blur')"
-  />
+  <div class="text-input">
+    <input
+      :type="type"
+      class="input"
+      v-bind="props"
+      @change="$event => $emit('change', $event.target.value)"
+      @input="$event => $emit('input', $event.target.value)"
+      @focus="onFocus"
+      @blur="onBlur"
+      ref="input"
+    />
+
+    <!--suppress HtmlUnknownTag, CheckEmptyScriptTag -->
+    <InputValidation />
+  </div>
 </template>
 
 <script>
-export default {
+import { wrapInput } from "../misc";
+
+export default wrapInput({
   name: "TextInput",
   props: {
-    value: String,
-    placeholder: String
-  },
-  methods: {
-    focus() {
-      this.$el.focus();
-    },
-    blur() {
-      this.$el.blur();
+    type: {
+      type: String,
+      default: "text"
     }
   }
-};
+});
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>

@@ -1,17 +1,18 @@
 <template>
   <div class="edit-entity">
-    <template v-if="!isCreating">
+    <template v-if="showHeader && !isCreating">
       <h1>[{{ savedRow.id }}] {{ savedDisplayText }}</h1>
       <h3><EntityFromAt :row="row" :showUser="showUser" /></h3>
     </template>
-    <slot :row="row" :isCreating="isCreating" :update="update" />
+    <slot v-bind="row" :row="row" :isCreating="isCreating" :update="update" />
   </div>
 </template>
 
 <script>
 import EntityFromAt from "./EntityFromAt";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { getDisplayText, isNewRow } from "../EntityHelper";
+import { focusFirstInput, resetAllInputs } from "../misc";
+import { getRowFullName, isNewRow } from "../EntityHelper";
 
 const commonProps = {
   transitionsList: {
@@ -21,6 +22,10 @@ const commonProps = {
   savedRow: {
     type: Object,
     required: true
+  },
+  showHeader: {
+    type: Boolean,
+    default: true
   }
 };
 
@@ -37,15 +42,29 @@ export default {
     ...commonProps
   },
   computed: {
+    saved() {
+      return this.transitionsList.isEmpty();
+    },
     row() {
       return this.transitionsList.applyToRow(this.tableName, this.savedRow);
     },
     savedDisplayText() {
-      return getDisplayText(this.savedRow, this.tableName);
+      return getRowFullName(this.savedRow, this.tableName).join(" > ");
     },
     isCreating() {
       return isNewRow(this.savedRow, this.tableName);
     }
+  },
+  watch: {
+    saved() {
+      if (this.saved) {
+        resetAllInputs(this);
+        this.$emit("save");
+      }
+    }
+  },
+  mounted() {
+    focusFirstInput(this);
   },
   methods: {
     update(updates) {

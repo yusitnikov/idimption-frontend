@@ -1,37 +1,46 @@
 <template>
   <div class="idea-comments">
-    <div v-for="row in rows" class="comment" :key="row.id">
+    <div class="no-rows" v-if="!rows.length && !parentId">No comments.</div>
+
+    <AddIdeaComment class="line" :ideaId="ideaId" v-if="!parentId" />
+
+    <div v-for="row in rows" class="line" :key="row.id">
       <!-- TODO: remove, edit -->
       <!-- TODO: shortcut to reply -->
       <!-- TODO: collapse replies when too much -->
-      <div class="from-at"><EntityFromAt :row="row" showUser /></div>
-      <div class="message multi-line">{{ row.message }}</div>
-      <div class="replies">
-        <IdeaComments :ideaId="ideaId" :parentId="row.id" />
-      </div>
+      <EntityById tableName="user" :id="row.userId" v-slot="{ avatarUrl }">
+        <UserAvatarBlock :userId="row.userId" :avatarUrl="avatarUrl">
+          <div class="header">
+            <div class="line from-at">
+              <EntityFromAt :row="row" showUser />
+            </div>
+            <div class="line multi-line">{{ row.message }}</div>
+
+            <AddIdeaComment class="line" :ideaId="ideaId" :parentId="row.id" />
+          </div>
+
+          <IdeaComments class="replies" :ideaId="ideaId" :parentId="row.id" />
+        </UserAvatarBlock>
+      </EntityById>
     </div>
-    <div class="comment" v-if="!rows.length && !parentId">No comments.</div>
-    <TextAreaInput
-      class="comment"
-      placeholder="Start writing the comment..."
-      v-model="addCommentText"
-    />
-    <Button :disabled="addCommentText.trim() === ''" @click="addComment">
-      {{ parentId ? "Reply" : "Add comment" }}
-    </Button>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import { ADD_ROW_ACTION } from "../store";
+import { getTableData } from "../storeProxy";
 import EntityFromAt from "./EntityFromAt";
-import TextAreaInput from "./TextAreaInput";
-import Button from "./Button";
+import EntityById from "./EntityById";
+import UserAvatarBlock from "./UserAvatarBlock";
+import AddIdeaComment from "./AddIdeaComment";
 
 export default {
   name: "IdeaComments",
-  components: { EntityFromAt, TextAreaInput, Button },
+  components: {
+    AddIdeaComment,
+    UserAvatarBlock,
+    EntityById,
+    EntityFromAt
+  },
   props: {
     ideaId: {
       type: String,
@@ -42,51 +51,39 @@ export default {
       default: null
     }
   },
-  data: function() {
-    return {
-      addCommentText: ""
-    };
-  },
   computed: {
-    ...mapState(["data"]),
     rows() {
-      // noinspection JSUnresolvedVariable
-      return this.data.ideacomment.filter(
+      const rows = getTableData("ideacomment").filter(
         row => row.ideaId === this.ideaId && row.parentId === this.parentId
       );
-    }
-  },
-  methods: {
-    ...mapActions([ADD_ROW_ACTION]),
-    addComment() {
-      this[ADD_ROW_ACTION]({
-        tableName: "ideacomment",
-        row: {
-          ideaId: this.ideaId,
-          parentId: this.parentId,
-          message: this.addCommentText.trim()
-        }
-      });
-      this.addCommentText = "";
+      rows.sort((a, b) => b.id - a.id);
+      return rows;
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 @import "../styles/essentials";
 
-.from-at {
-  font-weight: bold;
+.line {
   margin-bottom: @paragraph-margin;
 }
 
-.replies {
-  padding-left: 100px;
+.no-rows {
+  .block-margin;
 }
 
-.comment {
-  margin-bottom: @block-margin;
+.header {
+  min-height: @avatar-size;
+}
+
+.from-at {
+  font-weight: bold;
+}
+
+.replies {
+  border-left: 1px solid @block-border-color;
+  padding-left: @button-distance;
 }
 </style>

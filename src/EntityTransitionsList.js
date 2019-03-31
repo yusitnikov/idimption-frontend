@@ -1,4 +1,4 @@
-import store, { APPLY_TRANSITIONS_ACTION } from "./store";
+import { applyTransitions, getData, getDataVersion } from "./storeProxy";
 import { EntityTransition } from "./EntityTransition";
 import Guid from "guid";
 
@@ -120,16 +120,15 @@ export default class EntityTransitionsList {
     return this;
   }
   save() {
-    // noinspection JSUnresolvedFunction
-    return store.dispatch(APPLY_TRANSITIONS_ACTION, this);
+    return applyTransitions(this);
   }
   clearMigratedDataCache() {
     this.migratedDataCache = null;
     return this;
   }
   applyToState() {
-    // noinspection JSUnresolvedVariable
-    const { data, dataVersion } = store.state;
+    const data = getData();
+    const dataVersion = getDataVersion();
     if (this.migratedDataCache && this.cachedDataVersion === dataVersion) {
       return this.migratedDataCache;
     }

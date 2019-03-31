@@ -3,6 +3,7 @@
     <TextInput
       :value="value"
       :placeholder="placeholder"
+      noValidation
       @change="$event => $emit('change', $event)"
       @input="$event => $emit('input', $event)"
       @focus="onFocus"
@@ -113,7 +114,7 @@ export default {
 
   .popup {
     position: absolute;
-    z-index: 1;
+    z-index: @z-index-dropdown-popup;
     background: white;
     border: 1px solid @block-border-color;
     margin-top: 2px;

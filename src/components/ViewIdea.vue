@@ -1,45 +1,26 @@
 <template>
-  <ViewEntity tableName="idea" :row="row" showUser>
-    <MultipleEntityDisplay
-      tableName="ideatag"
-      parentFieldName="ideaId"
-      :parentId="row.id"
-      :fieldNames="['tagId']"
-    >
-      <template slot="before">
-        <i class="fas fa-tag" title="Tag"></i>
-      </template>
-    </MultipleEntityDisplay>
-    <MultipleEntityDisplay
-      tableName="ideacategory"
-      parentFieldName="ideaId"
-      :parentId="row.id"
-      :fieldNames="['categoryId']"
-    >
-      <template slot="before">
-        <i class="fas fa-sitemap" title="Category"></i>
-      </template>
-    </MultipleEntityDisplay>
-    <MultipleEntityDisplay
-      tableName="idearelation"
-      parentFieldName="ideaId"
-      :parentId="row.id"
-      :fieldNames="['relationId', 'dstIdeaId']"
-    >
-      <template slot="before">
-        <i class="fas fa-link" title="Relation"></i>
-      </template>
-    </MultipleEntityDisplay>
+  <ViewEntity
+    tableName="idea"
+    :row="row"
+    showUser
+    :readOnly="!verifiedEmail || row.userId !== userId"
+  >
+    <IdeaPropsLine :row="row" />
   </ViewEntity>
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
 import ViewEntity from "./ViewEntity";
-import MultipleEntityDisplay from "./MultipleEntityDisplay";
+import IdeaPropsLine from "./IdeaPropsLine";
 
 export default {
   name: "ViewIdea",
-  components: { MultipleEntityDisplay, ViewEntity },
+  components: { IdeaPropsLine, ViewEntity },
+  computed: {
+    ...mapState(["userId"]),
+    ...mapGetters(["verifiedEmail"])
+  },
   props: {
     row: {
       type: Object,

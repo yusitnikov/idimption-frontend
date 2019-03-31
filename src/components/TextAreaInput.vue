@@ -13,25 +13,28 @@
       }"
       @change="$event => $emit('change', $event.target.value)"
       @input="$event => $emit('input', $event.target.value)"
-      @focus="$emit('focus')"
-      @blur="$emit('blur')"
+      @focus="onFocus"
+      @blur="onBlur"
+      ref="input"
     >
     </textarea>
+
+    <!--suppress HtmlUnknownTag, CheckEmptyScriptTag -->
+    <InputValidation />
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import { wrapInput } from "../misc";
+// noinspection ES6CheckImport
+import { textAreaMinHeight } from "../styles/essentials.less";
 
-export default {
+export default wrapInput({
   name: "TextAreaInput",
-  props: {
-    value: String,
-    placeholder: String
-  },
   data() {
     return {
-      height: 0
+      height: textAreaMinHeight
     };
   },
   computed: {
@@ -49,22 +52,14 @@ export default {
     }
   },
   methods: {
-    calculateHeight() {
-      this.$nextTick(() => {
-        this.height = this.$refs.fake.offsetHeight;
-      });
-    },
-    focus() {
-      this.$el.focus();
-    },
-    blur() {
-      this.$el.blur();
+    async calculateHeight() {
+      await this.$nextTick();
+      this.height = Math.max(textAreaMinHeight, this.$refs.fake.offsetHeight);
     }
   }
-};
+});
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .text-area-input {
   position: relative;

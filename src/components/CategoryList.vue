@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { getTableData } from "../storeProxy";
 import ViewCategory from "./ViewCategory";
 
 export default {
@@ -23,9 +23,8 @@ export default {
     filter: Function
   },
   computed: {
-    ...mapState(["data"]),
     tableRows() {
-      let rows = this.data.category;
+      let rows = getTableData("category");
       rows = rows.filter(row => row.parentId === this.parentId);
       if (this.filter) {
         // TODO: filter by child levels - should keep the current level

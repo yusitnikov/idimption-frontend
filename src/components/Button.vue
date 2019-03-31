@@ -3,7 +3,7 @@
     type="button"
     :class="['button', 'input', align]"
     :disabled="disabled"
-    @click="$emit('click')"
+    @click="onClick"
   >
     <slot></slot>
   </button>
@@ -18,30 +18,12 @@ export default {
       type: String,
       default: "left"
     }
+  },
+  methods: {
+    onClick(event) {
+      event.preventDefault();
+      this.$emit("click");
+    }
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less">
-@import "../styles/essentials";
-
-.button.input {
-  width: auto;
-  min-width: @button-full-height;
-
-  &.left {
-    margin-right: @button-distance;
-  }
-
-  &.right {
-    float: right;
-    margin-left: @button-distance;
-  }
-
-  &.small {
-    padding-left: @input-vertical-padding;
-    padding-right: @input-vertical-padding;
-  }
-}
-</style>

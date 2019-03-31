@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { getTableData } from "../storeProxy";
 import ViewIdea from "./ViewIdea";
 
 export default {
@@ -16,10 +16,8 @@ export default {
     filter: Function
   },
   computed: {
-    ...mapState(["data"]),
     tableRows() {
-      // noinspection JSUnresolvedVariable
-      let rows = this.data.idea;
+      let rows = getTableData("idea");
       if (this.filter) {
         rows = rows.filter(this.filter);
       }

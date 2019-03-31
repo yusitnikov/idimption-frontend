@@ -3,7 +3,7 @@
     <template v-if="showUser">
       from
       <EntityById tableName="user" :id="row.userId" v-slot="{ displayText }">
-        {{ displayText || "Anonymous" }}
+        {{ displayText || "Guest" }}
       </EntityById>
     </template>
     <!--suppress JSUnresolvedVariable -->

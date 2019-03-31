@@ -1,10 +1,13 @@
 <template>
   <fragment>
     <slot
+      v-bind="row"
       :row="row"
       :displayText="displayText"
       :additionalInfoText="additionalInfoText"
-    />
+    >
+      {{ displayText }}
+    </slot>
   </fragment>
 </template>
 

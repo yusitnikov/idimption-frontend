@@ -1,7 +1,11 @@
 <template>
   <div class="form-row">
     <div class="label">{{ label }}</div>
-    <div :class="{ value: true, text }"><slot></slot></div>
+    <div :class="{ value: true, text }">
+      <div class="value-wrapper">
+        <slot />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,6 +35,10 @@ export default {
 
 .value {
   padding-left: @label-width;
+
+  .value-wrapper {
+    position: relative;
+  }
 }
 
 .label,

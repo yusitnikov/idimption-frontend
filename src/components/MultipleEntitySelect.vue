@@ -9,7 +9,9 @@
     >
       <template #after="{ linkRow }">
         <!--suppress JSUnresolvedVariable -->
-        <Button class="small" @click="() => removeRow(linkRow)">X</Button>
+        <Button class="small" @click="() => removeRow(linkRow)">
+          <Icon type="times" />
+        </Button>
       </template>
     </MultipleEntityDisplay>
 
@@ -26,10 +28,7 @@
               :tableName="tableName"
               :fieldName="selectFieldName"
               :id="addValues[selectFieldName]"
-              v-slot="{ displayText }"
-            >
-              {{ displayText }}
-            </ForeignEntityById>
+            />
           </span>
         </span>
         <EntitySelect
@@ -45,19 +44,23 @@
           ref="addSelect"
         />
       </template>
-      <Button v-else class="small" @click="startAdd">+</Button>
+      <Button v-else class="small" @click="startAdd">
+        <Icon type="plus" />
+      </Button>
     </span>
   </div>
 </template>
 
 <script>
+import { timeout } from "../misc";
+import { getForeignTableName, createRow } from "../EntityHelper";
 import EntityTransitionsList from "../EntityTransitionsList";
 import MultipleEntityDisplay from "./MultipleEntityDisplay";
 import Button from "./Button";
+import Icon from "./Icon";
 import EntitySelect from "./EntitySelect";
-import { getForeignTableName, createRow } from "../EntityHelper";
-import Guid from "guid";
 import ForeignEntityById from "./ForeignEntityById";
+import Guid from "guid";
 
 export default {
   name: "MultipleEntitySelect",
@@ -65,7 +68,8 @@ export default {
     ForeignEntityById,
     MultipleEntityDisplay,
     EntitySelect,
-    Button
+    Button,
+    Icon
   },
   props: {
     tableName: {
@@ -155,10 +159,10 @@ export default {
         const selectFieldName = this.selectFieldNames[index];
         if (!this.addValues[selectFieldName]) {
           this.addField = selectFieldName;
-          // use setTimeout instead of $nextTick to do focus() after bubbling onClick
-          setTimeout(() => {
+          // use timeout instead of $nextTick to do focus() after bubbling onClick
+          timeout().then(() => {
             this.$refs.addSelect.focus();
-          }, 1);
+          });
           return true;
         }
       }

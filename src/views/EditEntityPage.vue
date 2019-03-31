@@ -1,27 +1,39 @@
 <template>
-  <fragment>
-    <div>
+  <div class="edit-entity-page">
+    <div v-if="showBack">
       <router-link :to="'/' + tableName">&lt; Back</router-link>
     </div>
     <template v-if="row">
-      <slot :row="row" :transitionsList="transitionsList" />
-      <div class="footer">
+      <slot
+        :row="row"
+        :transitionsList="transitionsList"
+        :readOnly="readOnly"
+      />
+      <div class="footer" v-if="!readOnly">
         <Button @click="save">Save</Button>
-        <Button @click="remove" v-if="!isCreating">Remove</Button>
+        <Button @click="remove" v-if="allowRemove && !isCreating">
+          Remove
+        </Button>
       </div>
     </template>
     <template v-else>
       <div>Row not found</div>
     </template>
-  </fragment>
+  </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { DELETE_ROW_ACTION } from "../store";
+import { showNotification } from "../storeProxy";
+import { getUserId, isUserVerified } from "../auth";
+import { validateAllInputs } from "../misc";
 import Button from "../components/Button";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { getRowById, resolveGuid } from "../EntityHelper";
+import {
+  getTableFieldInfo,
+  getRowById,
+  resolveGuid,
+  deleteRow
+} from "../EntityHelper";
 import Guid from "guid";
 
 export default {
@@ -31,19 +43,38 @@ export default {
     tableName: {
       type: String,
       required: true
+    },
+    allowAnonymous: Boolean,
+    allowRemove: {
+      type: Boolean,
+      default: true
+    },
+    forcedId: [Number, String],
+    showBack: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
-      id: null,
+      id: this.forcedId,
       transitionsList: new EntityTransitionsList()
     };
   },
   created() {
+    if (this.forcedId) {
+      return;
+    }
+
     // noinspection JSUnresolvedVariable
     this.id = this.$route.params.id;
     if (this.id === "add") {
       this.id = Guid.create();
+      if (this.readOnly) {
+        showNotification("Access denied.", "error");
+        this.$router.push("/" + this.tableName);
+        return;
+      }
       this.transitionsList.addRow(this.tableName, this.row);
     }
   },
@@ -51,22 +82,42 @@ export default {
     isCreating() {
       return Guid.isGuid(this.id);
     },
+    readOnly() {
+      if (!this.allowAnonymous && !getUserId()) {
+        return true;
+      }
+      if (getUserId() && !isUserVerified()) {
+        return true;
+      }
+      if (!this.isCreating) {
+        if (!isUserVerified()) {
+          return true;
+        }
+        const hasUserField = getTableFieldInfo(this.tableName, "userId");
+        if (hasUserField && this.row.userId !== getUserId()) {
+          return true;
+        }
+      }
+      return false;
+    },
     row() {
       return getRowById(this.tableName, this.id, true);
     }
   },
   methods: {
-    ...mapActions([DELETE_ROW_ACTION]),
     async save() {
+      if (!validateAllInputs(this)) {
+        return;
+      }
       await this.transitionsList.save();
       await this.$nextTick();
       this.id = resolveGuid(this.id);
     },
     remove() {
-      this[DELETE_ROW_ACTION]({
-        tableName: this.tableName,
-        row: this.row
-      });
+      if (!confirm("Are you sure?")) {
+        return;
+      }
+      deleteRow(this.tableName, this.row);
       this.$router.push("/" + this.tableName);
     }
   }

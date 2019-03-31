@@ -5,22 +5,29 @@
     :savedRow="savedRow"
     v-slot="{ row, update }"
   >
-    <EditCommonTextFields
-      tableName="category"
-      :row="row"
-      :transitionsList="transitionsList"
-    />
-    <FormRow label="Parent">
-      <!--suppress JSUnresolvedVariable -->
-      <EntitySelect
-        :transitionsList="transitionsList"
-        :value="row.parentId"
-        @change="parentId => update({ parentId })"
-        :filter="isAllowedParent"
+    <div class="readonly" v-if="readOnly">
+      <!-- eslint-disable-next-line -->
+      <div class="description multi-line">{{ row.description || "No description provided." }}</div>
+    </div>
+    <div class="editable" v-else>
+      <EditCommonTextFields
         tableName="category"
-        allowEmpty
+        :row="row"
+        :transitionsList="transitionsList"
       />
-    </FormRow>
+
+      <FormRow label="Parent">
+        <!--suppress JSUnresolvedVariable -->
+        <EntitySelect
+          :transitionsList="transitionsList"
+          :value="row.parentId"
+          @change="parentId => update({ parentId })"
+          :filter="isAllowedParent"
+          tableName="category"
+          allowEmpty
+        />
+      </FormRow>
+    </div>
   </EditEntity>
 </template>
 
@@ -39,7 +46,10 @@ export default {
     EditCommonTextFields,
     EntitySelect
   },
-  props: EditEntity.commonProps,
+  props: {
+    ...EditEntity.commonProps,
+    readOnly: Boolean
+  },
   methods: {
     isAllowedParent(category) {
       return !isChild(category, this.savedRow, "category");

@@ -1,6 +1,13 @@
 <template>
-  <EditEntityPage tableName="category" v-slot="{ row, transitionsList }">
-    <EditCategory :savedRow="row" :transitionsList="transitionsList" />
+  <EditEntityPage
+    tableName="category"
+    v-slot="{ row, transitionsList, readOnly }"
+  >
+    <EditCategory
+      :savedRow="row"
+      :transitionsList="transitionsList"
+      :readOnly="readOnly"
+    />
   </EditEntityPage>
 </template>
 

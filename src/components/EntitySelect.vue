@@ -1,7 +1,7 @@
 <template>
-  <fragment>
+  <div class="entity-select">
     <Select
-      :class="['entity-select', passThroughClassName]"
+      v-bind="$attrs"
       :options="rows"
       :value="value"
       :allowAdd="allowAdd"
@@ -18,7 +18,7 @@
       @change="$event => $emit('change', $event)"
       @input="$event => $emit('input', $event)"
       @create="onCreate"
-      ref="el"
+      ref="input"
     />
 
     <PopupForm
@@ -33,7 +33,7 @@
         :transitionsList="addTransitionsList"
       />
     </PopupForm>
-  </fragment>
+  </div>
 </template>
 
 <script>
@@ -44,12 +44,13 @@ import { getDisplayText, createRow, resolveGuid } from "../EntityHelper";
 
 export default {
   name: "EntitySelect",
+  inheritAttrs: false,
   components: { Select, PopupForm },
   props: {
     ...Select.commonProps,
     transitionsList: {
       type: EntityTransitionsList,
-      default: () => new EntityTransitionsList(true)
+      required: true
     },
     addField: {
       type: String,
@@ -64,18 +65,11 @@ export default {
   },
   data() {
     return {
-      dom: null,
       addTransitionsList: new EntityTransitionsList(),
       addFormRow: null
     };
   },
-  mounted() {
-    this.dom = this.$el;
-  },
   computed: {
-    passThroughClassName() {
-      return this.dom ? this.dom.className : "";
-    },
     updatedData() {
       return this.transitionsList.applyToState();
     },
@@ -89,15 +83,15 @@ export default {
   },
   methods: {
     focus() {
-      this.$refs.el.focus();
+      this.$refs.input.focus();
     },
     blur() {
-      this.$refs.el.blur();
+      this.$refs.input.blur();
     },
     reset() {
       this.addTransitionsList.reset();
       this.addFormRow = null;
-      this.$refs.el.reset();
+      this.$refs.input.reset();
     },
     async doCreate(row = null) {
       row = row || this.addFormRow;
@@ -123,6 +117,3 @@ export default {
   }
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less"></style>
