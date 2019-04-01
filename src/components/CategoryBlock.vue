@@ -2,10 +2,10 @@
   <EntityBlock
     tableName="category"
     :row="row"
-    :readOnly="!verifiedEmail"
-    :expandable="verifiedEmail"
+    :readOnly="readOnly"
+    :expandable="!readOnly"
   >
-    <template #details="{ transitionsList, readOnly }">
+    <template #details="{ transitionsList }">
       <EditCategory
         :savedRow="row"
         :transitionsList="transitionsList"
@@ -25,7 +25,10 @@ export default {
   name: "CategoryBlock",
   components: { EntityBlock, EditCategory },
   computed: {
-    ...mapGetters(["verifiedEmail"])
+    ...mapGetters(["verifiedEmail"]),
+    readOnly() {
+      return !this.verifiedEmail;
+    }
   },
   props: {
     row: {

@@ -28,6 +28,7 @@
             <!-- This container expands only to the height of the elements in it -->
             <Container
               groupName="shared"
+              nonDragAreaSelector=".readonly"
               :getChildPayload="index => tableRowsByStatus[status.id][index]"
               :animationDuration="250"
               dragClass="dragging"
@@ -35,6 +36,7 @@
               @drop="ev => drop(ev, status.id, false)"
             >
               <Draggable
+                :class="{ readonly: !canEditUsersData(row) }"
                 v-for="row in tableRowsByStatus[status.id]"
                 :key="row.id"
               >
@@ -53,6 +55,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { getTableData } from "../storeProxy";
 import IdeaBlock from "./IdeaBlock";
 import { Container, Draggable } from "vue-smooth-dnd";
@@ -70,6 +73,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["canEditUsersData"]),
     data() {
       return this.dragTransitionsList.applyToState();
     },

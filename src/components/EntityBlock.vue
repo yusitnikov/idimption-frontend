@@ -24,11 +24,7 @@
       @close="hideDetails"
       v-if="expanded"
     >
-      <slot
-        name="details"
-        :transitionsList="transitionsList"
-        :readOnly="readOnly"
-      />
+      <slot name="details" :transitionsList="transitionsList" />
     </PopupForm>
   </div>
 </template>
