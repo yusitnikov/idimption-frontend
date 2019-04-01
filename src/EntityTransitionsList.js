@@ -167,7 +167,10 @@ export default class EntityTransitionsList {
             migratedData[tableName].push(originalRow);
           } else if (transition.type === "update") {
             // use the row from the transition
-            migratedData[tableName].push(transition.row);
+            migratedData[tableName].push({
+              ...originalRow,
+              ...transition.row
+            });
           } else {
             // type is "delete" - just skip the row
           }
