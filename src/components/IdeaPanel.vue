@@ -171,6 +171,8 @@ export default {
 table {
   border-collapse: separate;
   border-spacing: 10px;
+  // Cancel outer spacing
+  margin: -10px;
 
   th {
     font-size: 130%;

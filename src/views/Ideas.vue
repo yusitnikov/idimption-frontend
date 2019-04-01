@@ -6,7 +6,7 @@
         Add new idea
       </Button>
     </div>
-    <IdeaPanel />
+    <IdeaPanel class="next-section-start" />
   </div>
 </template>
 

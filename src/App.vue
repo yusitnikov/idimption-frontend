@@ -343,7 +343,15 @@ export default {
 @import "styles/essentials";
 
 body {
-  margin: @body-margin;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  .fullscreen(0);
+  overflow: auto;
+
+  padding: @body-margin;
 }
 
 body,
