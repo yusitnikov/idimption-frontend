@@ -1,10 +1,5 @@
 <template>
-  <div id="app">
-    <div id="loader" v-if="loading">
-      <Icon class="loader-icon" type="hourglass-half" />
-      <div class="loader-label">Loading...</div>
-    </div>
-
+  <div id="app" :class="{ loaded: !loading }">
     <div id="notifications" v-if="notifications.length">
       <Alert
         v-for="notification in notifications"
@@ -342,11 +337,6 @@ export default {
 @import "assets/fontawesome/less/solid";
 @import "styles/essentials";
 
-body {
-  margin: 0;
-  padding: 0;
-}
-
 #app {
   .fullscreen(0);
   overflow: auto;
@@ -359,30 +349,8 @@ input,
 textarea,
 select,
 button {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-size: @font-size;
   line-height: @line-height;
-}
-
-#loader {
-  .fullscreen(@z-index-loader);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: @popup-background-color;
-  color: green;
-
-  .loader-icon {
-    font-size: 100px;
-  }
-
-  .loader-label {
-    font-size: 30px;
-    margin-top: 20px;
-  }
 }
 
 #notifications .alert.notification {
