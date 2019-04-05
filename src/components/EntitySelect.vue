@@ -17,7 +17,7 @@
       @blur="$emit('blur')"
       @change="$event => $emit('change', $event)"
       @input="$event => $emit('input', $event)"
-      @create="() => onCreate()"
+      @create="onCreate"
       ref="input"
     />
 
