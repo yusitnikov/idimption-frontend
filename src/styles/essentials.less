@@ -26,6 +26,22 @@
 @avatar-distance: @button-distance;
 @popup-background-color: rgba(0, 0, 0, 0.2);
 
+@info-background-color: #d9edf7;
+@info-border-color: #bcdff1;
+@info-color: #31708f;
+
+@success-background-color: #dff0d8;
+@success-border-color: #d0e9c6;
+@success-color: #3c763d;
+
+@warning-background-color: #fcf8e3;
+@warning-border-color: #faf2cc;
+@warning-color: #8a6d3b;
+
+@error-background-color: #f2dede;
+@error-border-color: #ebcccc;
+@error-color: #a94442;
+
 @z-index-dropdown-popup: 1;
 @z-index-popup-form: 2;
 @z-index-notifications: 3;
@@ -89,4 +105,16 @@
   right: @margin;
   bottom: @margin;
   z-index: @z-index;
+}
+
+.color-with-hover(@color, @property: color) {
+  @{property}: @color;
+
+  &:not(:disabled) {
+    &:hover,
+    &:active,
+    &:focus {
+      @{property}: darken(@color, 10%);
+    }
+  }
 }

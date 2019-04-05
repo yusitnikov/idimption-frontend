@@ -406,15 +406,7 @@ button {
   &.button {
     width: auto;
     min-width: @button-full-height;
-    background: #ddd;
-
-    &:not(:disabled) {
-      &:hover,
-      &:focus,
-      &:active {
-        background: #ccc;
-      }
-    }
+    .color-with-hover(#ddd, background);
 
     &:disabled {
       background: #fff;

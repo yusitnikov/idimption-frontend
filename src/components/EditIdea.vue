@@ -5,79 +5,87 @@
     :savedRow="savedRow"
     :showHeader="showHeader"
     showUser
-    v-slot="{ row, isCreating, update }"
   >
-    <div
-      :class="{ readonly: true, 'next-section-start': showHeader }"
-      v-if="readOnly"
-    >
-      <IdeaPropsLine :row="row" />
+    <template #entity-from-at="{ row, isCreating }">
+      <IdeaVote class="header-vote" :ideaId="row.id" v-if="!isCreating" />
+    </template>
+    <template #default="{ row, isCreating, update }">
+      <div
+        :class="{ readonly: true, 'next-section-start': !isCreating }"
+        v-if="readOnly"
+      >
+        <IdeaPropsLine :row="row" />
 
-      <!-- eslint-disable-next-line -->
-      <div class="description multi-line">{{ row.description || "No description provided." }}</div>
+        <!-- eslint-disable-next-line -->
+        <div class="description multi-line">{{ row.description || "No description provided." }}</div>
 
-      <h2 class="next-section-start">Comments</h2>
-      <IdeaComments :ideaId="row.id" key="comments" />
-    </div>
-    <div :class="{ editable: true, 'next-section-start': showHeader }" v-else>
-      <EditCommonTextFields
-        tableName="idea"
-        :row="row"
-        :transitionsList="transitionsList"
-      />
-
-      <FormRow label="Status">
-        <!--suppress JSUnresolvedVariable -->
-        <EntitySelect
-          :transitionsList="transitionsList"
-          :value="row.statusId"
-          @change="statusId => update({ statusId })"
-          tableName="ideastatus"
-          selectFirstOnEmpty
-        />
-      </FormRow>
-
-      <FormRow class="next-section-start" label="Tags">
-        <MultipleEntitySelect
-          tableName="ideatag"
-          parentFieldName="ideaId"
-          :parentId="row.id"
-          :selectFieldNames="['tagId']"
-          :transitionsList="transitionsList"
-          :allowAdd="verifiedEmail"
-        />
-      </FormRow>
-      <FormRow label="Categories">
-        <MultipleEntitySelect
-          tableName="ideacategory"
-          parentFieldName="ideaId"
-          :parentId="row.id"
-          :selectFieldNames="['categoryId']"
-          :transitionsList="transitionsList"
-          :allowAdd="verifiedEmail"
-          :addComponent="editCategoryComponent"
-        />
-      </FormRow>
-      <FormRow label="Relations">
-        <MultipleEntitySelect
-          tableName="idearelation"
-          parentFieldName="ideaId"
-          :parentId="row.id"
-          :selectFieldNames="['relationId', 'dstIdeaId']"
-          :transitionsList="transitionsList"
-        />
-      </FormRow>
-
-      <FormRow class="next-section-start" label="Comments" v-if="!isCreating">
+        <h2 class="next-section-start">Comments</h2>
         <IdeaComments :ideaId="row.id" key="comments" />
-      </FormRow>
-    </div>
+      </div>
+      <div
+        :class="{ editable: true, 'next-section-start': !isCreating }"
+        v-else
+      >
+        <EditCommonTextFields
+          tableName="idea"
+          :row="row"
+          :transitionsList="transitionsList"
+        />
+
+        <FormRow label="Status">
+          <!--suppress JSUnresolvedVariable -->
+          <EntitySelect
+            :transitionsList="transitionsList"
+            :value="row.statusId"
+            @change="statusId => update({ statusId })"
+            tableName="ideastatus"
+            selectFirstOnEmpty
+          />
+        </FormRow>
+
+        <FormRow class="next-section-start" label="Tags">
+          <MultipleEntitySelect
+            tableName="ideatag"
+            parentFieldName="ideaId"
+            :parentId="row.id"
+            :selectFieldNames="['tagId']"
+            :transitionsList="transitionsList"
+            :allowAdd="verifiedEmail"
+          />
+        </FormRow>
+        <FormRow label="Categories">
+          <MultipleEntitySelect
+            tableName="ideacategory"
+            parentFieldName="ideaId"
+            :parentId="row.id"
+            :selectFieldNames="['categoryId']"
+            :transitionsList="transitionsList"
+            :allowAdd="verifiedEmail"
+            :addComponent="editCategoryComponent"
+          />
+        </FormRow>
+        <FormRow label="Relations">
+          <MultipleEntitySelect
+            tableName="idearelation"
+            parentFieldName="ideaId"
+            :parentId="row.id"
+            :selectFieldNames="['relationId', 'dstIdeaId']"
+            :transitionsList="transitionsList"
+          />
+        </FormRow>
+
+        <FormRow class="next-section-start" label="Comments" v-if="!isCreating">
+          <IdeaComments :ideaId="row.id" key="comments" />
+        </FormRow>
+      </div>
+    </template>
   </EditEntity>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import EditEntity from "./EditEntity";
+import IdeaVote from "./IdeaVote";
 import IdeaPropsLine from "./IdeaPropsLine";
 import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
@@ -90,6 +98,7 @@ export default {
   name: "EditIdea",
   components: {
     EditEntity,
+    IdeaVote,
     IdeaPropsLine,
     FormRow,
     EditCommonTextFields,
@@ -111,6 +120,12 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "../styles/essentials";
+
+.header-vote {
+  margin-left: @button-distance;
+}
+
 .readonly {
   .description {
     margin: 20px 0;

@@ -22,6 +22,7 @@ export default {
     href: String,
     disabled: Boolean,
     plain: Boolean,
+    customColors: Boolean,
     align: {
       type: String,
       default: "left"
@@ -32,7 +33,8 @@ export default {
       return [
         "link",
         this.disabled ? "disabled" : "enabled",
-        this.plain ? "plain" : "regular"
+        this.plain ? "plain" : "regular",
+        this.customColors ? "custom-colors" : "default-colors"
       ];
     }
   },
@@ -55,24 +57,31 @@ export default {
 
   &.enabled {
     cursor: pointer;
-    color: #00f;
+
+    &.default-colors {
+      color: #00f;
+    }
 
     &:hover,
     &:active,
     &:focus {
-      text-decoration: underline;
+      &.regular {
+        text-decoration: underline;
+      }
     }
   }
 
   &.disabled {
-    color: #ccc;
+    &.default-colors {
+      color: #ccc;
+    }
   }
 
   &.plain {
-    text-decoration: none;
-
     &.enabled {
-      color: inherit;
+      &.default-colors {
+        color: inherit;
+      }
     }
   }
 }

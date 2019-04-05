@@ -38,27 +38,27 @@ export default {
   }
 
   &.alert-info {
-    background-color: #d9edf7;
-    border-color: #bcdff1;
-    color: #31708f;
+    background-color: @info-background-color;
+    border-color: @info-border-color;
+    color: @info-color;
   }
 
   &.alert-success {
-    background-color: #dff0d8;
-    border-color: #d0e9c6;
-    color: #3c763d;
+    background-color: @success-background-color;
+    border-color: @success-border-color;
+    color: @success-color;
   }
 
   &.alert-warning {
-    background-color: #fcf8e3;
-    border-color: #faf2cc;
-    color: #8a6d3b;
+    background-color: @warning-background-color;
+    border-color: @warning-border-color;
+    color: @warning-color;
   }
 
   &.alert-error {
-    background-color: #f2dede;
-    border-color: #ebcccc;
-    color: #a94442;
+    background-color: @error-background-color;
+    border-color: @error-border-color;
+    color: @error-color;
   }
 
   .button {

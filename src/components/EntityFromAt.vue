@@ -18,6 +18,8 @@
       <!--suppress JSUnresolvedVariable -->
       <DateTime :value="row.updatedAt" />
     </template>
+
+    <slot />
   </div>
 </template>
 

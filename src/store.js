@@ -155,9 +155,17 @@ const store = new Vuex.Store({
     },
     async [CALL_API_ACTION](
       { state, commit },
-      { url, formData = {}, returnsData = false, onUploadProgress = null }
+      {
+        url,
+        formData = {},
+        returnsData = false,
+        onUploadProgress = null,
+        showProgress = null
+      }
     ) {
-      const showProgress = !onUploadProgress;
+      if (typeof showProgress !== "boolean") {
+        showProgress = !onUploadProgress;
+      }
       let xhrConfig = {
         withCredentials: true
       };

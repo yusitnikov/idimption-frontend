@@ -4,16 +4,25 @@
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="showHeader"
-    v-slot="{ row, update }"
+    v-slot="{ row, isCreating, update }"
   >
     <div
-      :class="{ readonly: true, 'next-section-start': showHeader }"
+      :class="{
+        readonly: true,
+        'next-section-start': showHeader && !isCreating
+      }"
       v-if="readOnly"
     >
       <!-- eslint-disable-next-line -->
       <div class="description multi-line">{{ row.description || "No description provided." }}</div>
     </div>
-    <div :class="{ editable: true, 'next-section-start': showHeader }" v-else>
+    <div
+      :class="{
+        editable: true,
+        'next-section-start': showHeader && !isCreating
+      }"
+      v-else
+    >
       <EditCommonTextFields
         tableName="category"
         :row="row"

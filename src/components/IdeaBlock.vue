@@ -1,5 +1,9 @@
 <template>
   <EntityBlock tableName="idea" :row="row" showUser :readOnly="readOnly">
+    <template slot="actions">
+      <IdeaVote :ideaId="row.id" />
+    </template>
+
     <template slot="additionalInfo">
       <IdeaPropsLine :row="row" :showStatus="showStatus" />
     </template>
@@ -18,12 +22,13 @@
 <script>
 import { canUserEditUsersData } from "../auth";
 import EntityBlock from "./EntityBlock";
+import IdeaVote from "./IdeaVote";
 import IdeaPropsLine from "./IdeaPropsLine";
 import EditIdea from "./EditIdea";
 
 export default {
   name: "IdeaBlock",
-  components: { EntityBlock, IdeaPropsLine, EditIdea },
+  components: { EntityBlock, IdeaVote, IdeaPropsLine, EditIdea },
   computed: {
     readOnly() {
       return !canUserEditUsersData(this.row.userId);

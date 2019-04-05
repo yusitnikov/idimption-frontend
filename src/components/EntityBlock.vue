@@ -3,12 +3,17 @@
     :class="{ 'entity-block': true, block: true, expandable }"
     @click="showDetails"
   >
-    <ButtonLink align="right" plain @click="remove" v-if="!readOnly">
-      <Icon type="trash-alt" />
-    </ButtonLink>
-    <ButtonLink align="right" :href="pageUrl" @click="stopPropagation">
-      <Icon type="external-link-alt" />
-    </ButtonLink>
+    <div class="pull-right">
+      <ButtonLink align="right" plain @click="remove" v-if="!readOnly">
+        <Icon type="trash-alt" />
+      </ButtonLink>
+      <ButtonLink align="right" :href="pageUrl" @click="stopPropagation">
+        <Icon type="external-link-alt" />
+      </ButtonLink>
+      <div class="pull-right">
+        <slot name="actions" />
+      </div>
+    </div>
 
     <div class="line summary">[{{ row.id }}] {{ displayText }}</div>
 
@@ -107,6 +112,11 @@ export default {
   &.expandable {
     cursor: pointer;
   }
+}
+
+.pull-right {
+  float: right;
+  margin-left: @button-distance;
 }
 
 .summary {

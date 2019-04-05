@@ -1,8 +1,15 @@
 <template>
   <div class="edit-entity">
-    <template v-if="showHeader && !isCreating">
-      <h1>[{{ savedRow.id }}] {{ savedDisplayText }}</h1>
-      <EntityFromAt :row="row" :showUser="showUser" />
+    <template v-if="!isCreating">
+      <h1 v-if="showHeader">[{{ savedRow.id }}] {{ savedDisplayText }}</h1>
+      <EntityFromAt :row="row" :showUser="showUser">
+        <slot
+          name="entity-from-at"
+          v-bind="row"
+          :row="row"
+          :isCreating="isCreating"
+        />
+      </EntityFromAt>
     </template>
     <slot v-bind="row" :row="row" :isCreating="isCreating" :update="update" />
   </div>

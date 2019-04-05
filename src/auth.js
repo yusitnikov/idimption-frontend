@@ -12,13 +12,13 @@ export function getUser() {
 export function isUserVerified() {
   const user = getUser();
   // noinspection JSUnresolvedVariable,EqualityComparisonWithCoercionJS
-  return user ? user.verifiedEmail == 1 : false;
+  return user ? user.verifiedEmail : false;
 }
 
 export function isUserAdmin() {
   const user = getUser();
   // noinspection JSUnresolvedVariable,EqualityComparisonWithCoercionJS
-  return user ? user.verifiedEmail == 1 && user.isAdmin == 1 : false;
+  return user ? user.verifiedEmail && user.isAdmin : false;
 }
 
 export function canUserEditUsersData(userId) {

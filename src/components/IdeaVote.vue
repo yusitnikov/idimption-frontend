@@ -1,0 +1,124 @@
+<template>
+  <div class="idea-vote">
+    <ButtonLink
+      :class="
+        currentVote && currentVote.isPositive ? 'vote-positive' : 'vote-none'
+      "
+      align="none"
+      plain
+      customColors
+      @click="event => toggle(event, true)"
+    >
+      <Icon type="thumbs-up" />
+      {{ allVotesByPositive.positive.length }}
+    </ButtonLink>
+    <ButtonLink
+      :class="
+        currentVote && !currentVote.isPositive ? 'vote-negative' : 'vote-none'
+      "
+      align="none"
+      plain
+      customColors
+      @click="event => toggle(event, false)"
+    >
+      <Icon type="thumbs-down" />
+      {{ allVotesByPositive.negative.length }}
+    </ButtonLink>
+  </div>
+</template>
+
+<script>
+import { mapState, mapGetters } from "vuex";
+import { getTableData, openPopup } from "../storeProxy";
+import { addRow, updateRow, deleteRow } from "../EntityHelper";
+import Guid from "guid";
+import ButtonLink from "./ButtonLink";
+import Icon from "./Icon";
+
+export default {
+  name: "IdeaVote",
+  components: { ButtonLink, Icon },
+  props: {
+    ideaId: [String, Guid]
+  },
+  computed: {
+    ...mapState(["userId"]),
+    ...mapGetters(["verifiedEmail"]),
+    allVotes() {
+      return getTableData("ideavote").filter(
+        vote => vote.ideaId === this.ideaId
+      );
+    },
+    allVotesByPositive() {
+      const result = {
+        positive: [],
+        negative: []
+      };
+      for (const vote of this.allVotes) {
+        result[vote.isPositive ? "positive" : "negative"].push(vote.userId);
+      }
+      return result;
+    },
+    currentVote() {
+      return this.allVotes.filter(vote => vote.userId === this.userId)[0];
+    }
+  },
+  methods: {
+    async toggle(event, isPositive) {
+      event.stopPropagation();
+
+      const wasGuest = !this.userId;
+      if (wasGuest) {
+        await openPopup(
+          "login",
+          "Sorry, but guests are not allowed to vote.\nPlease login or register."
+        );
+        await this.$nextTick();
+      }
+
+      if (!this.userId) {
+        return;
+      }
+
+      if (!this.verifiedEmail) {
+        alert("Please verify your email in order to vote");
+        return;
+      }
+
+      const vote = this.currentVote;
+      if (!vote) {
+        addRow("ideavote", {
+          ideaId: this.ideaId,
+          userId: this.userId,
+          isPositive
+        });
+      } else if (vote.isPositive !== isPositive) {
+        updateRow("ideavote", vote.id, { isPositive });
+      } else if (!wasGuest) {
+        deleteRow("ideavote", vote);
+      }
+    }
+  }
+};
+</script>
+
+<style lang="less">
+@import "../styles/essentials";
+
+.idea-vote {
+  display: inline;
+  font-weight: normal;
+
+  .vote-none .link {
+    .color-with-hover(#ccc);
+  }
+
+  .vote-positive .link {
+    .color-with-hover(@success-color);
+  }
+
+  .vote-negative .link {
+    .color-with-hover(@error-color);
+  }
+}
+</style>
