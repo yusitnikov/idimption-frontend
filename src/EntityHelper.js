@@ -126,18 +126,22 @@ export function createRow(tableName, data) {
   };
 }
 
-export function addRow(tableName, row) {
+export function addRow(tableName, row, showProgress = true) {
   let transitionsList = new EntityTransitionsList();
   row.id = row.id || Guid.create();
-  return transitionsList.addRow(tableName, row).save();
+  return transitionsList.addRow(tableName, row).save(showProgress);
 }
 
-export function updateRow(tableName, id, updates) {
-  return new EntityTransitionsList().updateRow(tableName, id, updates).save();
+export function updateRow(tableName, id, updates, showProgress = true) {
+  return new EntityTransitionsList()
+    .updateRow(tableName, id, updates)
+    .save(showProgress);
 }
 
-export function deleteRow(tableName, row) {
-  return new EntityTransitionsList().deleteRow(tableName, row).save();
+export function deleteRow(tableName, row, showProgress = true) {
+  return new EntityTransitionsList()
+    .deleteRow(tableName, row)
+    .save(showProgress);
 }
 
 export function resolveGuid(id) {

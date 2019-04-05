@@ -65,8 +65,11 @@ export function callApi(
   });
 }
 
-export function applyTransitions(transitionsList) {
-  return callAction(APPLY_TRANSITIONS_ACTION, transitionsList);
+export function applyTransitions(transitionsList, showProgress = true) {
+  return callAction(APPLY_TRANSITIONS_ACTION, {
+    transitionsList,
+    showProgress
+  });
 }
 
 export function login(userId, password) {

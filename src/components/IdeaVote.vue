@@ -29,8 +29,8 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import { getTableData, openPopup } from "../storeProxy";
-import { addRow, updateRow, deleteRow } from "../EntityHelper";
+import { openPopup } from "../storeProxy";
+import EntityTransitionsList from "../EntityTransitionsList";
 import Guid from "guid";
 import ButtonLink from "./ButtonLink";
 import Icon from "./Icon";
@@ -41,13 +41,19 @@ export default {
   props: {
     ideaId: [String, Guid]
   },
+  data() {
+    return {
+      transitionsList: new EntityTransitionsList()
+    };
+  },
   computed: {
     ...mapState(["userId"]),
     ...mapGetters(["verifiedEmail"]),
     allVotes() {
-      return getTableData("ideavote").filter(
-        vote => vote.ideaId === this.ideaId
-      );
+      // noinspection JSUnresolvedVariable
+      return this.transitionsList
+        .applyToState()
+        .ideavote.filter(vote => vote.ideaId === this.ideaId);
     },
     allVotesByPositive() {
       const result = {
@@ -87,16 +93,17 @@ export default {
 
       const vote = this.currentVote;
       if (!vote) {
-        addRow("ideavote", {
+        this.transitionsList.addRow("ideavote", {
           ideaId: this.ideaId,
           userId: this.userId,
           isPositive
         });
       } else if (vote.isPositive !== isPositive) {
-        updateRow("ideavote", vote.id, { isPositive });
+        this.transitionsList.updateRow("ideavote", vote.id, { isPositive });
       } else if (!wasGuest) {
-        deleteRow("ideavote", vote);
+        this.transitionsList.deleteRow("ideavote", vote);
       }
+      this.transitionsList.save(false);
     }
   }
 };

@@ -225,7 +225,10 @@ const store = new Vuex.Store({
         returnsData: true
       });
     },
-    async [APPLY_TRANSITIONS_ACTION]({ state, dispatch }, transitionsList) {
+    async [APPLY_TRANSITIONS_ACTION](
+      { state, dispatch },
+      { transitionsList, showProgress = true }
+    ) {
       if (transitionsList.isEmpty()) {
         return;
       }
@@ -242,7 +245,8 @@ const store = new Vuex.Store({
         formData: {
           transitions: transitionsList.toJSON()
         },
-        returnsData: true
+        returnsData: true,
+        showProgress
       });
       transitionsList.reset();
     },

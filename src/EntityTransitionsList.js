@@ -119,8 +119,8 @@ export default class EntityTransitionsList {
     this._onTransitionsChanged();
     return this;
   }
-  save() {
-    return applyTransitions(this);
+  save(showProgress = true) {
+    return applyTransitions(this, showProgress);
   }
   clearMigratedDataCache() {
     this.migratedDataCache = null;
