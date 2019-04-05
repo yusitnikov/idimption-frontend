@@ -1,10 +1,5 @@
 <template>
-  <EntityBlock
-    tableName="category"
-    :row="row"
-    :readOnly="readOnly"
-    :expandable="!readOnly"
-  >
+  <EntityBlock :row="row" :readOnly="readOnly" :expandable="!readOnly">
     <template #details="{ transitionsList }">
       <EditCategory
         :savedRow="row"

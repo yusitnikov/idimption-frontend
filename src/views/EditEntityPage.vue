@@ -32,12 +32,7 @@ import Button from "../components/Button";
 import ButtonLink from "../components/ButtonLink";
 import Icon from "../components/Icon";
 import EntityTransitionsList from "../EntityTransitionsList";
-import {
-  getTableFieldInfo,
-  getRowById,
-  resolveGuid,
-  deleteRow
-} from "../EntityHelper";
+import { getOrCreateRowById, resolveGuid } from "../EntityHelper";
 import Guid from "guid";
 
 export default {
@@ -79,7 +74,7 @@ export default {
         this.$router.push("/" + this.tableName);
         return;
       }
-      this.transitionsList.addRow(this.tableName, this.row);
+      this.transitionsList.addRow(this.row);
     }
   },
   computed: {
@@ -97,15 +92,14 @@ export default {
         if (!isUserVerified()) {
           return true;
         }
-        const hasUserField = getTableFieldInfo(this.tableName, "userId");
-        if (hasUserField && !canUserEditUsersData(this.row.userId)) {
+        if ("userId" in this.row && !canUserEditUsersData(this.row.userId)) {
           return true;
         }
       }
       return false;
     },
     row() {
-      return getRowById(this.tableName, this.id, true);
+      return getOrCreateRowById(this.tableName, this.id);
     }
   },
   methods: {
@@ -121,7 +115,7 @@ export default {
       if (!confirm("Are you sure?")) {
         return;
       }
-      deleteRow(this.tableName, this.row);
+      this.row.deleteNow();
       this.$router.push("/" + this.tableName);
     }
   }

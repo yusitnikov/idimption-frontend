@@ -31,6 +31,7 @@
 import { mapState, mapGetters } from "vuex";
 import { openPopup } from "../storeProxy";
 import EntityTransitionsList from "../EntityTransitionsList";
+import { EntityRow } from "../EntityRow";
 import Guid from "guid";
 import ButtonLink from "./ButtonLink";
 import Icon from "./Icon";
@@ -93,15 +94,21 @@ export default {
 
       const vote = this.currentVote;
       if (!vote) {
-        this.transitionsList.addRow("ideavote", {
-          ideaId: this.ideaId,
-          userId: this.userId,
-          isPositive
-        });
+        this.transitionsList.addRow(
+          new EntityRow(
+            "ideavote",
+            {
+              ideaId: this.ideaId,
+              userId: this.userId,
+              isPositive
+            },
+            true
+          )
+        );
       } else if (vote.isPositive !== isPositive) {
-        this.transitionsList.updateRow("ideavote", vote.id, { isPositive });
+        this.transitionsList.updateRow(vote, { isPositive });
       } else if (!wasGuest) {
-        this.transitionsList.deleteRow("ideavote", vote);
+        this.transitionsList.deleteRow(vote);
       }
       this.transitionsList.save(false);
     }

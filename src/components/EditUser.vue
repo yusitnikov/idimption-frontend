@@ -1,6 +1,5 @@
 <template>
   <EditEntity
-    tableName="user"
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="false"

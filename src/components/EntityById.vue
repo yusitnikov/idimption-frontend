@@ -1,22 +1,13 @@
 <template>
   <fragment>
-    <slot
-      v-bind="row"
-      :row="row"
-      :displayText="displayText"
-      :additionalInfoText="additionalInfoText"
-    >
-      {{ displayText }}
+    <slot v-bind="row" :row="row">
+      <template v-if="row">{{ row.displayText }}</template>
     </slot>
   </fragment>
 </template>
 
 <script>
-import {
-  getRowById,
-  getDisplayText,
-  getAdditionalInfoText
-} from "../EntityHelper";
+import { getRowById } from "../EntityHelper";
 
 export default {
   name: "EntityById",
@@ -30,12 +21,6 @@ export default {
   computed: {
     row() {
       return getRowById(this.tableName, this.id);
-    },
-    displayText() {
-      return this.row ? getDisplayText(this.row, this.tableName) : null;
-    },
-    additionalInfoText() {
-      return this.row ? getAdditionalInfoText(this.row, this.tableName) : null;
     }
   }
 };

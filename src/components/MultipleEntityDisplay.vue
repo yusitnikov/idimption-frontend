@@ -13,16 +13,9 @@
           :tableName="tableName"
           :fieldName="fieldName"
           :id="linkRow[fieldName]"
-          v-slot="{ foreignTableName, row, displayText, additionalInfoText }"
+          v-slot="{ row, displayText }"
         >
-          <slot
-            :fieldName="fieldName"
-            :tableName="foreignTableName"
-            :linkRow="linkRow"
-            :row="row"
-            :displayText="displayText"
-            :additionalInfoText="additionalInfoText"
-          >
+          <slot :fieldName="fieldName" :linkRow="linkRow" :row="row">
             {{ displayText }}
           </slot>
         </ForeignEntityById>

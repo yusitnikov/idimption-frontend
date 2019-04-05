@@ -99,11 +99,20 @@ const store = new Vuex.Store({
       state.schema = schema;
     },
     [SET_DATA_MUTATION](state, { data, guids = {} }) {
+      const { EntityRow } = require("./EntityRow");
+      for (const tableName of Object.keys(data)) {
+        data[tableName] = data[tableName].map(
+          row => new EntityRow(tableName, row, false)
+        );
+      }
       state.data = data;
+      window.data = data;
+
       state.guids = {
         ...state.guids,
         ...guids
       };
+
       // don't use increment operator, cause the reactivity system needs explicit assignment
       state.dataVersion = state.dataVersion + 1;
     },

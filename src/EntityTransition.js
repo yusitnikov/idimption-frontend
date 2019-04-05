@@ -1,14 +1,18 @@
 export class EntityTransition {
   type;
-  tableName;
   row;
   id;
-  constructor(type, tableName, row, id = null) {
+
+  constructor(type, row, id = null) {
     this.type = type;
-    this.tableName = tableName;
     this.row = row;
     this.id = id || row.id;
   }
+
+  get tableName() {
+    return this.row.tableName;
+  }
+
   // noinspection JSUnusedGlobalSymbols
   toJSON() {
     return {

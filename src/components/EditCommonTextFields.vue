@@ -27,10 +27,6 @@ export default {
     TextAreaInput
   },
   props: {
-    tableName: {
-      type: String,
-      required: true
-    },
     row: {
       type: Object,
       required: true
@@ -42,7 +38,7 @@ export default {
   },
   methods: {
     update(updates) {
-      this.transitionsList.updateRow(this.tableName, this.row.id, updates);
+      this.transitionsList.updateRow(this.row, updates);
     }
   }
 };

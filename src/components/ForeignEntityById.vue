@@ -3,16 +3,10 @@
     <EntityById
       :tableName="foreignTableName"
       :id="id"
-      v-slot="{ row, displayText, additionalInfoText }"
+      v-slot="{ row, displayText }"
     >
-      <slot
-        v-bind="row"
-        :foreignTableName="foreignTableName"
-        :row="row"
-        :displayText="displayText"
-        :additionalInfoText="additionalInfoText"
-      >
-        {{ displayText }}
+      <slot v-bind="row" :row="row">
+        {{ displayText || "" }}
       </slot>
     </EntityById>
   </fragment>

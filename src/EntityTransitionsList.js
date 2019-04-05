@@ -1,6 +1,6 @@
 import { applyTransitions, getData, getDataVersion } from "./storeProxy";
 import { EntityTransition } from "./EntityTransition";
-import Guid from "guid";
+import { EntityRow } from "./EntityRow";
 
 export default class EntityTransitionsList {
   transitions;
@@ -21,6 +21,9 @@ export default class EntityTransitionsList {
     }
     return null;
   }
+  findTransitionByRow(row) {
+    return this.findTransitionByRowId(row.tableName, row.id);
+  }
   // noinspection JSUnusedGlobalSymbols
   isEmpty() {
     return this.transitions.length === 0;
@@ -37,85 +40,36 @@ export default class EntityTransitionsList {
     this.clearMigratedDataCache();
     return this;
   }
-  addRow(tableName, row) {
-    this.transitions.push(new EntityTransition("add", tableName, row));
+  addRow(row) {
+    this.transitions.push(new EntityTransition("add", row));
     this._onTransitionsChanged();
     return this;
   }
-  updateRow(tableName, id, updates) {
-    const existingTransition = this.findTransitionByRowId(tableName, id);
+  updateRow(row, updates) {
+    const existingTransition = this.findTransitionByRow(row);
     if (!existingTransition) {
       this.transitions.push(
-        new EntityTransition("update", tableName, { id, ...updates })
+        new EntityTransition(
+          "update",
+          new EntityRow(row.tableName, { id: row.id, ...updates }, false)
+        )
       );
     } else {
-      existingTransition.row = {
-        ...existingTransition.row,
-        ...updates
-      };
+      existingTransition.row.merge(updates);
     }
     this._onTransitionsChanged();
     return this;
   }
-  deleteRow(tableName, row) {
-    const existingTransition = this.findTransitionByRowId(tableName, row.id);
+  deleteRow(row) {
+    const existingTransition = this.findTransitionByRow(row);
     if (!existingTransition) {
-      this.transitions.push(new EntityTransition("delete", tableName, row));
+      this.transitions.push(new EntityTransition("delete", row));
     } else if (existingTransition.type === "add") {
       // remove existingTransition from the array
       this.transitions.splice(this.transitions.indexOf(existingTransition), 1);
     } else {
       existingTransition.type = "delete";
     }
-    this._onTransitionsChanged();
-    return this;
-  }
-  syncRelationTableRows(
-    tableName,
-    parentFieldName,
-    parentId,
-    selectFieldName,
-    selectedIds
-  ) {
-    const selectedIdsMap = {};
-    for (const id of selectedIds) {
-      selectedIdsMap[id] = true;
-    }
-
-    for (let index = this.transitions.length; index >= 0; index--) {
-      const transition = this.transitions[index];
-
-      if (
-        transition.tableName !== tableName ||
-        transition.row[parentFieldName] !== parentId
-      ) {
-        continue;
-      }
-
-      const selectValue = transition.row[selectFieldName];
-      const isSelected = selectedIdsMap[selectValue];
-      // Remove the transition if it's not relevant anymore
-      if (transition.type === (isSelected ? "delete" : "add")) {
-        // remove the transition
-        this.transitions.splice(index, 1);
-      }
-
-      // Mark that the selected ID was processed
-      selectedIdsMap[selectValue] = false;
-    }
-
-    for (const id of selectedIds) {
-      if (selectedIdsMap[id]) {
-        this.transitions.push(
-          new EntityTransition("add", tableName, {
-            id: Guid.create(),
-            [parentFieldName]: parentId,
-            [selectFieldName]: id
-          })
-        );
-      }
-    }
-
     this._onTransitionsChanged();
     return this;
   }
@@ -167,10 +121,9 @@ export default class EntityTransitionsList {
             migratedData[tableName].push(originalRow);
           } else if (transition.type === "update") {
             // use the row from the transition
-            migratedData[tableName].push({
-              ...originalRow,
-              ...transition.row
-            });
+            migratedData[tableName].push(
+              originalRow.clone().merge(transition.row)
+            );
           } else {
             // type is "delete" - just skip the row
           }
@@ -187,16 +140,13 @@ export default class EntityTransitionsList {
     this.cachedDataVersion = dataVersion;
     return migratedData;
   }
-  applyToRow(tableName, row) {
+  applyToRow(row) {
     for (const transition of this.transitions) {
-      if (transition.tableName === tableName && transition.id === row.id) {
+      if (transition.tableName === row.tableName && transition.id === row.id) {
         if (transition.type === "delete") {
           return null;
         }
-        return {
-          ...row,
-          ...transition.row
-        };
+        return row.clone().merge(transition.row);
       }
     }
 

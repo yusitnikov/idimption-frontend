@@ -53,14 +53,15 @@
 
 <script>
 import { timeout } from "../misc";
-import { getForeignTableName, createRow } from "../EntityHelper";
+import { getForeignTableName } from "../EntityHelper";
 import EntityTransitionsList from "../EntityTransitionsList";
+import { EntityRow } from "../EntityRow";
+import Guid from "guid";
 import MultipleEntityDisplay from "./MultipleEntityDisplay";
 import Button from "./Button";
 import Icon from "./Icon";
 import EntitySelect from "./EntitySelect";
 import ForeignEntityById from "./ForeignEntityById";
-import Guid from "guid";
 
 export default {
   name: "MultipleEntitySelect",
@@ -178,15 +179,19 @@ export default {
       }
     },
     addRow() {
-      let row = createRow(this.tableName, {
-        [this.parentFieldName]: this.parentId,
-        ...this.addValues
-      });
-      this.transitionsList.addRow(this.tableName, row);
+      let row = new EntityRow(
+        this.tableName,
+        {
+          [this.parentFieldName]: this.parentId,
+          ...this.addValues
+        },
+        true
+      );
+      this.transitionsList.addRow(row);
       this.startAdd();
     },
     removeRow(row) {
-      this.transitionsList.deleteRow(this.tableName, row);
+      this.transitionsList.deleteRow(row);
     }
   }
 };

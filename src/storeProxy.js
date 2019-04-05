@@ -26,8 +26,10 @@ export function getData() {
   return getState().data;
 }
 
-export function getTableData(tableName) {
-  return getData()[tableName];
+export function getTableData(tableDataOrName) {
+  return typeof tableDataOrName === "string"
+    ? getData()[tableDataOrName]
+    : tableDataOrName;
 }
 
 export function getDataVersion() {

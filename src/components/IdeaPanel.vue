@@ -164,7 +164,7 @@ export default {
         }
 
         // Send the API request
-        this.dragTransitionsList.updateRow("idea", row.id, updates).save();
+        this.dragTransitionsList.updateRow(row, updates).save();
       }
     }
   }

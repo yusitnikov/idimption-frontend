@@ -1,6 +1,5 @@
 <template>
   <EditEntity
-    tableName="idea"
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="showHeader"
@@ -26,11 +25,7 @@
         :class="{ editable: true, 'next-section-start': !isCreating }"
         v-else
       >
-        <EditCommonTextFields
-          tableName="idea"
-          :row="row"
-          :transitionsList="transitionsList"
-        />
+        <EditCommonTextFields :row="row" :transitionsList="transitionsList" />
 
         <FormRow label="Status">
           <!--suppress JSUnresolvedVariable -->

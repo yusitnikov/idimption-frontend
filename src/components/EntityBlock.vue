@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="line summary">[{{ row.id }}] {{ displayText }}</div>
+    <div class="line summary">[{{ row.id }}] {{ row.displayText }}</div>
 
     <EntityFromAt :row="row" :showUser="showUser" />
 
@@ -24,7 +24,7 @@
     </div>
 
     <PopupForm
-      :title="displayText"
+      :title="row.displayText"
       @save="save"
       @close="hideDetails"
       v-if="expanded"
@@ -35,24 +35,20 @@
 </template>
 
 <script>
+import EntityTransitionsList from "../EntityTransitionsList";
+import { EntityRow } from "../EntityRow";
 import { validateAllInputs } from "../misc";
 import ButtonLink from "./ButtonLink";
 import PopupForm from "./PopupForm";
 import Icon from "./Icon";
 import EntityFromAt from "./EntityFromAt";
-import EntityTransitionsList from "../EntityTransitionsList";
-import { getDisplayText, deleteRow } from "../EntityHelper";
 
 export default {
   name: "EntityBlock",
   components: { ButtonLink, PopupForm, Icon, EntityFromAt },
   props: {
-    tableName: {
-      type: String,
-      required: true
-    },
     row: {
-      type: Object,
+      type: EntityRow,
       required: true
     },
     readOnly: Boolean,
@@ -70,10 +66,7 @@ export default {
   },
   computed: {
     pageUrl() {
-      return "/" + this.tableName + "/" + this.row.id;
-    },
-    displayText() {
-      return getDisplayText(this.row, this.tableName);
+      return "/" + this.row.tableName + "/" + this.row.id;
     }
   },
   methods: {
@@ -97,7 +90,7 @@ export default {
     },
     remove(event) {
       this.stopPropagation(event);
-      deleteRow(this.tableName, this.row);
+      this.row.deleteNow();
     }
   }
 };

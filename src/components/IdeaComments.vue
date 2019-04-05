@@ -4,9 +4,14 @@
       No comments.
     </div>
 
-    <AddIdeaComment class="line" :ideaId="ideaId" v-if="!parentId" />
+    <AddIdeaComment
+      class="line"
+      :transitionsList="transitionsList"
+      :ideaId="ideaId"
+      v-if="!parentId"
+    />
 
-    <div v-for="row in rows" class="line" :key="row.id">
+    <div v-for="row in rows" class="line" :key="row.id.toString()">
       <!-- TODO: remove, edit -->
       <!-- TODO: shortcut to reply -->
       <!-- TODO: collapse replies when too much -->
@@ -16,7 +21,12 @@
             <EntityFromAt :row="row" showUser />
             <div class="line multi-line">{{ row.message }}</div>
 
-            <AddIdeaComment class="line" :ideaId="ideaId" :parentId="row.id" />
+            <AddIdeaComment
+              class="line"
+              :transitionsList="transitionsList"
+              :ideaId="ideaId"
+              :parentId="row.id"
+            />
           </div>
 
           <IdeaComments class="replies" :ideaId="ideaId" :parentId="row.id" />
@@ -27,7 +37,8 @@
 </template>
 
 <script>
-import { getTableData } from "../storeProxy";
+import EntityTransitionsList from "../EntityTransitionsList";
+import Guid from "guid";
 import EntityFromAt from "./EntityFromAt";
 import EntityById from "./EntityById";
 import UserAvatarBlock from "./UserAvatarBlock";
@@ -43,20 +54,28 @@ export default {
   },
   props: {
     ideaId: {
-      type: String,
+      type: [String, Guid],
       required: true
     },
     parentId: {
-      type: String,
+      type: [String, Guid],
       default: null
     }
   },
+  data() {
+    return {
+      transitionsList: new EntityTransitionsList()
+    };
+  },
   computed: {
     rows() {
-      const rows = getTableData("ideacomment").filter(
-        row => row.ideaId === this.ideaId && row.parentId === this.parentId
-      );
-      rows.sort((a, b) => b.id - a.id);
+      // noinspection JSUnresolvedVariable
+      const rows = this.transitionsList
+        .applyToState()
+        .ideacomment.filter(
+          row => row.ideaId === this.ideaId && row.parentId === this.parentId
+        );
+      rows.reverse();
       return rows;
     }
   }

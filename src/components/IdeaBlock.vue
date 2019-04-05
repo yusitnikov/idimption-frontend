@@ -1,5 +1,5 @@
 <template>
-  <EntityBlock tableName="idea" :row="row" showUser :readOnly="readOnly">
+  <EntityBlock :row="row" showUser :readOnly="readOnly">
     <template slot="actions">
       <IdeaVote :ideaId="row.id" />
     </template>

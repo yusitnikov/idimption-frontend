@@ -1,6 +1,5 @@
 <template>
   <EditEntity
-    tableName="category"
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="showHeader"
@@ -23,11 +22,7 @@
       }"
       v-else
     >
-      <EditCommonTextFields
-        tableName="category"
-        :row="row"
-        :transitionsList="transitionsList"
-      />
+      <EditCommonTextFields :row="row" :transitionsList="transitionsList" />
 
       <FormRow label="Parent">
         <!--suppress JSUnresolvedVariable -->
@@ -49,7 +44,6 @@ import EditEntity from "./EditEntity";
 import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
-import { isChild } from "../EntityHelper";
 
 export default {
   name: "EditCategory",
@@ -65,7 +59,7 @@ export default {
   },
   methods: {
     isAllowedParent(category) {
-      return !isChild(category, this.savedRow, "category");
+      return !category.isChild(this.savedRow);
     }
   }
 };

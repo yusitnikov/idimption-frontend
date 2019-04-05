@@ -19,7 +19,6 @@
 import EntityFromAt from "./EntityFromAt";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { focusFirstInput, resetAllInputs } from "../misc";
-import { getRowFullName, isNewRow } from "../EntityHelper";
 
 const commonProps = {
   transitionsList: {
@@ -41,10 +40,6 @@ export default {
   components: { EntityFromAt },
   commonProps,
   props: {
-    tableName: {
-      type: String,
-      required: true
-    },
     showUser: Boolean,
     ...commonProps
   },
@@ -53,13 +48,13 @@ export default {
       return this.transitionsList.isEmpty();
     },
     row() {
-      return this.transitionsList.applyToRow(this.tableName, this.savedRow);
+      return this.transitionsList.applyToRow(this.savedRow);
     },
     savedDisplayText() {
-      return getRowFullName(this.savedRow, this.tableName).join(" > ");
+      return this.savedRow.getFullName().join(" > ");
     },
     isCreating() {
-      return isNewRow(this.savedRow, this.tableName);
+      return this.savedRow.isNew;
     }
   },
   watch: {
@@ -75,7 +70,7 @@ export default {
   },
   methods: {
     update(updates) {
-      this.transitionsList.updateRow(this.tableName, this.savedRow.id, updates);
+      this.transitionsList.updateRow(this.savedRow, updates);
     }
   }
 };

@@ -20,7 +20,9 @@
 
 <script>
 import { timeout } from "../misc";
-import { addRow } from "../EntityHelper";
+import EntityTransitionsList from "../EntityTransitionsList";
+import { EntityRow } from "../EntityRow";
+import Guid from "guid";
 import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
 
@@ -28,12 +30,16 @@ export default {
   name: "AddIdeaComment",
   components: { TextAreaInput, Button },
   props: {
+    transitionsList: {
+      type: EntityTransitionsList,
+      required: true
+    },
     ideaId: {
-      type: String,
+      type: [String, Guid],
       required: true
     },
     parentId: {
-      type: String,
+      type: [String, Guid],
       default: null
     }
   },
@@ -52,11 +58,19 @@ export default {
         return;
       }
 
-      await addRow("ideacomment", {
-        ideaId: this.ideaId,
-        parentId: this.parentId,
-        message: this.text.trim()
-      });
+      this.transitionsList
+        .addRow(
+          new EntityRow(
+            "ideacomment",
+            {
+              ideaId: this.ideaId,
+              parentId: this.parentId,
+              message: this.text.trim()
+            },
+            true
+          )
+        )
+        .save();
       this.text = "";
       this.expanded = false;
     },

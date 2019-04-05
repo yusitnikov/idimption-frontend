@@ -17,7 +17,7 @@
       @blur="$emit('blur')"
       @change="$event => $emit('change', $event)"
       @input="$event => $emit('input', $event)"
-      @create="onCreate"
+      @create="() => onCreate()"
       ref="input"
     />
 
@@ -38,9 +38,10 @@
 
 <script>
 import EntityTransitionsList from "../EntityTransitionsList";
+import { resolveGuid } from "../EntityHelper";
+import { EntityRow } from "../EntityRow";
 import Select from "./Select";
 import PopupForm from "./PopupForm";
-import { getDisplayText, createRow, resolveGuid } from "../EntityHelper";
 
 export default {
   name: "EntitySelect",
@@ -76,7 +77,7 @@ export default {
     rows() {
       return this.updatedData[this.tableName].map(row => ({
         id: row.id,
-        text: getDisplayText(row, this.tableName),
+        text: row.displayText,
         hidden: this.filter && !this.filter(row)
       }));
     }
@@ -95,7 +96,7 @@ export default {
     },
     async doCreate(row = null) {
       row = row || this.addFormRow;
-      row = this.addTransitionsList.applyToRow(this.tableName, row);
+      row = this.addTransitionsList.applyToRow(row);
       await this.addTransitionsList.save();
       await this.$nextTick();
       const id = resolveGuid(row.id);
@@ -104,10 +105,14 @@ export default {
       this.reset();
     },
     onCreate(text) {
-      const row = createRow(this.tableName, {
-        [this.addField]: text
-      });
-      this.addTransitionsList.addRow(this.tableName, row);
+      const row = new EntityRow(
+        this.tableName,
+        {
+          [this.addField]: text
+        },
+        true
+      );
+      this.addTransitionsList.addRow(row);
       if (this.addComponent) {
         this.addFormRow = row;
       } else {
