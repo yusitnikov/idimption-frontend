@@ -18,7 +18,7 @@ export default {
       return this.computedIdimptionSelection[tableName] || {};
     },
     getIdimptionSelectionForRow(row) {
-      return this.getIdimptionSelectionForTable(row.tableName);
+      return row ? this.getIdimptionSelectionForTable(row.tableName) : {};
     }
   }
 };
