@@ -72,7 +72,11 @@
       />
     </div>
 
-    <IdeaPanel class="next-section-start" :filter="shouldDisplayIdea" />
+    <IdeaPanel
+      class="next-section-start"
+      :filter="shouldDisplayIdea"
+      :idimptionSelection="selection"
+    />
   </div>
 </template>
 
@@ -208,6 +212,22 @@ export default {
     },
     filterUsersSet() {
       return new Set(this.filterUsers);
+    },
+    selection() {
+      return {
+        idea: {
+          displayText: this.filterText
+        },
+        tag: {
+          id: this.filterTagsSet
+        },
+        category: {
+          id: this.filterCategoriesSet
+        },
+        user: {
+          id: this.filterUsersSet
+        }
+      };
     }
   },
   methods: {

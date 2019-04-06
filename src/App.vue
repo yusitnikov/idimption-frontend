@@ -449,4 +449,8 @@ button {
 .irrelevant {
   opacity: 0.5;
 }
+
+.highlighted {
+  background: yellow;
+}
 </style>

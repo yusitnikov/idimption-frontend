@@ -3,6 +3,7 @@
     class="select"
     v-model="text"
     @input="bringSelectedItemToFocus"
+    :idimptionSelection="{ global: text }"
     :placeholder="(chosenOption && chosenOption.text) || emptyPlaceholder"
     :ignoreEvents="ignoreEvents"
     @focus="onFocus"
@@ -22,7 +23,8 @@
       ref="items"
       :key="row.id.toString()"
     >
-      {{ row.text }}
+      <HighlightSelection :text="row.text" v-if="row.highlight" />
+      <template v-else>{{ row.text }}</template>
     </div>
   </BasicSearchBox>
 </template>
@@ -31,6 +33,7 @@
 import BasicSearchBox from "./BasicSearchBox";
 import Guid from "guid";
 import { getKeyCodeByEvent, matchesFreeTextSearch } from "../misc";
+import HighlightSelection from "./HighlightSelection";
 
 const commonProps = {
   value: [String, Guid],
@@ -59,7 +62,7 @@ const commonProps = {
 
 export default {
   name: "Select",
-  components: { BasicSearchBox },
+  components: { HighlightSelection, BasicSearchBox },
   commonProps,
   props: {
     options: {
@@ -115,6 +118,7 @@ export default {
         if (!option.hidden && matchesFreeTextSearch(optionText, trimmedText)) {
           rows.push({
             ...option,
+            highlight: true,
             onClick: () => this.onSelect(option.id)
           });
         }
@@ -176,6 +180,7 @@ export default {
       await this.$nextTick;
       if (this.rows.length) {
         const item = this.$refs.items[this.selectedRowIndex];
+        // noinspection JSUnresolvedVariable
         if (item.scrollIntoViewIfNeeded) {
           item.scrollIntoViewIfNeeded();
         } else {

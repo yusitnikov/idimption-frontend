@@ -15,7 +15,10 @@
       </div>
     </div>
 
-    <div class="line summary">[{{ row.id }}] {{ row.displayText }}</div>
+    <div class="line summary">
+      [{{ row.id }}]
+      <HighlightRowPropSelection :row="row" fieldName="displayText" />
+    </div>
 
     <EntityFromAt :row="row" :showUser="showUser" />
 
@@ -42,10 +45,17 @@ import ButtonLink from "./ButtonLink";
 import PopupForm from "./PopupForm";
 import Icon from "./Icon";
 import EntityFromAt from "./EntityFromAt";
+import HighlightRowPropSelection from "./HighlightRowPropSelection";
 
 export default {
   name: "EntityBlock",
-  components: { ButtonLink, PopupForm, Icon, EntityFromAt },
+  components: {
+    ButtonLink,
+    PopupForm,
+    Icon,
+    EntityFromAt,
+    HighlightRowPropSelection
+  },
   props: {
     row: {
       type: EntityRow,

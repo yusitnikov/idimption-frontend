@@ -20,7 +20,11 @@
       />
     </div>
 
-    <CategoryList class="next-section-start" :filter="shouldDisplayCategory" />
+    <CategoryList
+      class="next-section-start"
+      :filter="shouldDisplayCategory"
+      :idimptionSelection="selection"
+    />
   </div>
 </template>
 
@@ -55,6 +59,13 @@ export default {
           text: value || undefined
         };
       }
+    },
+    selection() {
+      return {
+        category: {
+          displayText: this.filterText
+        }
+      };
     }
   },
   methods: {
