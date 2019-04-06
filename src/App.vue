@@ -386,6 +386,16 @@ button {
   .block-margin;
 }
 
+.inline {
+  display: inline !important;
+  .inline-align-modifiers;
+}
+
+.inline-block {
+  display: inline-block !important;
+  .inline-align-modifiers;
+}
+
 .line {
   margin-bottom: @paragraph-margin;
 }
@@ -396,6 +406,10 @@ button {
 
 .first-section {
   margin-bottom: @section-margin;
+}
+
+.select-popup {
+  margin-top: 2px;
 }
 
 .input {
@@ -420,13 +434,8 @@ button {
   }
 }
 
-.button-left {
-  margin-right: @button-distance;
-}
-
-.button-right {
-  float: right;
-  margin-left: @button-distance;
+.button {
+  .inline-align-modifiers;
 }
 
 .single-line {
@@ -435,5 +444,9 @@ button {
 
 .multi-line {
   white-space: pre-wrap;
+}
+
+.irrelevant {
+  opacity: 0.5;
 }
 </style>

@@ -11,6 +11,11 @@ export function getTableFieldInfo(tableName, fieldName) {
   return getTableSchema(tableName).fieldsInfo[fieldName];
 }
 
+export function getForeignFieldName(tableName, foreignTableName) {
+  // noinspection JSUnresolvedVariable
+  return getTableSchema(tableName).foreignKeys[foreignTableName];
+}
+
 export function getRowById(tableDataOrName, id) {
   return getTableData(tableDataOrName).filter(row => row.id === id)[0] || null;
 }

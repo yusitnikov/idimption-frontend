@@ -39,20 +39,18 @@
         </FormRow>
 
         <FormRow class="next-section-start" label="Tags">
-          <MultipleEntitySelect
+          <MultipleForeignEntitySelect
             tableName="ideatag"
-            parentFieldName="ideaId"
-            :parentId="row.id"
+            :row="row"
             :selectFieldNames="['tagId']"
             :transitionsList="transitionsList"
             :allowAdd="verifiedEmail"
           />
         </FormRow>
         <FormRow label="Categories">
-          <MultipleEntitySelect
+          <MultipleForeignEntitySelect
             tableName="ideacategory"
-            parentFieldName="ideaId"
-            :parentId="row.id"
+            :row="row"
             :selectFieldNames="['categoryId']"
             :transitionsList="transitionsList"
             :allowAdd="verifiedEmail"
@@ -60,10 +58,9 @@
           />
         </FormRow>
         <FormRow label="Relations">
-          <MultipleEntitySelect
+          <MultipleForeignEntitySelect
             tableName="idearelation"
-            parentFieldName="ideaId"
-            :parentId="row.id"
+            :row="row"
             :selectFieldNames="['relationId', 'dstIdeaId']"
             :transitionsList="transitionsList"
           />
@@ -85,7 +82,7 @@ import IdeaPropsLine from "./IdeaPropsLine";
 import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
-import MultipleEntitySelect from "./MultipleEntitySelect";
+import MultipleForeignEntitySelect from "./MultipleForeignEntitySelect";
 import IdeaComments from "./IdeaComments";
 import EditCategory from "./EditCategory";
 
@@ -97,7 +94,7 @@ export default {
     IdeaPropsLine,
     FormRow,
     EditCommonTextFields,
-    MultipleEntitySelect,
+    MultipleForeignEntitySelect,
     EntitySelect,
     IdeaComments
   },

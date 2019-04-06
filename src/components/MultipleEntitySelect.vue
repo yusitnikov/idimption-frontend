@@ -1,43 +1,43 @@
 <template>
   <div class="multiple-entity-select">
     <MultipleEntityDisplay
-      :tableName="tableName"
-      :parentFieldName="parentFieldName"
-      :parentId="parentId"
-      :fieldNames="selectFieldNames"
-      :transitionsList="transitionsList"
+      :value="value"
+      :tableNames="selectTableNames"
+      :iconClass="iconClass"
+      :iconTitle="iconTitle"
     >
-      <template #after="{ linkRow }">
-        <!--suppress JSUnresolvedVariable -->
-        <Button class="small" @click="() => removeRow(linkRow)">
+      <template #after="{ ids }">
+        <Button class="small" align="none" @click="() => removeRow(ids)">
           <Icon type="times" />
         </Button>
       </template>
     </MultipleEntityDisplay>
 
     <span class="add-tag">
-      <template v-if="adding">
+      <template v-if="adding || alwaysOpened">
         <span
-          v-for="selectFieldName in selectFieldNames"
-          :key="selectFieldName"
+          v-for="selectTableName in selectTableNames"
+          :key="selectTableName"
         >
           <span
-            v-if="selectFieldName !== addField && addValues[selectFieldName]"
+            v-if="
+              selectTableName !== addTableName && addValues[selectTableName]
+            "
           >
-            <ForeignEntityById
-              :tableName="tableName"
-              :fieldName="selectFieldName"
-              :id="addValues[selectFieldName]"
+            <EntityById
+              :tableName="selectTableName"
+              :id="addValues[selectTableName]"
             />
           </span>
         </span>
         <EntitySelect
-          v-if="addField"
+          v-if="addTableName"
           class="add-tag-select"
-          v-model="addValues[addField]"
+          v-model="addValues[addTableName]"
           :transitionsList="transitionsList"
-          :tableName="getFieldTableName(addField)"
+          :tableName="addTableName"
           :filter="canSelectRow"
+          :emptyPlaceholder="normalizedPlaceholder[addTableName]"
           :allowAdd="allowAdd"
           :addComponent="addComponent"
           @blur="onAddTagSelectBlur"
@@ -53,96 +53,101 @@
 
 <script>
 import { timeout } from "../misc";
-import { getForeignTableName } from "../EntityHelper";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { EntityRow } from "../EntityRow";
-import Guid from "guid";
 import MultipleEntityDisplay from "./MultipleEntityDisplay";
 import Button from "./Button";
 import Icon from "./Icon";
 import EntitySelect from "./EntitySelect";
-import ForeignEntityById from "./ForeignEntityById";
+import EntityById from "./EntityById";
+import Tag from "./Tag";
 
 export default {
   name: "MultipleEntitySelect",
   components: {
-    ForeignEntityById,
+    EntityById,
     MultipleEntityDisplay,
     EntitySelect,
     Button,
     Icon
   },
   props: {
-    tableName: {
-      type: String,
-      required: true
-    },
-    parentFieldName: {
-      type: String,
-      required: true
-    },
-    parentId: {
-      type: [String, Guid],
-      required: true
-    },
-    selectFieldNames: {
+    ...Tag.props,
+    value: {
       type: Array,
       required: true
     },
+    plainValue: Boolean,
+    selectTableNames: {
+      type: Array,
+      required: true
+    },
+    alwaysOpened: Boolean,
+    placeholder: [String, Array],
     allowAdd: Boolean,
     addComponent: Object,
-    transitionsList: {
-      type: EntityTransitionsList,
-      required: true
-    }
+    transitionsList: EntityTransitionsList
   },
   data() {
     return {
       adding: false,
-      addField: null,
+      addTableName: null,
       addValues: {}
     };
   },
+  created() {
+    this.addTableName = this.selectTableNames[0];
+  },
   computed: {
-    updatedData() {
-      return this.transitionsList.applyToState();
+    normalizedValue() {
+      return this.value.map(ids => {
+        if (this.plainValue) {
+          return {
+            [this.selectTableNames[0]]: ids
+          };
+        } else {
+          return ids;
+        }
+      });
     },
-    selectedRows() {
-      return this.updatedData[this.tableName].filter(
-        row => row[this.parentFieldName] === this.parentId
-      );
+    normalizedPlaceholder() {
+      if (typeof this.placeholder !== "object") {
+        let placeholder = {};
+        for (const selectTableName of this.selectTableNames) {
+          placeholder[selectTableName] = this.placeholder;
+        }
+        return placeholder;
+      } else {
+        return this.placeholder;
+      }
     },
     selectedIdsMap() {
       let map = {};
-      for (const row of this.selectedRows) {
+      for (const ids of this.normalizedValue) {
         let subMap = map;
-        for (const selectFieldName of this.selectFieldNames) {
-          const value = row[selectFieldName];
-          subMap = subMap[value] = subMap[value] || {};
+        for (const selectTableName of this.selectTableNames) {
+          const id = ids[selectTableName].toString();
+          subMap = subMap[id] = subMap[id] || {};
         }
       }
       return map;
     }
   },
   methods: {
-    getFieldTableName(fieldName) {
-      return getForeignTableName(this.tableName, fieldName);
-    },
     canSelectRow(row) {
       if (
-        this.addField !==
-        this.selectFieldNames[this.selectFieldNames.length - 1]
+        this.addTableName !==
+        this.selectTableNames[this.selectTableNames.length - 1]
       ) {
         return true;
       }
 
       let map = this.selectedIdsMap;
-      for (const selectFieldName of this.selectFieldNames) {
-        const value =
-          selectFieldName === this.addField
+      for (const selectTableName of this.selectTableNames) {
+        const id =
+          selectTableName === this.addTableName
             ? row.id
-            : this.addValues[selectFieldName];
-        map = map[value];
+            : this.addValues[selectTableName];
+        map = map[id.toString()];
         if (!map) {
           return true;
         }
@@ -156,10 +161,10 @@ export default {
       this.focusNextAddTagSelect();
     },
     focusNextAddTagSelect() {
-      for (let index = 0; index < this.selectFieldNames.length; index++) {
-        const selectFieldName = this.selectFieldNames[index];
-        if (!this.addValues[selectFieldName]) {
-          this.addField = selectFieldName;
+      for (let index = 0; index < this.selectTableNames.length; index++) {
+        const selectTableName = this.selectTableNames[index];
+        if (!this.addValues[selectTableName]) {
+          this.addTableName = selectTableName;
           // use timeout instead of $nextTick to do focus() after bubbling onClick
           timeout().then(() => {
             this.$refs.addSelect.focus();
@@ -168,30 +173,33 @@ export default {
         }
       }
 
-      this.addField = null;
+      this.addTableName = null;
       return false;
     },
     onAddTagSelectBlur() {
-      if (!this.addValues[this.addField]) {
+      if (!this.addValues[this.addTableName]) {
         this.adding = false;
       } else if (!this.focusNextAddTagSelect()) {
         this.addRow();
       }
     },
+    denormalizeIds(ids) {
+      return this.plainValue ? ids[this.selectTableNames[0]] : ids;
+    },
     addRow() {
-      let row = new EntityRow(
-        this.tableName,
-        {
-          [this.parentFieldName]: this.parentId,
-          ...this.addValues
-        },
-        true
-      );
-      this.transitionsList.addRow(row);
+      const ids = this.denormalizeIds(this.addValues);
+      this.$emit("add", ids);
+      const newValue = [...this.value, ids];
+      this.$emit("input", newValue);
+      this.$emit("change", newValue);
       this.startAdd();
     },
-    removeRow(row) {
-      this.transitionsList.deleteRow(row);
+    removeRow(ids) {
+      ids = this.denormalizeIds(ids);
+      this.$emit("remove", ids);
+      const newValue = this.value.filter(valueIds => valueIds !== ids);
+      this.$emit("input", newValue);
+      this.$emit("change", newValue);
     }
   }
 };

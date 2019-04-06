@@ -1,5 +1,47 @@
-import Guid from "guid";
-import InputValidation from "./components/InputValidation";
+export function toArray(value) {
+  if (value instanceof Array) {
+    return value;
+  } else if (value === undefined) {
+    return [];
+  } else {
+    return [value];
+  }
+}
+
+export function formatDate(dt) {
+  return dt ? dt.toISOString().substr(0, 10) : null;
+}
+
+export function matchesFreeTextSearch(value, searchPhrase) {
+  if (!searchPhrase) {
+    return true;
+  }
+  if (!value) {
+    return false;
+  }
+
+  // ignore case and extra space characters
+  value = value.trim().toLowerCase();
+  searchPhrase = searchPhrase.trim().toLowerCase();
+
+  // check again for empty values after trimming
+  if (!searchPhrase) {
+    return true;
+  }
+  if (!value) {
+    return false;
+  }
+
+  let startIndex = 0;
+  for (const searchWord of searchPhrase.split(/\s+/)) {
+    startIndex = value.indexOf(searchWord, startIndex);
+    if (startIndex < 0) {
+      return false;
+    }
+    startIndex += searchWord.length + 1;
+  }
+  return true;
+}
 
 export function getApiUrl(url = "") {
   return process.env.VUE_APP_API_URL + url;
@@ -23,127 +65,6 @@ export function timeout(millisecs = 1) {
   return new Promise(resolve => {
     setTimeout(resolve, millisecs);
   });
-}
-
-export function wrapInput(component) {
-  const {
-    inheritAttrs = false,
-    components = {},
-    props = {},
-    data = () => ({}),
-    computed = {},
-    methods = {},
-    ...otherComponentFields
-  } = component;
-
-  const {
-    focus = () => {},
-    blur = () => {},
-    reset = () => {},
-    validate = () => true,
-    onFocus = () => {},
-    onBlur = () => {},
-    ...otherMethods
-  } = methods;
-
-  return {
-    inheritAttrs,
-    components: {
-      ...components,
-      InputValidation
-    },
-    props: {
-      ...props,
-      value: [String, Number, Guid],
-      noValidation: Boolean,
-      validationMessage: [String, Boolean],
-      placeholder: String,
-      allowEmpty: Boolean,
-      minLength: Number,
-      maxLength: Number,
-      isEmail: Boolean
-    },
-    data() {
-      return {
-        ...data.apply(this, arguments),
-        showValidationMessage: false
-      };
-    },
-    computed: {
-      ...computed,
-      implementsInputInterface() {
-        return true;
-      },
-      computedValidationMessage() {
-        if (this.noValidation) {
-          return "";
-        }
-        const value = (this.value || "").toString().trim();
-        if (value === "") {
-          return this.allowEmpty ? "" : "Please enter the field value";
-        }
-        if (this.minLength && value.length < this.minLength) {
-          return "Please input at least " + this.minLength + " characters";
-        }
-        if (this.maxLength && value.length > this.maxLength) {
-          return "Maximum " + this.minLength + " characters allowed";
-        }
-        if (this.isEmail) {
-          // According to the RFC
-          const emailRegex = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
-          if (!emailRegex.test(value)) {
-            return "Please input a valid email address";
-          }
-        }
-        return this.validationMessage;
-      },
-      props() {
-        return {
-          ...this.$attrs,
-          value: this.value,
-          placeholder: this.placeholder,
-          allowEmpty: this.allowEmpty
-        };
-      }
-    },
-    methods: {
-      ...otherMethods,
-      focus() {
-        this.$refs.input.focus();
-        return focus.apply(this, arguments);
-      },
-      blur() {
-        this.$refs.input.blur();
-        return blur.apply(this, arguments);
-      },
-      reset() {
-        this.showValidationMessage = false;
-        return reset.apply(this, arguments);
-      },
-      validate() {
-        if (
-          !validate.apply(this, arguments) ||
-          this.computedValidationMessage
-        ) {
-          this.showValidationMessage = true;
-          this.focus();
-          return false;
-        } else {
-          return true;
-        }
-      },
-      onFocus() {
-        this.$emit("focus");
-        return onFocus.apply(this, arguments);
-      },
-      onBlur() {
-        this.showValidationMessage = true;
-        this.$emit("blur");
-        return onBlur.apply(this, arguments);
-      }
-    },
-    ...otherComponentFields
-  };
 }
 
 function _getAllInputs(component, resultsArray) {

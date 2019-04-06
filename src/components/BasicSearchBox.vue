@@ -9,7 +9,14 @@
       @focus="onFocus"
       ref="input"
     />
-    <div :class="{ popup: true, input: true, hidden: !opened }">
+    <div
+      :class="{
+        'select-popup': true,
+        popup: true,
+        input: true,
+        hidden: !opened
+      }"
+    >
       <slot></slot>
     </div>
   </div>
@@ -117,7 +124,6 @@ export default {
     z-index: @z-index-dropdown-popup;
     background: white;
     border: 1px solid @block-border-color;
-    margin-top: 2px;
     max-height: 300px;
     overflow-y: auto;
 

@@ -4,28 +4,25 @@
       <EntityById tableName="ideastatus" :id="row.statusId" />
     </Tag>
 
-    <MultipleEntityDisplay
+    <MultipleForeignEntityDisplay
       tableName="ideatag"
-      parentFieldName="ideaId"
-      :parentId="row.id"
+      :row="row"
       :fieldNames="['tagId']"
       iconClass="tag"
       iconTitle="Tag"
     />
 
-    <MultipleEntityDisplay
+    <MultipleForeignEntityDisplay
       tableName="ideacategory"
-      parentFieldName="ideaId"
-      :parentId="row.id"
+      :row="row"
       :fieldNames="['categoryId']"
       iconClass="sitemap"
       iconTitle="Category"
     />
 
-    <MultipleEntityDisplay
+    <MultipleForeignEntityDisplay
       tableName="idearelation"
-      parentFieldName="ideaId"
-      :parentId="row.id"
+      :row="row"
       :fieldNames="['relationId', 'dstIdeaId']"
       iconClass="link"
       iconTitle="Relation"
@@ -36,11 +33,11 @@
 <script>
 import Tag from "./Tag";
 import EntityById from "./EntityById";
-import MultipleEntityDisplay from "./MultipleEntityDisplay";
+import MultipleForeignEntityDisplay from "./MultipleForeignEntityDisplay";
 
 export default {
   name: "IdeaPropsLine",
-  components: { Tag, EntityById, MultipleEntityDisplay },
+  components: { Tag, EntityById, MultipleForeignEntityDisplay },
   props: {
     row: {
       type: Object,

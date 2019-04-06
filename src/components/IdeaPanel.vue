@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <th v-for="status in statuses" :key="status.id">
-            {{ status.summary }}
+            {{ status.summary }} ({{ tableRowsByStatus[status.id].length }})
           </th>
         </tr>
       </thead>

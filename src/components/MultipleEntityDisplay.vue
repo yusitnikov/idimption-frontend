@@ -1,60 +1,45 @@
 <template>
   <span class="multiple-entity-display">
     <Tag
-      v-for="linkRow in linkRows"
-      :key="linkRow.id.toString()"
-      :class="'tag--' + tableName"
+      v-for="ids in normalizedValue"
+      :key="JSON.stringify(ids)"
       :iconClass="iconClass"
       :iconTitle="iconTitle"
     >
-      <slot name="before" :linkRow="linkRow" />
-      <span v-for="fieldName in fieldNames" :key="fieldName">
-        <ForeignEntityById
+      <slot name="before" :ids="ids" />
+      <span v-for="tableName in tableNames" :key="tableName">
+        <EntityById
           :tableName="tableName"
-          :fieldName="fieldName"
-          :id="linkRow[fieldName]"
+          :id="ids[tableName]"
           v-slot="{ row, displayText }"
         >
-          <slot :fieldName="fieldName" :linkRow="linkRow" :row="row">
+          <slot :ids="ids" v-bind="row" :row="row">
             {{ displayText }}
           </slot>
-        </ForeignEntityById>
+        </EntityById>
       </span>
-      <slot name="after" :linkRow="linkRow" />
+      <slot name="after" :ids="ids" />
     </Tag>
   </span>
 </template>
 
 <script>
-import ForeignEntityById from "./ForeignEntityById";
+import EntityById from "./EntityById";
 import Tag from "./Tag";
-import EntityTransitionsList from "../EntityTransitionsList";
 import Guid from "guid";
 
 export default {
   name: "MultipleEntityDisplay",
-  components: { ForeignEntityById, Tag },
+  components: { EntityById, Tag },
   props: {
     ...Tag.props,
-    tableName: {
-      type: String,
-      required: true
-    },
-    parentFieldName: {
-      type: String,
-      required: true
-    },
-    parentId: {
-      type: [String, Guid],
-      required: true
-    },
-    fieldNames: {
+    value: {
       type: Array,
       required: true
     },
-    transitionsList: {
-      type: EntityTransitionsList,
-      default: () => new EntityTransitionsList()
+    tableNames: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -65,13 +50,16 @@ export default {
     };
   },
   computed: {
-    updatedData() {
-      return this.transitionsList.applyToState();
-    },
-    linkRows() {
-      return this.updatedData[this.tableName].filter(
-        row => row[this.parentFieldName] === this.parentId
-      );
+    normalizedValue() {
+      return this.value.map(ids => {
+        if (typeof ids === "string" || Guid.isGuid(ids)) {
+          return {
+            [this.tableNames[0]]: ids
+          };
+        } else {
+          return ids;
+        }
+      });
     }
   }
 };

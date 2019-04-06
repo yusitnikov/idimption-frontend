@@ -106,7 +106,6 @@ const store = new Vuex.Store({
         );
       }
       state.data = data;
-      window.data = data;
 
       state.guids = {
         ...state.guids,

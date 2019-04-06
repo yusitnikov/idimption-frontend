@@ -87,7 +87,9 @@
 
 .basic-block(@padding, @width: 100%) {
   box-sizing: border-box;
-  width: @width;
+  & when not (@width = ignore) {
+    width: @width;
+  }
   padding: @padding;
   border: 1px solid @block-border-color;
   border-radius: 3px;
@@ -116,5 +118,16 @@
     &:focus {
       @{property}: darken(@color, 10%);
     }
+  }
+}
+
+.inline-align-modifiers() {
+  &-left {
+    margin-right: @button-distance;
+  }
+
+  &-right {
+    float: right;
+    margin-left: @button-distance;
   }
 }

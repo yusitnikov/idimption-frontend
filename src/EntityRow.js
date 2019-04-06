@@ -1,4 +1,6 @@
 import {
+  getForeignFieldName,
+  getForeignTableName,
   getRowById,
   getTableFieldInfo,
   getTableFieldsArray
@@ -39,8 +41,30 @@ export class EntityRow {
     return getTableFieldInfo(this.tableName, fieldName);
   }
 
+  getForeignFieldName(foreignTableName) {
+    return getForeignFieldName(this.tableName, foreignTableName);
+  }
+
+  getForeignTableName(fieldName) {
+    return getForeignTableName(this.tableName, fieldName);
+  }
+
   getTableData() {
     return getTableData(this.tableName);
+  }
+
+  getForeignRows(foreignTableName, transitionsList = null) {
+    const foreignFieldName = this.getForeignFieldName(foreignTableName);
+    const foreignTableData = transitionsList
+      ? transitionsList.applyToState()[foreignTableName]
+      : getTableData(foreignTableName);
+    return foreignTableData.filter(row => row[foreignFieldName] === this.id);
+  }
+
+  getForeignIds(foreignTableName, foreignFieldName, transitionsList = null) {
+    return this.getForeignRows(foreignTableName, transitionsList).map(
+      row => row[foreignFieldName]
+    );
   }
 
   walkFields(callback) {
@@ -70,23 +94,26 @@ export class EntityRow {
     return data;
   }
 
+  getParent(tableData = null) {
+    tableData = tableData || this.getTableData();
+    const { parentId } = this;
+    return parentId ? getRowById(tableData, parentId) : null;
+  }
+
   getRowFullId(tableData = null) {
     tableData = tableData || this.getTableData();
     let fullId = [];
-    let row = this;
-    while (row) {
+    for (let row = this; row; row = row.getParent(tableData)) {
       fullId.unshift(row.id);
-      const { parentId } = row;
-      if (!parentId) {
-        break;
-      }
-      row = getRowById(tableData, parentId);
     }
     return fullId;
   }
 
   // Checks if this is a child of "row" or equals to it
   isChild(row, tableData = null) {
+    if (row instanceof Array) {
+      return row.some(item => this.isChild(item));
+    }
     if (this.id === row.id) {
       return true;
     }
@@ -98,16 +125,22 @@ export class EntityRow {
   getFullName(tableData = null) {
     tableData = tableData || this.getTableData();
     let fullName = [];
-    let row = this;
-    while (row) {
+    for (let row = this; row; row = row.getParent(tableData)) {
       fullName.unshift(row.displayText);
-      const { parentId } = row;
-      if (!parentId) {
-        break;
-      }
-      row = getRowById(tableData, parentId);
     }
     return fullName;
+  }
+
+  // not enumerable
+  get createdAtDt() {
+    // noinspection JSUnresolvedVariable
+    return this.createdAt ? new Date(this.createdAt * 1000) : null;
+  }
+
+  // not enumerable
+  get updatedAtDt() {
+    // noinspection JSUnresolvedVariable
+    return this.updatedAt ? new Date(this.updatedAt * 1000) : null;
   }
 
   clone() {

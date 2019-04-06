@@ -25,12 +25,13 @@
 
 <script>
 import { mapState } from "vuex";
-import { wrapInput } from "../misc";
+import InputMixin from "../mixins/InputMixin";
 // noinspection ES6CheckImport
 import { textAreaMinHeight } from "../styles/essentials.less";
 
-export default wrapInput({
+export default {
   name: "TextAreaInput",
+  mixins: [InputMixin],
   data() {
     return {
       height: textAreaMinHeight
@@ -56,7 +57,7 @@ export default wrapInput({
       this.height = Math.max(textAreaMinHeight, this.$refs.fake.offsetHeight);
     }
   }
-});
+};
 </script>
 
 <style scoped lang="less">

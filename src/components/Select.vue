@@ -30,7 +30,7 @@
 <script>
 import BasicSearchBox from "./BasicSearchBox";
 import Guid from "guid";
-import { getKeyCodeByEvent } from "../misc";
+import { getKeyCodeByEvent, matchesFreeTextSearch } from "../misc";
 
 const commonProps = {
   value: [String, Guid],
@@ -109,12 +109,10 @@ export default {
         });
       }
       for (const option of options) {
-        const optionTextLoCase = option.text.toLowerCase();
+        const optionText = option.text;
+        const optionTextLoCase = optionText.toLowerCase();
         textUsed = textUsed || optionTextLoCase === trimmedTextLoCase;
-        if (
-          !option.hidden &&
-          (!trimmedText || optionTextLoCase.indexOf(trimmedTextLoCase) >= 0)
-        ) {
+        if (!option.hidden && matchesFreeTextSearch(optionText, trimmedText)) {
           rows.push({
             ...option,
             onClick: () => this.onSelect(option.id)

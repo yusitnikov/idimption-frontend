@@ -51,7 +51,7 @@ export default {
     ...Select.commonProps,
     transitionsList: {
       type: EntityTransitionsList,
-      required: true
+      default: () => new EntityTransitionsList()
     },
     addField: {
       type: String,

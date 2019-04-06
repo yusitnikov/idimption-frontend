@@ -16,15 +16,16 @@
 </template>
 
 <script>
-import { wrapInput } from "../misc";
+import InputMixin from "../mixins/InputMixin";
 
-export default wrapInput({
+export default {
   name: "TextInput",
+  mixins: [InputMixin],
   props: {
     type: {
       type: String,
       default: "text"
     }
   }
-});
+};
 </script>
