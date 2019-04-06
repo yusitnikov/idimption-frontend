@@ -165,6 +165,7 @@ export default {
         const selectTableName = this.selectTableNames[index];
         if (!this.addValues[selectTableName]) {
           this.addTableName = selectTableName;
+          this.adding = true;
           // use timeout instead of $nextTick to do focus() after bubbling onClick
           timeout().then(() => {
             this.$refs.addSelect.focus();

@@ -1,76 +1,32 @@
 <template>
-  <div class="multiple-foreign-entity-select">
-    <MultipleForeignEntityDisplay
-      :tableName="tableName"
-      :row="row"
-      :fieldNames="selectFieldNames"
-      :transitionsList="transitionsList"
-    >
-      <template #after="{ linkRow }">
-        <!--suppress JSUnresolvedVariable -->
-        <Button class="small" @click="() => removeRow(linkRow)">
-          <Icon type="times" />
-        </Button>
-      </template>
-    </MultipleForeignEntityDisplay>
-
-    <span class="add-tag">
-      <template v-if="adding">
-        <span
-          v-for="selectFieldName in selectFieldNames"
-          :key="selectFieldName"
-        >
-          <span
-            v-if="selectFieldName !== addField && addValues[selectFieldName]"
-          >
-            <ForeignEntityById
-              :tableName="tableName"
-              :fieldName="selectFieldName"
-              :id="addValues[selectFieldName]"
-            />
-          </span>
-        </span>
-        <EntitySelect
-          v-if="addField"
-          class="add-tag-select"
-          v-model="addValues[addField]"
-          :transitionsList="transitionsList"
-          :tableName="getFieldTableName(addField)"
-          :filter="canSelectRow"
-          :allowAdd="allowAdd"
-          :addComponent="addComponent"
-          @blur="onAddTagSelectBlur"
-          ref="addSelect"
-        />
-      </template>
-      <Button v-else class="small" @click="startAdd">
-        <Icon type="plus" />
-      </Button>
-    </span>
-  </div>
+  <MultipleEntitySelect
+    class="multiple-foreign-entity-select"
+    :value="foreignValue"
+    :selectTableNames="foreignTableNames"
+    :alwaysOpened="alwaysOpened"
+    :placeholder="placeholder"
+    :allowAdd="allowAdd"
+    :addComponent="addComponent"
+    :transitionsList="transitionsList"
+    :iconClass="iconClass"
+    :iconTitle="iconTitle"
+    @add="addRow"
+    @remove="removeRow"
+  />
 </template>
 
 <script>
-import { timeout } from "../misc";
 import { getForeignTableName } from "../EntityHelper";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { EntityRow } from "../EntityRow";
-import MultipleForeignEntityDisplay from "./MultipleForeignEntityDisplay";
-import Button from "./Button";
-import Icon from "./Icon";
-import EntitySelect from "./EntitySelect";
-import ForeignEntityById from "./ForeignEntityById";
+import MultipleEntitySelect from "./MultipleEntitySelect";
+import Tag from "./Tag";
 
 export default {
   name: "MultipleForeignEntitySelect",
-  components: {
-    ForeignEntityById,
-    MultipleForeignEntityDisplay,
-    EntitySelect,
-    Button,
-    Icon
-  },
+  components: { MultipleEntitySelect },
   props: {
+    ...Tag.props,
     tableName: {
       type: String,
       required: true
@@ -83,19 +39,14 @@ export default {
       type: Array,
       required: true
     },
+    alwaysOpened: Boolean,
+    placeholder: [String, Array],
     allowAdd: Boolean,
     addComponent: Object,
     transitionsList: {
       type: EntityTransitionsList,
       required: true
     }
-  },
-  data() {
-    return {
-      adding: false,
-      addField: null,
-      addValues: {}
-    };
   },
   computed: {
     updatedData() {
@@ -109,102 +60,41 @@ export default {
         row => row[this.parentFieldName] === this.row.id
       );
     },
-    selectedIdsMap() {
+    foreignTableNamesMap() {
       let map = {};
-      for (const row of this.selectedRows) {
-        let subMap = map;
-        for (const selectFieldName of this.selectFieldNames) {
-          const value = row[selectFieldName];
-          subMap = subMap[value] = subMap[value] || {};
-        }
+      for (const fieldName of this.selectFieldNames) {
+        map[fieldName] = getForeignTableName(this.tableName, fieldName);
       }
       return map;
+    },
+    foreignTableNames() {
+      return this.selectFieldNames.map(
+        fieldName => this.foreignTableNamesMap[fieldName]
+      );
+    },
+    foreignValue() {
+      return this.selectedRows.map(selectedRow => {
+        let result = { original: selectedRow };
+        for (const fieldName of this.selectFieldNames) {
+          result[this.foreignTableNamesMap[fieldName]] = selectedRow[fieldName];
+        }
+        return result;
+      });
     }
   },
   methods: {
-    getFieldTableName(fieldName) {
-      return getForeignTableName(this.tableName, fieldName);
-    },
-    canSelectRow(row) {
-      if (
-        this.addField !==
-        this.selectFieldNames[this.selectFieldNames.length - 1]
-      ) {
-        return true;
+    addRow(ids) {
+      let row = {
+        [this.parentFieldName]: this.row.id
+      };
+      for (const fieldName of this.selectFieldNames) {
+        row[fieldName] = ids[this.foreignTableNamesMap[fieldName]];
       }
-
-      let map = this.selectedIdsMap;
-      for (const selectFieldName of this.selectFieldNames) {
-        const value =
-          selectFieldName === this.addField
-            ? row.id
-            : this.addValues[selectFieldName];
-        map = map[value];
-        if (!map) {
-          return true;
-        }
-      }
-
-      return false;
+      this.transitionsList.addRow(new EntityRow(this.tableName, row, true));
     },
-    startAdd() {
-      this.adding = true;
-      this.addValues = {};
-      this.focusNextAddTagSelect();
-    },
-    focusNextAddTagSelect() {
-      for (let index = 0; index < this.selectFieldNames.length; index++) {
-        const selectFieldName = this.selectFieldNames[index];
-        if (!this.addValues[selectFieldName]) {
-          this.addField = selectFieldName;
-          // use timeout instead of $nextTick to do focus() after bubbling onClick
-          timeout().then(() => {
-            this.$refs.addSelect.focus();
-          });
-          return true;
-        }
-      }
-
-      this.addField = null;
-      return false;
-    },
-    onAddTagSelectBlur() {
-      if (!this.addValues[this.addField]) {
-        this.adding = false;
-      } else if (!this.focusNextAddTagSelect()) {
-        this.addRow();
-      }
-    },
-    addRow() {
-      let row = new EntityRow(
-        this.tableName,
-        {
-          [this.parentFieldName]: this.row.id,
-          ...this.addValues
-        },
-        true
-      );
-      this.transitionsList.addRow(row);
-      this.startAdd();
-    },
-    removeRow(row) {
-      this.transitionsList.deleteRow(row);
+    removeRow(ids) {
+      this.transitionsList.deleteRow(ids.original);
     }
   }
 };
 </script>
-
-<style lang="less">
-@import "../styles/essentials";
-
-.multiple-entity-select {
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: @input-vertical-padding;
-}
-
-.add-tag-select {
-  display: inline-block;
-  width: 400px;
-}
-</style>

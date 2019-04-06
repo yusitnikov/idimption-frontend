@@ -1,24 +1,23 @@
 <template>
-  <span class="multiple-foreign-entity-display">
-    <MultipleEntityDisplay
-      :value="foreignValue"
-      :tableNames="foreignTableNames"
-      :iconClass="iconClass"
-      :iconTitle="iconTitle"
-    >
-      <template #before="{ ids }">
-        <slot name="before" :linkRow="ids.original" />
-      </template>
-      <template #default="{ ids, row, displayText }">
-        <slot :linkRow="ids.original" v-bind="row" :row="row">
-          {{ displayText }}
-        </slot>
-      </template>
-      <template #after="{ ids }">
-        <slot name="after" :linkRow="ids.original" />
-      </template>
-    </MultipleEntityDisplay>
-  </span>
+  <MultipleEntityDisplay
+    class="multiple-foreign-entity-display"
+    :value="foreignValue"
+    :tableNames="foreignTableNames"
+    :iconClass="iconClass"
+    :iconTitle="iconTitle"
+  >
+    <template #before="{ ids }">
+      <slot name="before" :linkRow="ids.original" />
+    </template>
+    <template #default="{ ids, row, displayText }">
+      <slot :linkRow="ids.original" v-bind="row" :row="row">
+        {{ displayText }}
+      </slot>
+    </template>
+    <template #after="{ ids }">
+      <slot name="after" :linkRow="ids.original" />
+    </template>
+  </MultipleEntityDisplay>
 </template>
 
 <script>
