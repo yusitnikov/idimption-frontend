@@ -99,13 +99,19 @@ const store = new Vuex.Store({
       state.schema = schema;
     },
     [SET_DATA_MUTATION](state, { data, guids = {} }) {
+      const { TableData } = require("./TableData");
       const { EntityRow } = require("./EntityRow");
+      let indexedData = {};
       for (const tableName of Object.keys(data)) {
-        data[tableName] = data[tableName].map(
-          row => new EntityRow(tableName, row, false)
+        Vue.set(
+          indexedData,
+          tableName,
+          new TableData(
+            data[tableName].map(row => new EntityRow(tableName, row, false))
+          )
         );
       }
-      state.data = data;
+      state.data = indexedData;
 
       state.guids = {
         ...state.guids,

@@ -10,7 +10,7 @@
       @click="event => toggle(event, true)"
     >
       <Icon type="thumbs-up" />
-      {{ allVotesByPositive.positive.length }}
+      {{ getVotesByIsPositive(true).length }}
     </ButtonLink>
     <ButtonLink
       :class="
@@ -22,7 +22,7 @@
       @click="event => toggle(event, false)"
     >
       <Icon type="thumbs-down" />
-      {{ allVotesByPositive.negative.length }}
+      {{ getVotesByIsPositive(false).length }}
     </ButtonLink>
   </div>
 </template>
@@ -53,24 +53,17 @@ export default {
     allVotes() {
       // noinspection JSUnresolvedVariable
       return this.transitionsList
-        .applyToState()
-        .ideavote.filter(vote => vote.ideaId === this.ideaId);
-    },
-    allVotesByPositive() {
-      const result = {
-        positive: [],
-        negative: []
-      };
-      for (const vote of this.allVotes) {
-        result[vote.isPositive ? "positive" : "negative"].push(vote.userId);
-      }
-      return result;
+        .getTableData("ideavote")
+        .getRowsByFieldValue("ideaId", this.ideaId);
     },
     currentVote() {
-      return this.allVotes.filter(vote => vote.userId === this.userId)[0];
+      return this.allVotes.getRowByFieldValue("userId", this.userId);
     }
   },
   methods: {
+    getVotesByIsPositive(isPositive) {
+      return this.allVotes.getRowsByFieldValue("isPositive", isPositive);
+    },
     async toggle(event, isPositive) {
       event.stopPropagation();
 

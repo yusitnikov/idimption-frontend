@@ -72,10 +72,10 @@ export default {
   },
   computed: {
     updatedData() {
-      return this.transitionsList.applyToState();
+      return this.transitionsList.getTableData(this.tableName);
     },
     rows() {
-      return this.updatedData[this.tableName].map(row => ({
+      return this.updatedData.rows.map(row => ({
         id: row.id,
         text: row.displayText,
         hidden: this.filter && !this.filter(row)

@@ -69,14 +69,12 @@ export default {
   },
   computed: {
     rows() {
-      // noinspection JSUnresolvedVariable
-      const rows = this.transitionsList
-        .applyToState()
-        .ideacomment.filter(
-          row => row.ideaId === this.ideaId && row.parentId === this.parentId
-        );
-      rows.reverse();
-      return rows;
+      return this.transitionsList
+        .getTableData("ideacomment")
+        .getRowsByFieldValue("ideaId", this.ideaId)
+        .getRowsByFieldValue("parentId", this.parentId)
+        .rows.slice()
+        .reverse();
     }
   }
 };

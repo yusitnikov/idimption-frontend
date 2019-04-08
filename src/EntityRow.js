@@ -30,6 +30,10 @@ export class EntityRow {
       this.id = Guid.create();
     }
 
+    if (this.priority === null) {
+      this.priority = this.id;
+    }
+
     this.merge(data);
   }
 
@@ -56,15 +60,16 @@ export class EntityRow {
   getForeignRows(foreignTableName, transitionsList = null) {
     const foreignFieldName = this.getForeignFieldName(foreignTableName);
     const foreignTableData = transitionsList
-      ? transitionsList.applyToState()[foreignTableName]
+      ? transitionsList.getTableData(foreignTableName)
       : getTableData(foreignTableName);
-    return foreignTableData.filter(row => row[foreignFieldName] === this.id);
+    return foreignTableData.getRowsByFieldValue(foreignFieldName, this.id);
   }
 
   getForeignIds(foreignTableName, foreignFieldName, transitionsList = null) {
-    return this.getForeignRows(foreignTableName, transitionsList).map(
-      row => row[foreignFieldName]
-    );
+    return this.getForeignRows(
+      foreignTableName,
+      transitionsList
+    ).getFieldValues(foreignFieldName);
   }
 
   walkFields(callback) {
@@ -97,7 +102,7 @@ export class EntityRow {
   getParent(tableData = null) {
     tableData = tableData || this.getTableData();
     const { parentId } = this;
-    return parentId ? getRowById(tableData, parentId) : null;
+    return parentId ? tableData.getRowById(parentId) : null;
   }
 
   getRowFullId(tableData = null) {

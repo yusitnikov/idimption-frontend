@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <th v-for="status in statuses" :key="status.id">
-            {{ status.summary }} ({{ tableRowsByStatus[status.id].length }})
+            {{ status.summary }} ({{ getTableRowsByStatus(status.id).length }})
           </th>
         </tr>
       </thead>
@@ -29,7 +29,7 @@
             <Container
               groupName="shared"
               nonDragAreaSelector=".readonly"
-              :getChildPayload="index => tableRowsByStatus[status.id][index]"
+              :getChildPayload="index => getTableRowsByStatus(status.id)[index]"
               :animationDuration="250"
               dragClass="dragging"
               dropClass="dropping"
@@ -37,7 +37,7 @@
             >
               <Draggable
                 :class="{ readonly: !canEditUsersData(row) }"
-                v-for="row in tableRowsByStatus[status.id]"
+                v-for="row in getTableRowsByStatus(status.id)"
                 :key="row.id"
               >
                 <IdeaBlock
@@ -74,33 +74,25 @@ export default {
   },
   computed: {
     ...mapGetters(["canEditUsersData"]),
-    data() {
-      return this.dragTransitionsList.applyToState();
-    },
     statuses() {
-      return getTableData("ideastatus");
+      return getTableData("ideastatus").rows;
     },
-    tableRows() {
-      // noinspection JSUnresolvedVariable
-      return this.data.idea;
+    tableData() {
+      return this.dragTransitionsList.getTableData("idea");
     },
-    tableRowsByStatus() {
-      let rows = this.tableRows;
-      // Important! This action will clone the array.
-      // We need it to prevent from sorting the initial array.
-      rows = rows.filter(this.filter || (() => true));
-      rows.sort((a, b) => (b.priority || b.id) - (a.priority || a.id));
-      let rowsByStatus = {};
-      for (const { id } of this.statuses) {
-        rowsByStatus[id] = [];
-      }
-      for (const row of rows) {
-        rowsByStatus[row.statusId].push(row);
-      }
-      return rowsByStatus;
+    sortedTableData() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.tableData.sort((a, b) => b.priority - a.priority);
+    },
+    filteredTableData() {
+      return this.sortedTableData.filter(this.filter);
     }
   },
   methods: {
+    getTableRowsByStatus(statusId) {
+      return this.filteredTableData.getRowsByFieldValue("statusId", statusId)
+        .rows;
+    },
     drop(
       { removedIndex, addedIndex, payload: row },
       statusId,
@@ -108,7 +100,7 @@ export default {
     ) {
       // The Container component triggers the event for all elements, so need to filter the ones that really have info
       if (typeof addedIndex === "number") {
-        const statusTasks = this.tableRowsByStatus[statusId];
+        const statusTasks = this.getTableRowsByStatus(statusId);
         if (isFallbackContainer) {
           addedIndex = statusTasks.length;
           if (statusTasks[addedIndex - 1] === row) {
@@ -154,11 +146,9 @@ export default {
           updates.priority = (prevPriority + nextPriority) / 2;
 
           // Ensure that the new priority is unique
-          let rowsByPriority = {};
-          for (const row of this.tableRows) {
-            rowsByPriority[(row.priority || row.id).toString()] = row;
-          }
-          while (rowsByPriority[updates.priority.toString()]) {
+          while (
+            this.tableData.getRowByFieldValue("priority", updates.priority)
+          ) {
             updates.priority = (prevPriority + updates.priority) / 2;
           }
         }

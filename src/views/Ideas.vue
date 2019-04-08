@@ -203,7 +203,7 @@ export default {
       const filterCategories = this.filterCategories.map(id =>
         getRowById("category", id)
       );
-      for (const category of getTableData("category")) {
+      for (const category of getTableData("category").rows) {
         if (!set.has(category.id) && category.isChild(filterCategories)) {
           set.add(category.id);
         }

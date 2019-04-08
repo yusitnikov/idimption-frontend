@@ -57,16 +57,8 @@ export default {
     };
   },
   computed: {
-    updatedData() {
-      return this.transitionsList.applyToState();
-    },
-    parentFieldName() {
-      return this.row.getForeignFieldName(this.tableName);
-    },
     linkRows() {
-      return this.updatedData[this.tableName].filter(
-        row => row[this.parentFieldName] === this.row.id
-      );
+      return this.row.getForeignRows(this.tableName, this.transitionsList);
     },
     foreignTableNamesMap() {
       let map = {};

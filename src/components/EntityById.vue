@@ -8,7 +8,7 @@
 
 <script>
 import { getRowById } from "../EntityHelper";
-import HighlightRowPropSelection from "./HighlightSelection";
+import HighlightRowPropSelection from "./HighlightRowPropSelection";
 
 export default {
   name: "EntityById",

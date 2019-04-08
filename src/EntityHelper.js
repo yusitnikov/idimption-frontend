@@ -17,7 +17,7 @@ export function getForeignFieldName(tableName, foreignTableName) {
 }
 
 export function getRowById(tableDataOrName, id) {
-  return getTableData(tableDataOrName).filter(row => row.id === id)[0] || null;
+  return getTableData(tableDataOrName).getRowById(id);
 }
 
 export function getOrCreateRowById(tableName, id) {

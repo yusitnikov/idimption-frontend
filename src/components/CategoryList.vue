@@ -24,10 +24,10 @@ export default {
   },
   computed: {
     tableRows() {
-      let rows = getTableData("category");
+      let data = getTableData("category");
       let matchingIds = new Set();
       let matchingChildrenIds = new Set();
-      for (const row of rows) {
+      for (const row of data.rows) {
         if (!this.filter || this.filter(row)) {
           matchingIds.add(row.id);
           for (let parent = row; parent; parent = parent.getParent()) {
@@ -39,13 +39,13 @@ export default {
           }
         }
       }
-      rows = rows.filter(
-        row => row.parentId === this.parentId && matchingChildrenIds.has(row.id)
-      );
-      return rows.map(row => ({
-        row,
-        irrelevant: !matchingIds.has(row.id)
-      }));
+      return data
+        .getRowsByFieldValue("parentId", this.parentId)
+        .rows.filter(row => matchingChildrenIds.has(row.id))
+        .map(row => ({
+          row,
+          irrelevant: !matchingIds.has(row.id)
+        }));
     }
   }
 };

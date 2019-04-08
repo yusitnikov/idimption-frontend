@@ -28,6 +28,7 @@
               :tableName="selectTableName"
               :id="addValues[selectTableName]"
             />
+            {{ " " }}
           </span>
         </span>
         <EntitySelect
