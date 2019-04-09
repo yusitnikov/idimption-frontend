@@ -3,7 +3,6 @@
     class="select"
     v-model="text"
     @input="bringSelectedItemToFocus"
-    :idimptionSelection="{ global: text }"
     :placeholder="(chosenOption && chosenOption.text) || emptyPlaceholder"
     :ignoreEvents="ignoreEvents"
     @focus="onFocus"

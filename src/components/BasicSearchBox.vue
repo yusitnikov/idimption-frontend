@@ -9,27 +9,21 @@
       @focus="onFocus"
       ref="input"
     />
-    <div
-      :class="{
-        'select-popup': true,
-        popup: true,
-        input: true,
-        hidden: !opened
-      }"
-    >
-      <slot></slot>
-    </div>
+    <BasicSearchBoxPopup :idimptionSelection="{ global: value }" v-if="opened">
+      <slot />
+    </BasicSearchBoxPopup>
   </div>
 </template>
 
 <script>
 import TextInput from "./TextInput";
+import BasicSearchBoxPopup from "./BasicSearchBoxPopup";
 import Guid from "guid";
 import { getKeyCodeByEvent } from "../misc";
 
 export default {
   name: "BasicSearchBox",
-  components: { TextInput },
+  components: { TextInput, BasicSearchBoxPopup },
   props: {
     value: [String, Guid],
     placeholder: String,
@@ -109,27 +103,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "../styles/essentials";
-
 .basic-search-box {
   position: relative;
-
-  * {
-    box-sizing: border-box;
-    width: 100%;
-  }
-
-  .popup {
-    position: absolute;
-    z-index: @z-index-dropdown-popup;
-    background: white;
-    border: 1px solid @block-border-color;
-    max-height: 300px;
-    overflow-y: auto;
-
-    &.hidden {
-      display: none;
-    }
-  }
 }
 </style>
