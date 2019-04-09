@@ -1,11 +1,30 @@
 import Vue from "vue";
+import { normalizeUserInput } from "./misc";
+
+function normalizeFieldValue(fieldValue, isUserInput) {
+  fieldValue = (fieldValue || "").toString();
+  if (isUserInput) {
+    fieldValue = normalizeUserInput(fieldValue);
+  }
+  return fieldValue;
+}
+
+function plainifySubTree(data, parentId) {
+  let result = [];
+  for (const row of data.getRowsByFieldValue("parentId", parentId).rows) {
+    result.push(row, ...plainifySubTree(data, row.id));
+  }
+  return result;
+}
 
 export class TableData {
   rows;
+  matchingRowIds;
   cache;
 
-  constructor(rows = []) {
+  constructor(rows = [], matchingRowIds = null) {
     this.rows = rows;
+    this.matchingRowIds = matchingRowIds;
     this.clearCache();
   }
 
@@ -20,17 +39,50 @@ export class TableData {
 
   remove(row) {
     this.rows.splice(this.rows.indexOf(row), 1);
+    this.clearCache();
   }
 
   filter(callback) {
-    return callback ? new TableData(this.rows.filter(callback)) : this;
+    if (!callback) {
+      return this;
+    }
+
+    let matchingRowIds = new Set();
+    let matchingChildrenIds = new Set();
+    for (const row of this.rows) {
+      if (this.isMatchingRow(row) && callback(row)) {
+        matchingRowIds.add(row.id);
+        for (let parent = row; parent; parent = parent.getParent(this)) {
+          if (matchingChildrenIds.has(parent.id)) {
+            break;
+          } else {
+            matchingChildrenIds.add(parent.id);
+          }
+        }
+      }
+    }
+    return new TableData(
+      this.rows.filter(row => matchingChildrenIds.has(row.id)),
+      matchingRowIds
+    );
+  }
+
+  isMatchingRow(row) {
+    return !this.matchingRowIds || this.matchingRowIds.has(row.id);
   }
 
   sort(callback) {
     // Clone the rows
     let rows = [...this.rows];
     rows.sort(callback);
-    return new TableData(rows);
+    return new TableData(rows, this.matchingRowIds);
+  }
+
+  sortTree() {
+    return this.getFromCacheOrCallback(
+      "sorted-tree",
+      () => new TableData(plainifySubTree(this, null), this.matchingRowIds)
+    );
   }
 
   map(callback) {
@@ -49,20 +101,19 @@ export class TableData {
     return cache[key];
   }
 
-  mapRowByFieldValue(fieldName) {
+  mapRowByFieldValue(fieldName, isUserInput = false) {
     return this.getFromCacheOrCallback("row-by-" + fieldName, () => {
       const map = {};
       for (const row of this.rows) {
-        Vue.set(map, (row[fieldName] || "").toString(), row);
+        Vue.set(map, normalizeFieldValue(row[fieldName], isUserInput), row);
       }
       return map;
     });
   }
 
-  getRowByFieldValue(fieldName, fieldValue) {
-    return (
-      this.mapRowByFieldValue(fieldName)[(fieldValue || "").toString()] || null
-    );
+  getRowByFieldValue(fieldName, fieldValue, isUserInput = false) {
+    fieldValue = normalizeFieldValue(fieldValue, isUserInput);
+    return this.mapRowByFieldValue(fieldName, isUserInput)[fieldValue] || null;
   }
 
   getRowById(id) {
@@ -77,13 +128,13 @@ export class TableData {
     return this.getFieldValues("id");
   }
 
-  mapRowsByFieldValue(fieldName) {
+  mapRowsByFieldValue(fieldName, isUserInput = false) {
     return this.getFromCacheOrCallback("rows-by-" + fieldName, () => {
       const map = {};
       for (const row of this.rows) {
-        let value = (row[fieldName] || "").toString();
+        let value = normalizeFieldValue(row[fieldName], isUserInput);
         if (!map[value]) {
-          Vue.set(map, value, new TableData());
+          Vue.set(map, value, new TableData([], this.matchingRowIds));
         }
         map[value].push(row);
       }
@@ -91,9 +142,10 @@ export class TableData {
     });
   }
 
-  getRowsByFieldValue(fieldName, fieldValue) {
+  getRowsByFieldValue(fieldName, fieldValue, isUserInput = false) {
+    fieldValue = normalizeFieldValue(fieldValue, isUserInput);
     return (
-      this.mapRowsByFieldValue(fieldName)[(fieldValue || "").toString()] ||
+      this.mapRowsByFieldValue(fieldName, isUserInput)[fieldValue] ||
       new TableData()
     );
   }

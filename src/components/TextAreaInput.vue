@@ -54,7 +54,10 @@ export default {
   methods: {
     async calculateHeight() {
       await this.$nextTick();
-      this.height = Math.max(textAreaMinHeight, this.$refs.fake.offsetHeight);
+      const element = this.$refs.fake;
+      if (element) {
+        this.height = Math.max(textAreaMinHeight, element.offsetHeight);
+      }
     }
   }
 };

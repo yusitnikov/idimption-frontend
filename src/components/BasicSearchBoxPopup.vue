@@ -10,10 +10,12 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @import "../styles/essentials";
 
 .basic-search-box-popup {
+  .basic-block(0, ignore);
+
   position: absolute;
   z-index: @z-index-dropdown-popup;
   background: white;

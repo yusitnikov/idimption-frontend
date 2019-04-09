@@ -127,6 +127,25 @@ export class EntityRow {
     return thisFullId.startsWith(rowFullId);
   }
 
+  getSiblings(tableData = null) {
+    tableData = tableData || this.getTableData();
+    // noinspection JSUnresolvedVariable
+    return tableData.getRowsByFieldValue("parentId", this.parentId);
+  }
+
+  getChildren(tableData = null) {
+    tableData = tableData || this.getTableData();
+    return tableData.getRowsByFieldValue("parentId", this.id);
+  }
+
+  hasChildren(tableData = null) {
+    return this.getChildren(tableData).length !== 0;
+  }
+
+  getTreeLevel(tableData = null) {
+    return this.getRowFullId(tableData).length - 1;
+  }
+
   getFullName(tableData = null) {
     tableData = tableData || this.getTableData();
     let fullName = [];

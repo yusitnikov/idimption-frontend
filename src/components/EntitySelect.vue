@@ -2,8 +2,10 @@
   <div class="entity-select">
     <Select
       v-bind="$attrs"
-      :options="rows"
+      :options="updatedData"
+      :isTree="isTree"
       :value="value"
+      :filter="filter"
       :allowAdd="allowAdd"
       :allowAddEmpty="allowAddEmpty || !!addComponent"
       :addLabel="addLabel"
@@ -38,7 +40,7 @@
 
 <script>
 import EntityTransitionsList from "../EntityTransitionsList";
-import { resolveGuid } from "../EntityHelper";
+import { getTableFieldsArray, resolveGuid } from "../EntityHelper";
 import { EntityRow } from "../EntityRow";
 import Select from "./Select";
 import PopupForm from "./PopupForm";
@@ -58,7 +60,6 @@ export default {
       default: "summary"
     },
     addComponent: Object,
-    filter: Function,
     tableName: {
       type: String,
       required: true
@@ -71,15 +72,11 @@ export default {
     };
   },
   computed: {
+    isTree() {
+      return getTableFieldsArray(this.tableName).includes("parentId");
+    },
     updatedData() {
       return this.transitionsList.getTableData(this.tableName);
-    },
-    rows() {
-      return this.updatedData.rows.map(row => ({
-        id: row.id,
-        text: row.displayText,
-        hidden: this.filter && !this.filter(row)
-      }));
     }
   },
   methods: {

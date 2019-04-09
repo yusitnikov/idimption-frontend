@@ -155,7 +155,7 @@
       </PopupForm>
     </template>
 
-    <portal-target name="popups" />
+    <portal-target name="popups" multiple />
   </div>
 </template>
 

@@ -1,14 +1,18 @@
 <template>
   <div class="category-list">
-    <div v-for="{ row, irrelevant } in tableRows" :key="row.id">
-      <CategoryBlock :class="{ irrelevant }" :row="row" />
-      <CategoryList class="children" :parentId="row.id" :filter="filter" />
+    <div v-for="row in currentData.rows" :key="row.id">
+      <CategoryBlock
+        :class="{ irrelevant: !currentData.isMatchingRow(row) }"
+        :row="row"
+      />
+      <CategoryList class="children" :data="filteredData" :parentId="row.id" />
     </div>
-    <div v-if="!tableRows.length && !parentId">No rows.</div>
+    <div v-if="!filteredData.length && !parentId">No rows.</div>
   </div>
 </template>
 
 <script>
+import { TableData } from "../TableData";
 import { getTableData } from "../storeProxy";
 import CategoryBlock from "./CategoryBlock";
 
@@ -16,6 +20,7 @@ export default {
   name: "CategoryList",
   components: { CategoryBlock },
   props: {
+    data: TableData,
     parentId: {
       type: String,
       default: null
@@ -23,29 +28,11 @@ export default {
     filter: Function
   },
   computed: {
-    tableRows() {
-      let data = getTableData("category");
-      let matchingIds = new Set();
-      let matchingChildrenIds = new Set();
-      for (const row of data.rows) {
-        if (!this.filter || this.filter(row)) {
-          matchingIds.add(row.id);
-          for (let parent = row; parent; parent = parent.getParent()) {
-            if (matchingChildrenIds.has(parent.id)) {
-              break;
-            } else {
-              matchingChildrenIds.add(parent.id);
-            }
-          }
-        }
-      }
-      return data
-        .getRowsByFieldValue("parentId", this.parentId)
-        .rows.filter(row => matchingChildrenIds.has(row.id))
-        .map(row => ({
-          row,
-          irrelevant: !matchingIds.has(row.id)
-        }));
+    filteredData() {
+      return (this.data || getTableData("category")).filter(this.filter);
+    },
+    currentData() {
+      return this.filteredData.getRowsByFieldValue("parentId", this.parentId);
     }
   }
 };

@@ -12,19 +12,17 @@ export function formatDate(dt) {
   return dt ? dt.toISOString().substr(0, 10) : null;
 }
 
+export function normalizeUserInput(value) {
+  return (value || "")
+    .toString()
+    .trim()
+    .toLowerCase();
+}
+
 export function matchesFreeTextSearch(value, searchPhrase) {
-  if (!searchPhrase) {
-    return true;
-  }
-  if (!value) {
-    return false;
-  }
+  value = normalizeUserInput(value);
+  searchPhrase = normalizeUserInput(searchPhrase);
 
-  // ignore case and extra space characters
-  value = value.trim().toLowerCase();
-  searchPhrase = searchPhrase.trim().toLowerCase();
-
-  // check again for empty values after trimming
   if (!searchPhrase) {
     return true;
   }
@@ -47,18 +45,9 @@ export function highlightFreeTextSearch(value, searchPhrase) {
   const originalValue = value;
   const fallbackResult = [{ text: value }];
 
-  if (!searchPhrase) {
-    return fallbackResult;
-  }
-  if (!value) {
-    return fallbackResult;
-  }
+  value = normalizeUserInput(value);
+  searchPhrase = normalizeUserInput(searchPhrase);
 
-  // ignore case and extra space characters
-  value = value.trim().toLowerCase();
-  searchPhrase = searchPhrase.trim().toLowerCase();
-
-  // check again for empty values after trimming
   if (!searchPhrase) {
     return fallbackResult;
   }
