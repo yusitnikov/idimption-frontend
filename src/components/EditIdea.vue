@@ -16,7 +16,7 @@
         <IdeaPropsLine :row="row" />
 
         <!-- eslint-disable-next-line -->
-        <div class="description multi-line">{{ row.description || "No description provided." }}</div>
+        <div class="description multi-line"><AutoLink :text="row.description || 'No description provided.'" /></div>
 
         <h2 class="next-section-start">Comments</h2>
         <IdeaComments :ideaId="row.id" key="comments" />
@@ -99,6 +99,7 @@ import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
 import MultipleForeignEntitySelect from "./MultipleForeignEntitySelect";
 import ButtonLink from "./ButtonLink";
+import AutoLink from "./AutoLink";
 import IdeaComments from "./IdeaComments";
 import EditCategory from "./EditCategory";
 
@@ -113,6 +114,7 @@ export default {
     MultipleForeignEntitySelect,
     ButtonLink,
     EntitySelect,
+    AutoLink,
     IdeaComments
   },
   props: {

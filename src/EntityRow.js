@@ -30,10 +30,6 @@ export class EntityRow {
       this.id = Guid.create();
     }
 
-    if (this.priority === null) {
-      this.priority = this.id;
-    }
-
     this.merge(data);
   }
 

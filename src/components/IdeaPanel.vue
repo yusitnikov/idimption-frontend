@@ -125,9 +125,9 @@ export default {
 
         // Calculate the new priority based on items that it is inserted between
         const prevRow = statusTasks[addedIndex - 1];
-        let prevPriority = Number(prevRow && (prevRow.priority || prevRow.id));
+        let prevPriority = Number(prevRow && prevRow.priority);
         const nextRow = statusTasks[addedIndex];
-        let nextPriority = Number(nextRow && (nextRow.priority || nextRow.id));
+        let nextPriority = Number(nextRow && nextRow.priority);
         if (prevRow || nextRow) {
           // Inserting to the top - take a priority a little bit higher then the first item
           if (!prevRow) {

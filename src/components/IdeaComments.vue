@@ -19,7 +19,8 @@
         <UserAvatarBlock :userId="row.userId" :avatarUrl="avatarUrl">
           <div class="header">
             <EntityFromAt :row="row" showUser />
-            <div class="line multi-line">{{ row.message }}</div>
+            <!-- eslint-disable-next-line -->
+            <div class="line multi-line"><AutoLink :text="row.message" /></div>
 
             <AddIdeaComment
               class="line"
@@ -43,6 +44,7 @@ import EntityFromAt from "./EntityFromAt";
 import EntityById from "./EntityById";
 import UserAvatarBlock from "./UserAvatarBlock";
 import AddIdeaComment from "./AddIdeaComment";
+import AutoLink from "./AutoLink";
 
 export default {
   name: "IdeaComments",
@@ -50,7 +52,8 @@ export default {
     AddIdeaComment,
     UserAvatarBlock,
     EntityById,
-    EntityFromAt
+    EntityFromAt,
+    AutoLink
   },
   props: {
     ideaId: {

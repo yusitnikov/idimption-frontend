@@ -13,7 +13,7 @@
       v-if="readOnly"
     >
       <!-- eslint-disable-next-line -->
-      <div class="description multi-line">{{ row.description || "No description provided." }}</div>
+      <div class="description multi-line"><AutoLink :text="row.description || 'No description provided.'" /></div>
     </div>
     <div
       :class="{
@@ -44,6 +44,7 @@ import EditEntity from "./EditEntity";
 import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
+import AutoLink from "./AutoLink";
 
 export default {
   name: "EditCategory",
@@ -51,7 +52,8 @@ export default {
     EditEntity,
     FormRow,
     EditCommonTextFields,
-    EntitySelect
+    EntitySelect,
+    AutoLink
   },
   props: {
     ...EditEntity.commonProps,
