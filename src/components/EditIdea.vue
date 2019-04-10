@@ -55,7 +55,12 @@
             :transitionsList="transitionsList"
             :allowAdd="verifiedEmail"
             :addComponent="editCategoryComponent"
-          />
+            v-slot="{ id, displayText }"
+          >
+            <ButtonLink :href="'/category/' + id" align="none">{{
+              displayText
+            }}</ButtonLink>
+          </MultipleForeignEntitySelect>
         </FormRow>
         <FormRow label="Relations">
           <MultipleForeignEntitySelect
@@ -63,7 +68,17 @@
             :row="row"
             :selectFieldNames="['relationId', 'dstIdeaId']"
             :transitionsList="transitionsList"
-          />
+            v-slot="{ tableName, id, displayText }"
+          >
+            <template v-if="tableName === 'idea'">
+              <ButtonLink :href="'/idea/' + id" align="none">{{
+                displayText
+              }}</ButtonLink>
+            </template>
+            <template v-else>
+              {{ displayText }}
+            </template>
+          </MultipleForeignEntitySelect>
         </FormRow>
 
         <FormRow class="next-section-start" label="Comments" v-if="!isCreating">
@@ -83,6 +98,7 @@ import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
 import EntitySelect from "./EntitySelect";
 import MultipleForeignEntitySelect from "./MultipleForeignEntitySelect";
+import ButtonLink from "./ButtonLink";
 import IdeaComments from "./IdeaComments";
 import EditCategory from "./EditCategory";
 
@@ -95,6 +111,7 @@ export default {
     FormRow,
     EditCommonTextFields,
     MultipleForeignEntitySelect,
+    ButtonLink,
     EntitySelect,
     IdeaComments
   },

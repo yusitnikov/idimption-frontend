@@ -6,8 +6,16 @@
       :iconClass="iconClass"
       :iconTitle="iconTitle"
     >
-      <template #after="{ ids }">
-        <Button class="small" align="none" @click="() => removeRow(ids)">
+      <template #before="params">
+        <slot name="before" v-bind="params" />
+      </template>
+      <template #default="params">
+        <slot v-bind="params" />
+      </template>
+      <template #after="params">
+        <slot name="after" v-bind="params" />
+        {{ " " }}
+        <Button class="small" align="none" @click="() => removeRow(params.ids)">
           <Icon type="times" />
         </Button>
       </template>

@@ -1,6 +1,7 @@
 <template>
   <span class="tag">
     <Icon :type="iconClass" :title="iconTitle" v-if="iconClass" />
+    {{ " " }}
     <slot />
   </span>
 </template>

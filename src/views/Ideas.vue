@@ -70,6 +70,22 @@
         allowEmpty
         placeholder="Filter by date..."
       />
+
+      <!--suppress RequiredAttributes value (handled by v-model)-->
+      <CheckboxInput
+        class="filter-with-comments inline-block inline-block-left"
+        v-model="filterWithComments"
+      >
+        with comments
+      </CheckboxInput>
+
+      <!--suppress RequiredAttributes value (handled by v-model)-->
+      <CheckboxInput
+        class="filter-with-votes inline-block inline-block-left"
+        v-model="filterWithVotes"
+      >
+        with votes
+      </CheckboxInput>
     </div>
 
     <IdeaPanel
@@ -90,6 +106,7 @@ import Button from "../components/Button";
 import MultipleEntitySelect from "../components/MultipleEntitySelect";
 import TextInput from "../components/TextInput";
 import DateInput from "../components/DateInput";
+import CheckboxInput from "../components/CheckboxInput";
 import IdeaPanel from "../components/IdeaPanel";
 
 export default {
@@ -100,6 +117,7 @@ export default {
     MultipleEntitySelect,
     TextInput,
     DateInput,
+    CheckboxInput,
     IdeaPanel
   },
   computed: {
@@ -195,6 +213,28 @@ export default {
         this.filterToStr = formatDate(value);
       }
     },
+    filterWithComments: {
+      get() {
+        return !!this.routeQuery.withComments;
+      },
+      set(value) {
+        this.routeQuery = {
+          ...this.routeQuery,
+          withComments: value || undefined
+        };
+      }
+    },
+    filterWithVotes: {
+      get() {
+        return !!this.routeQuery.withVotes;
+      },
+      set(value) {
+        this.routeQuery = {
+          ...this.routeQuery,
+          withVotes: value || undefined
+        };
+      }
+    },
     filterTagsSet() {
       return new Set(this.filterTags);
     },
@@ -266,7 +306,11 @@ export default {
           this.filterUsersSet.has(idea.userId)) &&
         (!this.filterFromStr ||
           formatDate(idea.createdAtDt) >= this.filterFromStr) &&
-        (!this.filterToStr || formatDate(idea.createdAtDt) <= this.filterToStr)
+        (!this.filterToStr ||
+          formatDate(idea.createdAtDt) <= this.filterToStr) &&
+        (!this.filterWithComments ||
+          idea.getForeignRows("ideacomment").length !== 0) &&
+        (!this.filterWithVotes || idea.getForeignRows("ideavote").length !== 0)
       );
     }
   }

@@ -18,7 +18,12 @@
       :fieldNames="['categoryId']"
       iconClass="sitemap"
       iconTitle="Category"
-    />
+      v-slot="{ id, displayText }"
+    >
+      <ButtonLink :href="'/category/' + id" align="none">{{
+        displayText
+      }}</ButtonLink>
+    </MultipleForeignEntityDisplay>
 
     <MultipleForeignEntityDisplay
       tableName="idearelation"
@@ -26,7 +31,17 @@
       :fieldNames="['relationId', 'dstIdeaId']"
       iconClass="link"
       iconTitle="Relation"
-    />
+      v-slot="{ tableName, id, displayText }"
+    >
+      <template v-if="tableName === 'idea'">
+        <ButtonLink :href="'/idea/' + id" align="none">{{
+          displayText
+        }}</ButtonLink>
+      </template>
+      <template v-else>
+        {{ displayText }}
+      </template>
+    </MultipleForeignEntityDisplay>
   </div>
 </template>
 
@@ -34,10 +49,11 @@
 import Tag from "./Tag";
 import EntityById from "./EntityById";
 import MultipleForeignEntityDisplay from "./MultipleForeignEntityDisplay";
+import ButtonLink from "./ButtonLink";
 
 export default {
   name: "IdeaPropsLine",
-  components: { Tag, EntityById, MultipleForeignEntityDisplay },
+  components: { Tag, EntityById, MultipleForeignEntityDisplay, ButtonLink },
   props: {
     row: {
       type: Object,

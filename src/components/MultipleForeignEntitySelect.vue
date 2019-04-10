@@ -12,7 +12,17 @@
     :iconTitle="iconTitle"
     @add="addRow"
     @remove="removeRow"
-  />
+  >
+    <template #before="params">
+      <slot name="before" v-bind="params" />
+    </template>
+    <template #default="params">
+      <slot v-bind="params" />
+    </template>
+    <template #after="params">
+      <slot name="after" v-bind="params" />
+    </template>
+  </MultipleEntitySelect>
 </template>
 
 <script>
