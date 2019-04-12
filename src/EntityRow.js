@@ -137,7 +137,7 @@ export class EntityRow {
   // Checks if this is a child of "row" or equals to it
   isChild(row, tableData = null) {
     if (row instanceof Array) {
-      return row.some(item => this.isChild(item));
+      return row.some(item => this.isChild(item, tableData));
     }
     if (this.id === row.id) {
       return true;
@@ -163,6 +163,9 @@ export class EntityRow {
   }
 
   getAllChildrenIdsSet(tableData = null) {
+    if (this.isNew) {
+      return new Set([this.id]);
+    }
     tableData = tableData || this.getTableData();
     return tableData.getFromCacheOrCallback(
       "all-row-children-ids+" + this.id.toString(),
