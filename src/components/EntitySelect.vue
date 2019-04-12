@@ -76,7 +76,11 @@ export default {
       return getTableFieldsArray(this.tableName).includes("parentId");
     },
     updatedData() {
-      return this.transitionsList.getTableData(this.tableName);
+      return this.transitionsList
+        .getTableData(this.tableName)
+        .sort("displayText", (a, b) =>
+          a.displayText.localeCompare(b.displayText)
+        );
     }
   },
   methods: {
