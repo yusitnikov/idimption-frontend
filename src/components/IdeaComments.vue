@@ -74,10 +74,9 @@ export default {
     rows() {
       return this.transitionsList
         .getTableData("ideacomment")
+        .reverse()
         .getRowsByFieldValue("ideaId", this.ideaId)
-        .getRowsByFieldValue("parentId", this.parentId)
-        .rows.slice()
-        .reverse();
+        .getRowsByFieldValue("parentId", this.parentId).rows;
     }
   }
 };

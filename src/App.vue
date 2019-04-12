@@ -19,7 +19,7 @@
 
     <template v-if="ready">
       <div id="nav">
-        <div id="auth">
+        <div id="auth" class="pull-right">
           Welcome,
           <EntityById tableName="user" :id="userId" v-slot="{ displayText }">
             {{ displayText || "Guest" }}
@@ -368,10 +368,6 @@ button {
 #nav {
   padding: 30px;
 
-  #auth {
-    float: right;
-  }
-
   a {
     font-weight: bold;
     color: #2c3e50;
@@ -452,5 +448,9 @@ button {
 
 .highlighted {
   background: yellow;
+}
+
+.pull-right {
+  float: right;
 }
 </style>

@@ -9,6 +9,7 @@ import { getTableData } from "./storeProxy";
 import Guid from "guid";
 import EntityTransitionsList from "./EntityTransitionsList";
 import { getUserId } from "./auth";
+import { TableData } from "./TableData";
 
 export class EntityRow {
   tableName;
@@ -53,19 +54,42 @@ export class EntityRow {
     return getTableData(this.tableName);
   }
 
-  getForeignRows(foreignTableName, transitionsList = null) {
+  getForeignRows(
+    foreignTableName,
+    transitionsList = null,
+    returnChildrenRows = false
+  ) {
     const foreignFieldName = this.getForeignFieldName(foreignTableName);
+    const currentTableData = transitionsList
+      ? transitionsList.getTableData(this.tableName)
+      : this.getTableData();
     const foreignTableData = transitionsList
       ? transitionsList.getTableData(foreignTableName)
       : getTableData(foreignTableName);
-    return foreignTableData.getRowsByFieldValue(foreignFieldName, this.id);
+    const childrenIds = returnChildrenRows
+      ? this.getAllChildrenIdsSet(currentTableData)
+      : [this.id];
+    let result = new TableData();
+    for (const childId of childrenIds) {
+      result.push(
+        ...foreignTableData.getRowsByFieldValue(foreignFieldName, childId).rows
+      );
+    }
+    return result;
   }
 
-  getForeignIds(foreignTableName, foreignFieldName, transitionsList = null) {
-    return this.getForeignRows(
+  getForeignIds(
+    foreignTableName,
+    foreignFieldName,
+    transitionsList = null,
+    returnChildrenIds = false
+  ) {
+    const values = this.getForeignRows(
       foreignTableName,
-      transitionsList
+      transitionsList,
+      returnChildrenIds
     ).getFieldValues(foreignFieldName);
+    return returnChildrenIds ? [...new Set(values)] : values;
   }
 
   walkFields(callback) {
@@ -136,6 +160,14 @@ export class EntityRow {
 
   hasChildren(tableData = null) {
     return this.getChildren(tableData).length !== 0;
+  }
+
+  getAllChildrenIdsSet(tableData = null) {
+    tableData = tableData || this.getTableData();
+    return tableData.getFromCacheOrCallback(
+      "all-row-children-ids+" + this.id.toString(),
+      () => tableData.getAllChildrenIdsSet([this.id])
+    );
   }
 
   getTreeLevel(tableData = null) {

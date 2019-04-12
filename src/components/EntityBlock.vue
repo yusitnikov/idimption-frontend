@@ -4,10 +4,21 @@
     @click="showDetails"
   >
     <div class="pull-right">
-      <ButtonLink align="right" plain @click="remove" v-if="!readOnly">
+      <ButtonLink
+        class="pull-right"
+        align="right"
+        plain
+        @click="remove"
+        v-if="!readOnly"
+      >
         <Icon type="trash-alt" />
       </ButtonLink>
-      <ButtonLink align="right" :href="pageUrl" @click="stopPropagation">
+      <ButtonLink
+        class="pull-right"
+        align="right"
+        :href="pageUrl"
+        @click="stopPropagation"
+      >
         <Icon type="external-link-alt" />
       </ButtonLink>
       <div class="pull-right">
@@ -118,7 +129,6 @@ export default {
 }
 
 .pull-right {
-  float: right;
   margin-left: @button-distance;
 }
 

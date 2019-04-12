@@ -82,7 +82,7 @@ export default {
     },
     sortedTableData() {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return this.tableData.sort((a, b) => b.priority - a.priority);
+      return this.tableData.sort("priority", (a, b) => b.priority - a.priority);
     },
     filteredTableData() {
       return this.sortedTableData.filter(this.filter);

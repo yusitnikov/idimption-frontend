@@ -32,8 +32,8 @@ export class TableData {
     return this.rows.length;
   }
 
-  push(row) {
-    this.rows.push(row);
+  push(...rows) {
+    this.rows.push(...rows);
     this.clearCache();
   }
 
@@ -71,11 +71,24 @@ export class TableData {
     return !this.matchingRowIds || this.matchingRowIds.has(row.id);
   }
 
-  sort(callback) {
-    // Clone the rows
-    let rows = [...this.rows];
-    rows.sort(callback);
-    return new TableData(rows, this.matchingRowIds);
+  clone() {
+    return new TableData([...this.rows], this.matchingRowIds);
+  }
+
+  reverse() {
+    return this.getFromCacheOrCallback("reverse", () => {
+      let result = this.clone();
+      result.rows.reverse();
+      return result;
+    });
+  }
+
+  sort(key, callback) {
+    return this.getFromCacheOrCallback("sort-" + key, () => {
+      let result = this.clone();
+      result.rows.sort(callback);
+      return result;
+    });
   }
 
   sortTree() {
@@ -148,6 +161,17 @@ export class TableData {
       this.mapRowsByFieldValue(fieldName, isUserInput)[fieldValue] ||
       new TableData()
     );
+  }
+
+  getAllChildrenIdsSet(ids) {
+    const set = new Set(ids);
+    const rows = ids.map(id => this.getRowById(id));
+    for (const row of this.rows) {
+      if (!set.has(row.id) && row.isChild(rows)) {
+        set.add(row.id);
+      }
+    }
+    return set;
   }
 
   // noinspection JSUnusedGlobalSymbols

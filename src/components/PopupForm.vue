@@ -10,10 +10,12 @@
           <slot></slot>
         </div>
         <div class="footer">
-          <Button align="right" @click="save">{{ okLabel }}</Button>
-          <Button align="right" @click="$emit('close')">{{
-            cancelLabel
-          }}</Button>
+          <div class="pull-right">
+            <Button align="right" @click="$emit('close')">{{
+              cancelLabel
+            }}</Button>
+            <Button align="right" @click="save">{{ okLabel }}</Button>
+          </div>
         </div>
       </div>
     </div>

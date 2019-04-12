@@ -4,6 +4,13 @@
       <template v-if="!isCreating">
         <h1 v-if="showHeader">
           [{{ savedRow.id }}] <AutoLink :text="savedDisplayText" />
+          <slot
+            name="title"
+            v-bind="row"
+            :row="row"
+            :isCreating="isCreating"
+            :update="update"
+          />
         </h1>
         <EntityFromAt :row="row" :showUser="showUser">
           <slot

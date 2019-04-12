@@ -100,7 +100,6 @@
 import { mapState, mapGetters } from "vuex";
 import { toArray, formatDate, matchesFreeTextSearch } from "../misc";
 import { getTableData } from "../storeProxy";
-import { getRowById } from "../EntityHelper";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
 import MultipleEntitySelect from "../components/MultipleEntitySelect";
@@ -239,16 +238,9 @@ export default {
       return new Set(this.filterTags);
     },
     filterCategoriesSet() {
-      const set = new Set(this.filterCategories);
-      const filterCategories = this.filterCategories.map(id =>
-        getRowById("category", id)
+      return getTableData("category").getAllChildrenIdsSet(
+        this.filterCategories
       );
-      for (const category of getTableData("category").rows) {
-        if (!set.has(category.id) && category.isChild(filterCategories)) {
-          set.add(category.id);
-        }
-      }
-      return set;
     },
     filterUsersSet() {
       return new Set(this.filterUsers);
