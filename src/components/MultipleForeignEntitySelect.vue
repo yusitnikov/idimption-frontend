@@ -3,6 +3,8 @@
     class="multiple-foreign-entity-select"
     :value="foreignValue"
     :selectTableNames="foreignTableNames"
+    :filter="filter"
+    :tipFunction="tipFunction"
     :alwaysOpened="alwaysOpened"
     :placeholder="placeholder"
     :allowAdd="allowAdd"
@@ -49,6 +51,8 @@ export default {
       type: Array,
       required: true
     },
+    filter: Function,
+    tipFunction: Function,
     alwaysOpened: Boolean,
     placeholder: [String, Array],
     allowAdd: Boolean,

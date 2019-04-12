@@ -6,6 +6,7 @@
       :isTree="isTree"
       :value="value"
       :filter="filter"
+      :tipFunction="tipFunction"
       :allowAdd="allowAdd"
       :allowAddEmpty="allowAddEmpty || !!addComponent"
       :addLabel="addLabel"

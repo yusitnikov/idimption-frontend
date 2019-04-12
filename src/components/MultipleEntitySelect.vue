@@ -45,7 +45,8 @@
           v-model="addValues[addTableName]"
           :transitionsList="transitionsList"
           :tableName="addTableName"
-          :filter="canSelectRow"
+          :filter="displayRow"
+          :tipFunction="tipFunction"
           :emptyPlaceholder="normalizedPlaceholder[addTableName]"
           :allowAdd="allowAdd"
           :addComponent="addComponent"
@@ -85,6 +86,8 @@ export default {
       type: Array,
       required: true
     },
+    filter: Function,
+    tipFunction: Function,
     plainValue: Boolean,
     selectTableNames: {
       type: Array,
@@ -142,7 +145,11 @@ export default {
     }
   },
   methods: {
-    canSelectRow(row) {
+    displayRow(row) {
+      if (this.filter && !this.filter(row)) {
+        return false;
+      }
+
       if (
         this.addTableName !==
         this.selectTableNames[this.selectTableNames.length - 1]

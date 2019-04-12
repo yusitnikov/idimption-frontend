@@ -26,6 +26,7 @@
         plainValue
         alwaysOpened
         :selectTableNames="['tag']"
+        :tipFunction="getTagIdeaCount"
         placeholder="Filter by tags..."
         iconClass="tag"
         iconTitle="Tag"
@@ -38,6 +39,7 @@
         plainValue
         alwaysOpened
         :selectTableNames="['category']"
+        :tipFunction="getCategoryIdeaCount"
         placeholder="Filter by categories..."
         iconClass="sitemap"
         iconTitle="Category"
@@ -50,6 +52,8 @@
         plainValue
         alwaysOpened
         :selectTableNames="['user']"
+        :filter="getUserIdeaCount"
+        :tipFunction="getUserIdeaCount"
         placeholder="Filter by users..."
         iconClass="user"
         iconTitle="User"
@@ -304,6 +308,15 @@ export default {
           idea.getForeignRows("ideacomment").length !== 0) &&
         (!this.filterWithVotes || idea.getForeignRows("ideavote").length !== 0)
       );
+    },
+    getTagIdeaCount(tag) {
+      return tag.getForeignRows("ideatag").length;
+    },
+    getCategoryIdeaCount(row) {
+      return row.getForeignIds("ideacategory", "ideaId", null, true).length;
+    },
+    getUserIdeaCount(user) {
+      return user.getForeignRows("idea").length;
     }
   }
 };

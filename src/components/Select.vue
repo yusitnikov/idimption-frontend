@@ -69,6 +69,9 @@
             <td>
               <HighlightSelection :text="row.text" v-if="row.highlight" />
               <template v-else>{{ row.text }}</template>
+              <span class="irrelevant" v-if="row.tip !== null">
+                ({{ row.tip }})
+              </span>
             </td>
           </tr>
         </tbody>
@@ -90,6 +93,7 @@ import Icon from "./Icon";
 const commonProps = {
   value: [String, Guid],
   filter: Function,
+  tipFunction: Function,
   allowAdd: Boolean,
   allowAddEmpty: Boolean,
   addLabel: {
@@ -215,6 +219,7 @@ export default {
         rows.push({
           id: option.id,
           text: option.displayText,
+          tip: this.tipFunction ? this.tipFunction(option) : null,
           disabled: !this.processedOptions.isMatchingRow(option),
           parentId: option.parentId,
           treePaddings,
