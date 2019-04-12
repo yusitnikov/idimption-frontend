@@ -1,6 +1,6 @@
 <template>
   <portal to="popups" :order="priority">
-    <div :class="['popup-form', ($el && $el.className) || '']">
+    <div :class="['popup-form', parentClassName]">
       <div class="background" @click="$emit('close')"></div>
       <div class="window">
         <div class="header">
@@ -47,7 +47,14 @@ export default {
       default: "Cancel"
     }
   },
+  data() {
+    return {
+      parentClassName: ""
+    };
+  },
   mounted() {
+    this.parentClassName = this.$el.className;
+
     focusFirstInput(this);
   },
   methods: {

@@ -58,6 +58,7 @@
       <router-view />
 
       <PopupForm
+        class="auth-popup"
         title="Login"
         :priority="1000"
         @save="doLogin"
@@ -97,6 +98,7 @@
       </PopupForm>
 
       <PopupForm
+        class="auth-popup"
         title="Register"
         :priority="1000"
         @save="doRegister"
@@ -134,6 +136,7 @@
       </PopupForm>
 
       <PopupForm
+        class="auth-popup"
         title="Restore password"
         :priority="1000"
         @save="doResetPassword"
@@ -375,6 +378,12 @@ button {
       color: #42b983;
     }
   }
+}
+
+.popup-form.auth-popup .window {
+  max-width: 640px;
+  max-height: 400px;
+  margin: auto;
 }
 
 .block {
