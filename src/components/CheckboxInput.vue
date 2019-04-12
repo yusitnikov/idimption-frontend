@@ -2,7 +2,7 @@
   <label class="checkbox-input">
     <input
       type="checkbox"
-      :value="value"
+      :checked="value"
       @change="$event => $emit('change', $event.target.checked)"
       @input="$event => $emit('input', $event.target.checked)"
     />
