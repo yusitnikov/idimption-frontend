@@ -8,7 +8,7 @@
       id,
       name,
       avatarUrl,
-      password,
+      passwordHash,
       verifiedEmail,
       isCreating,
       update
@@ -52,19 +52,19 @@
       <TextInput
         type="password"
         autocomplete="off"
-        :value="password || ''"
+        :value="passwordHash || ''"
         allowEmpty
         :minLength="8"
-        @input="password => update({ password })"
+        @input="passwordHash => update({ passwordHash })"
       />
     </FormRow>
     <FormRow label="Confirm pass">
       <TextInput
         type="password"
         autocomplete="off"
-        :allowEmpty="!password"
+        :allowEmpty="!passwordHash"
         :validationMessage="
-          passwordConfirmation !== password &&
+          passwordConfirmation !== passwordHash &&
             'Passwords not match, please input again'
         "
         v-model="passwordConfirmation"

@@ -1,9 +1,13 @@
 <template>
-  <EntityBlock :row="row" showUser :readOnly="readOnly">
+  <EntityBlock class="idea-block" :row="row" showUser :readOnly="readOnly">
     <template slot="actions">
-      <span class="comments-count" v-if="commentsCount">
+      <span
+        class="comments-count"
+        :title="commentUsers.join('\n')"
+        v-if="comments.length"
+      >
         <Icon type="comment" iconTitle="Comments" />
-        {{ commentsCount }}
+        {{ comments.length }}
       </span>
 
       <IdeaVote :ideaId="row.id" />
@@ -26,6 +30,7 @@
 
 <script>
 import { canUserEditUsersData } from "../auth";
+import { getRowById } from "../EntityHelper";
 import EntityBlock from "./EntityBlock";
 import Icon from "./Icon";
 import IdeaVote from "./IdeaVote";
@@ -39,8 +44,17 @@ export default {
     readOnly() {
       return !canUserEditUsersData(this.row.userId);
     },
-    commentsCount() {
-      return this.row.getForeignRows("ideacomment").length;
+    comments() {
+      return this.row.getForeignRows("ideacomment");
+    },
+    commentUsers() {
+      return [
+        ...new Set(
+          this.comments.map(({ userId }) =>
+            userId ? getRowById("user", userId).displayText : "Guest"
+          )
+        )
+      ];
     }
   },
   props: {
@@ -56,10 +70,22 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @import "../styles/essentials";
 
-.comments-count {
-  margin-right: @button-distance;
+.idea-block {
+  .actions {
+    // .line
+    margin-bottom: @paragraph-margin;
+  }
+
+  .summary-text {
+    display: block;
+    clear: both;
+  }
+
+  .comments-count {
+    margin-right: @button-distance;
+  }
 }
 </style>

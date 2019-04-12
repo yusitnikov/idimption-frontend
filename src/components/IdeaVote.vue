@@ -7,6 +7,7 @@
       align="none"
       plain
       customColors
+      :title="getVotesByIsPositive(true).join('\n')"
       @click="event => toggle(event, true)"
     >
       <Icon type="thumbs-up" />
@@ -19,6 +20,7 @@
       align="none"
       plain
       customColors
+      :title="getVotesByIsPositive(false).join('\n')"
       @click="event => toggle(event, false)"
     >
       <Icon type="thumbs-down" />
@@ -32,6 +34,7 @@ import { mapState, mapGetters } from "vuex";
 import { openPopup } from "../storeProxy";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { EntityRow } from "../EntityRow";
+import { getRowById } from "../EntityHelper";
 import Guid from "guid";
 import ButtonLink from "./ButtonLink";
 import Icon from "./Icon";
@@ -62,7 +65,9 @@ export default {
   },
   methods: {
     getVotesByIsPositive(isPositive) {
-      return this.allVotes.getRowsByFieldValue("isPositive", isPositive);
+      return this.allVotes
+        .getRowsByFieldValue("isPositive", isPositive)
+        .map(row => getRowById("user", row.userId).displayText);
     },
     async toggle(event, isPositive) {
       event.stopPropagation();

@@ -3,7 +3,7 @@
     :class="{ 'entity-block': true, block: true, expandable }"
     @click="showDetails"
   >
-    <div class="pull-right">
+    <div class="actions pull-right">
       <ButtonLink
         class="pull-right"
         align="right"
@@ -28,7 +28,11 @@
 
     <div class="line summary">
       [{{ row.id }}]
-      <HighlightRowPropSelection :row="row" fieldName="displayText" />
+      <HighlightRowPropSelection
+        class="summary-text"
+        :row="row"
+        fieldName="displayText"
+      />
     </div>
 
     <EntityFromAt :row="row" :showUser="showUser" />
