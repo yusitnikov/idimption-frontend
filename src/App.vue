@@ -177,13 +177,13 @@ import {
   closePopup
 } from "./storeProxy";
 import { sendVerificationEmail } from "./auth";
-import Icon from "./components/Icon";
-import Alert from "./components/Alert";
-import EntityById from "./components/EntityById";
+import Icon from "./components/displayHelpers/Icon";
+import Alert from "./components/displayHelpers/Alert";
+import EntityById from "./components/displayHelpers/EntityById";
 import Button from "./components/Button";
-import PopupForm from "./components/PopupForm";
-import FormRow from "./components/FormRow";
-import TextInput from "./components/TextInput";
+import PopupForm from "./components/forms/generic/PopupForm";
+import FormRow from "./components/forms/generic/FormRow";
+import TextInput from "./components/inputs/TextInput";
 // noinspection ES6CheckImport
 import {
   bodyMargin,

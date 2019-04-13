@@ -98,13 +98,13 @@
 import { mapState, mapGetters } from "vuex";
 import { toArray, formatDate, matchesFreeTextSearch } from "../misc";
 import { getTableData } from "../storeProxy";
-import Icon from "../components/Icon";
+import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
-import MultipleEntitySelect from "../components/MultipleEntitySelect";
-import TextInput from "../components/TextInput";
-import DateInput from "../components/DateInput";
-import CheckboxInput from "../components/CheckboxInput";
-import IdeaPanel from "../components/IdeaPanel";
+import MultipleEntitySelect from "../components/inputs/MultipleEntitySelect";
+import TextInput from "../components/inputs/TextInput";
+import DateInput from "../components/inputs/DateInput";
+import CheckboxInput from "../components/inputs/CheckboxInput";
+import IdeaPanel from "../components/lists/IdeaPanel";
 
 export default {
   name: "Ideas",

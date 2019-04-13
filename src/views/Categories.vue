@@ -31,10 +31,10 @@
 <script>
 import { mapGetters } from "vuex";
 import { matchesFreeTextSearch } from "../misc";
-import Icon from "../components/Icon";
+import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
-import TextInput from "../components/TextInput";
-import CategoryList from "../components/CategoryList";
+import TextInput from "../components/inputs/TextInput";
+import CategoryList from "../components/lists/CategoryList";
 
 export default {
   name: "Categories",

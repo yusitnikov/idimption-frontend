@@ -14,7 +14,7 @@
 
 <script>
 import EditEntityPage from "./EditEntityPage";
-import EditIdea from "../components/EditIdea";
+import EditIdea from "../components/forms/EditIdea";
 
 export default {
   name: "Idea",

@@ -13,7 +13,7 @@
 
 <script>
 import EditEntityPage from "./EditEntityPage";
-import EditCategory from "../components/EditCategory";
+import EditCategory from "../components/forms/EditCategory";
 
 export default {
   name: "Category",

@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import Tag from "./Tag";
-import EntityById from "./EntityById";
-import MultipleForeignEntityDisplay from "./MultipleForeignEntityDisplay";
+import Tag from "./displayHelpers/Tag";
+import EntityById from "./displayHelpers/EntityById";
+import MultipleForeignEntityDisplay from "./displayHelpers/MultipleForeignEntityDisplay";
 import ButtonLink from "./ButtonLink";
 
 export default {

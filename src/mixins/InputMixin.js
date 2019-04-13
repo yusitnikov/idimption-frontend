@@ -1,4 +1,4 @@
-import InputValidation from "../components/InputValidation";
+import InputValidation from "../components/inputs/InputValidation";
 
 export default {
   inheritAttrs: false,

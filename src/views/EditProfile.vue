@@ -27,8 +27,8 @@
 <script>
 import { mapState } from "vuex";
 import EditEntityPage from "./EditEntityPage";
-import EditUser from "../components/EditUser";
-import EditSubscriptions from "../components/EditSubscriptions";
+import EditUser from "../components/forms/EditUser";
+import EditSubscriptions from "../components/forms/EditSubscriptions";
 
 export default {
   name: "EditProfile",

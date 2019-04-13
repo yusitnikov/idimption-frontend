@@ -31,7 +31,7 @@ import { getUserId, isUserVerified, canUserEditUsersData } from "../auth";
 import { validateAllInputs } from "../misc";
 import Button from "../components/Button";
 import ButtonLink from "../components/ButtonLink";
-import Icon from "../components/Icon";
+import Icon from "../components/displayHelpers/Icon";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { getOrCreateRowById, resolveGuid } from "../EntityHelper";
 import Guid from "guid";
