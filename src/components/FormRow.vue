@@ -1,7 +1,10 @@
 <template>
   <div class="form-row">
-    <div class="label">{{ label }}</div>
-    <div :class="{ value: true, text }">
+    <div class="label" :style="{ width: labelWidth + 'px' }">{{ label }}</div>
+    <div
+      :class="{ value: true, text }"
+      :style="{ paddingLeft: labelWidth + 'px' }"
+    >
       <div class="value-wrapper">
         <slot />
       </div>
@@ -14,15 +17,17 @@ export default {
   name: "FormRow",
   props: {
     label: String,
-    text: Boolean
+    text: Boolean,
+    labelWidth: {
+      type: Number,
+      default: 110
+    }
   }
 };
 </script>
 
 <style scoped lang="less">
 @import "../styles/essentials";
-
-@label-width: 110px;
 
 .form-row {
   .block-margin;
@@ -34,15 +39,10 @@ export default {
 
 .label {
   position: absolute;
-  width: @label-width;
 }
 
-.value {
-  padding-left: @label-width;
-
-  .value-wrapper {
-    position: relative;
-  }
+.value .value-wrapper {
+  position: relative;
 }
 
 .label,

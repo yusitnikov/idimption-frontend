@@ -64,6 +64,10 @@ export default {
     tableName: {
       type: String,
       required: true
+    },
+    sort: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -77,11 +81,13 @@ export default {
       return getTableFieldsArray(this.tableName).includes("parentId");
     },
     updatedData() {
-      return this.transitionsList
-        .getTableData(this.tableName)
-        .sort("displayText", (a, b) =>
+      let data = this.transitionsList.getTableData(this.tableName);
+      if (this.sort) {
+        data = data.sort("displayText", (a, b) =>
           a.displayText.localeCompare(b.displayText)
         );
+      }
+      return data;
     }
   },
   methods: {

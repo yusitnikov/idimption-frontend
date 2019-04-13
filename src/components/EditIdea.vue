@@ -3,6 +3,7 @@
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="showHeader"
+    :focusFirstInput="focusFirstInput"
     showUser
   >
     <template #entity-from-at="{ row, isCreating }">
@@ -34,6 +35,7 @@
             :value="row.statusId"
             @change="statusId => update({ statusId })"
             tableName="ideastatus"
+            :sort="false"
             selectFirstOnEmpty
           />
         </FormRow>

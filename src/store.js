@@ -24,6 +24,7 @@ export const SET_USER_ACTION = "SET_USER";
 export const CALL_API_ACTION = "ADD_LOADER";
 export const FETCH_SCHEMA_ACTION = "FETCH_SCHEMA";
 export const FETCH_DATA_ACTION = "FETCH_DATA";
+export const RECOMMEND_LOGIN_ACTION = "RECOMMEND_LOGIN";
 export const APPLY_TRANSITIONS_ACTION = "APPLY_TRANSITIONS";
 export const CHECK_AUTH_ACTION = "CHECK_AUTH";
 export const LOGIN_ACTION = "LOGIN";
@@ -239,13 +240,7 @@ const store = new Vuex.Store({
         returnsData: true
       });
     },
-    async [APPLY_TRANSITIONS_ACTION](
-      { state, dispatch },
-      { transitionsList, showProgress = true }
-    ) {
-      if (transitionsList.isEmpty()) {
-        return;
-      }
+    async [RECOMMEND_LOGIN_ACTION]({ state }) {
       if (!state.userId) {
         const { openPopup } = require("./storeProxy");
         await openPopup(
@@ -254,6 +249,15 @@ const store = new Vuex.Store({
             "You still may submit this data as a guest, but you won't be able to edit it later."
         );
       }
+    },
+    async [APPLY_TRANSITIONS_ACTION](
+      { dispatch },
+      { transitionsList, showProgress = true }
+    ) {
+      if (transitionsList.isEmpty()) {
+        return;
+      }
+      await dispatch(RECOMMEND_LOGIN_ACTION);
       await dispatch(CALL_API_ACTION, {
         url: "/save.php",
         formData: {

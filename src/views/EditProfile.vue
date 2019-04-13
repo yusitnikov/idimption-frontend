@@ -1,16 +1,25 @@
 <template>
   <div class="edit-profile">
-    <h1>User profile</h1>
-
     <EditEntityPage
-      class="next-section-start"
       tableName="user"
       :forcedId="userId"
       :showBack="false"
       :allowRemove="false"
       v-slot="{ row, transitionsList }"
     >
+      <h1>User profile</h1>
+
       <EditUser :savedRow="row" :transitionsList="transitionsList" />
+
+      <template v-if="!row.isNew">
+        <h2>Subscriptions</h2>
+
+        <EditSubscriptions
+          :savedRow="row"
+          :transitionsList="transitionsList"
+          :focusFirstInput="false"
+        />
+      </template>
     </EditEntityPage>
   </div>
 </template>
@@ -19,10 +28,11 @@
 import { mapState } from "vuex";
 import EditEntityPage from "./EditEntityPage";
 import EditUser from "../components/EditUser";
+import EditSubscriptions from "../components/EditSubscriptions";
 
 export default {
   name: "EditProfile",
-  components: { EditEntityPage, EditUser },
+  components: { EditEntityPage, EditUser, EditSubscriptions },
   created() {
     this.checkAuth();
   },

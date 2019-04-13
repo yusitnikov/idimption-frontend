@@ -11,6 +11,11 @@ export function getTableFieldInfo(tableName, fieldName) {
   return getTableSchema(tableName).fieldsInfo[fieldName];
 }
 
+export function getForeignTableNames(tableName) {
+  // noinspection JSUnresolvedVariable
+  return Object.keys(getTableSchema(tableName).foreignKeys);
+}
+
 export function getForeignFieldName(tableName, foreignTableName) {
   // noinspection JSUnresolvedVariable
   return getTableSchema(tableName).foreignKeys[foreignTableName];

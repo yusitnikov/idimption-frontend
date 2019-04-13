@@ -1,6 +1,7 @@
 import store, {
   SET_USER_ACTION,
   CALL_API_ACTION,
+  RECOMMEND_LOGIN_ACTION,
   APPLY_TRANSITIONS_ACTION,
   LOGIN_ACTION,
   REGISTER_ACTION,
@@ -65,6 +66,10 @@ export function callApi(
     returnsData,
     onUploadProgress
   });
+}
+
+export function recommendLogin() {
+  return callAction(RECOMMEND_LOGIN_ACTION);
 }
 
 export function applyTransitions(transitionsList, showProgress = true) {

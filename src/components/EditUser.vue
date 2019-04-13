@@ -3,6 +3,7 @@
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="false"
+    :focusFirstInput="focusFirstInput"
     @save="passwordConfirmation = ''"
     v-slot="{
       id,
@@ -105,5 +106,9 @@ export default {
 
 .remove-avatar {
   .block-margin-top;
+}
+
+.text-input {
+  width: 270px;
 }
 </style>

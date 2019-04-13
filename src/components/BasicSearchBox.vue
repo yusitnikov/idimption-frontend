@@ -18,32 +18,23 @@
 <script>
 import TextInput from "./TextInput";
 import BasicSearchBoxPopup from "./BasicSearchBoxPopup";
+import GlobalEventsMixin from "../mixins/GlobalEventsMixin";
 import Guid from "guid";
 import { getKeyCodeByEvent } from "../misc";
 
 export default {
   name: "BasicSearchBox",
   components: { TextInput, BasicSearchBoxPopup },
+  mixins: [GlobalEventsMixin],
   props: {
     value: [String, Guid],
-    placeholder: String,
-    ignoreEvents: Boolean
+    placeholder: String
   },
   data() {
     return {
       opened: false,
       openedChangeTimer: null
     };
-  },
-  mounted() {
-    this.onClick = this.onClick.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    document.addEventListener("click", this.onClick);
-    document.addEventListener("keydown", this.onKeyDown);
-  },
-  beforeDestroy() {
-    document.removeEventListener("click", this.onClick);
-    document.removeEventListener("keydown", this.onKeyDown);
   },
   methods: {
     focus() {
@@ -61,20 +52,10 @@ export default {
       this.$emit("focus");
       this.opened = true;
     },
-    onClick(ev) {
-      if (this.ignoreEvents) {
-        return;
-      }
-
-      if (!this.$el.contains(ev.target)) {
-        this.blur();
-      }
+    onOuterClick() {
+      this.blur();
     },
     onKeyDown(ev) {
-      if (this.ignoreEvents) {
-        return;
-      }
-
       if (this.opened) {
         switch (getKeyCodeByEvent(ev)) {
           case "ArrowUp":

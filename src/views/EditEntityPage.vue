@@ -1,6 +1,6 @@
 <template>
   <div class="edit-entity-page">
-    <div v-if="showBack">
+    <div class="back-button" v-if="showBack">
       <ButtonLink :href="'/' + tableName"
         ><Icon type="chevron-left" /> Back</ButtonLink
       >
@@ -121,3 +121,9 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="less">
+.back-button {
+  margin-bottom: 15px;
+}
+</style>

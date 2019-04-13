@@ -23,9 +23,13 @@ export default {
 </script>
 
 <style scoped lang="less">
-input {
-  position: relative;
-  top: 2px;
-  margin: 0;
+.checkbox-input {
+  cursor: pointer;
+
+  input {
+    position: relative;
+    top: 2px;
+    margin: 0;
+  }
 }
 </style>

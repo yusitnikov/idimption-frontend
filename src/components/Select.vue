@@ -20,7 +20,7 @@
         disabled: row.disabled,
         selected: index === selectedRowIndex
       }"
-      @click="() => !row.disabled && row.onClick && row.onClick()"
+      @click="() => clickRow(row)"
       :ref="'item-' + index"
       :key="row.id.toString()"
     >
@@ -69,7 +69,7 @@
             <td>
               <HighlightSelection :text="row.text" v-if="row.highlight" />
               <template v-else>{{ row.text }}</template>
-              <span class="irrelevant" v-if="row.tip !== null">
+              <span class="irrelevant" v-if="row.tip !== undefined">
                 ({{ row.tip }})
               </span>
             </td>
@@ -82,7 +82,7 @@
 
 <script>
 import Vue from "vue";
-import { getKeyCodeByEvent, matchesFreeTextSearch } from "../misc";
+import { getKeyCodeByEvent, matchesFreeTextSearch, timeout } from "../misc";
 import { TableData } from "../TableData";
 import Guid from "guid";
 import HighlightSelection from "./HighlightSelection";
@@ -163,7 +163,10 @@ export default {
       }
       return options;
     },
-    visibleOptionIds() {
+    visibleTreeOptionIds() {
+      if (!this.isTree) {
+        return null;
+      }
       const visibleOptionIds = {};
       for (const row of this.processedOptions.rows) {
         for (const id of row.getRowFullId(this.options)) {
@@ -189,43 +192,49 @@ export default {
       }
 
       for (const option of this.processedOptions.rows) {
-        if (!this.visibleOptionIds[option.id]) {
+        if (this.isTree && !this.visibleTreeOptionIds[option.id]) {
           continue;
         }
 
         let treePaddings = [];
-        for (let child = option; child; child = child.getParent(this.options)) {
-          let classNames = [];
-          if (!child.parentId) {
-            classNames.push("first-level");
-          }
-          if (child === option) {
-            classNames.push("last-level");
-          } else {
-            classNames.push("prev-level");
-          }
+        if (this.isTree) {
+          for (
+            let child = option;
+            child;
+            child = child.getParent(this.options)
+          ) {
+            let classNames = [];
+            if (!child.parentId) {
+              classNames.push("first-level");
+            }
+            if (child === option) {
+              classNames.push("last-level");
+            } else {
+              classNames.push("prev-level");
+            }
 
-          const siblings = child.getSiblings(this.processedOptions).rows;
-          if (siblings[0] === child) {
-            classNames.push("first-child");
-          }
-          if (siblings[siblings.length - 1] === child) {
-            classNames.push("last-child");
-          }
+            const siblings = child.getSiblings(this.processedOptions).rows;
+            if (siblings[0] === child) {
+              classNames.push("first-child");
+            }
+            if (siblings[siblings.length - 1] === child) {
+              classNames.push("last-child");
+            }
 
-          treePaddings.unshift(classNames);
+            treePaddings.unshift(classNames);
+          }
         }
 
         rows.push({
           id: option.id,
           text: option.displayText,
-          tip: this.tipFunction ? this.tipFunction(option) : null,
+          tip: this.tipFunction ? this.tipFunction(option) : undefined,
           disabled: !this.processedOptions.isMatchingRow(option),
           parentId: option.parentId,
           treePaddings,
-          treeLevel: option.getTreeLevel(this.options),
-          collapsed: this.isTreeItemCollapsed(option.id),
-          hasChildren: option.hasChildren(this.processedOptions),
+          treeLevel: this.isTree ? option.getTreeLevel(this.options) : 0,
+          collapsed: this.isTree && this.isTreeItemCollapsed(option.id),
+          hasChildren: this.isTree && option.hasChildren(this.processedOptions),
           highlight: true,
           onClick: () => this.onSelect(option.id)
         });
@@ -289,6 +298,12 @@ export default {
       this.text = "";
       if (blur) {
         this.$nextTick(() => this.blur());
+      }
+    },
+    async clickRow(row) {
+      if (!row.disabled && row.onClick) {
+        await timeout();
+        row.onClick();
       }
     },
     async onInput() {

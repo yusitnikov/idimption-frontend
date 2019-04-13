@@ -3,6 +3,7 @@
     :transitionsList="transitionsList"
     :savedRow="savedRow"
     :showHeader="showHeader"
+    :focusFirstInput="focusFirstInput"
   >
     <template slot="title" v-if="ideaCount">
       <ButtonLink align="right" :href="'/idea?cat=' + savedRow.id">

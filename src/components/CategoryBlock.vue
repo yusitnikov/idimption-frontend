@@ -1,6 +1,11 @@
 <template>
-  <EntityBlock :row="row" :readOnly="readOnly" :expandable="!readOnly">
-    <template #details="{ transitionsList }">
+  <EntityBlock
+    :row="row"
+    :readOnly="readOnly"
+    :expandable="!readOnly"
+    :transitionsList="transitionsList"
+  >
+    <template slot="details">
       <EditCategory
         :savedRow="row"
         :transitionsList="transitionsList"
@@ -13,6 +18,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import EntityTransitionsList from "../EntityTransitionsList";
 import EntityBlock from "./EntityBlock";
 import EditCategory from "./EditCategory";
 
@@ -28,6 +34,10 @@ export default {
   props: {
     row: {
       type: Object,
+      required: true
+    },
+    transitionsList: {
+      type: EntityTransitionsList,
       required: true
     }
   }

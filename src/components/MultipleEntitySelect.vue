@@ -171,7 +171,8 @@ export default {
 
       return false;
     },
-    startAdd() {
+    async startAdd() {
+      await timeout();
       this.adding = true;
       this.addValues = {};
       this.focusNextAddTagSelect();
@@ -211,7 +212,8 @@ export default {
       this.$emit("change", newValue);
       this.startAdd();
     },
-    removeRow(ids) {
+    async removeRow(ids) {
+      await timeout();
       ids = this.denormalizeIds(ids);
       this.$emit("remove", ids);
       const newValue = this.value.filter(valueIds => valueIds !== ids);

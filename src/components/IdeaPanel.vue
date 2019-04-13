@@ -43,6 +43,7 @@
                 <IdeaBlock
                   class="draggable-block"
                   :row="row"
+                  :transitionsList="transitionsList"
                   :showStatus="false"
                 />
               </Draggable>
@@ -57,9 +58,9 @@
 <script>
 import { mapGetters } from "vuex";
 import { getTableData } from "../storeProxy";
+import EntityTransitionsList from "../EntityTransitionsList";
 import IdeaBlock from "./IdeaBlock";
 import { Container, Draggable } from "vue-smooth-dnd";
-import EntityTransitionsList from "../EntityTransitionsList";
 
 export default {
   name: "IdeaPanel",
@@ -69,7 +70,7 @@ export default {
   },
   data() {
     return {
-      dragTransitionsList: new EntityTransitionsList()
+      transitionsList: new EntityTransitionsList()
     };
   },
   computed: {
@@ -78,7 +79,7 @@ export default {
       return getTableData("ideastatus").rows;
     },
     tableData() {
-      return this.dragTransitionsList.getTableData("idea");
+      return this.transitionsList.getTableData("idea");
     },
     sortedTableData() {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -154,7 +155,7 @@ export default {
         }
 
         // Send the API request
-        this.dragTransitionsList.updateRow(row, updates).save();
+        this.transitionsList.updateRow(row, updates).save();
       }
     }
   }

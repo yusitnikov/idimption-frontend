@@ -356,6 +356,10 @@ button {
   line-height: @line-height;
 }
 
+h1 {
+  margin-top: 0;
+}
+
 #notifications .alert.notification {
   position: fixed;
   z-index: @z-index-notifications;

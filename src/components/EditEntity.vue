@@ -44,6 +44,10 @@ const commonProps = {
   showHeader: {
     type: Boolean,
     default: true
+  },
+  focusFirstInput: {
+    type: Boolean,
+    default: true
   }
 };
 
@@ -78,7 +82,9 @@ export default {
     }
   },
   mounted() {
-    focusFirstInput(this);
+    if (this.focusFirstInput) {
+      focusFirstInput(this);
+    }
   },
   methods: {
     update(updates) {

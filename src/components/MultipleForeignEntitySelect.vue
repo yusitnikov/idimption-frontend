@@ -52,11 +52,13 @@ export default {
       required: true
     },
     filter: Function,
+    foreignFilter: Function,
     tipFunction: Function,
     alwaysOpened: Boolean,
     placeholder: [String, Array],
     allowAdd: Boolean,
     addComponent: Object,
+    addProps: Object,
     transitionsList: {
       type: EntityTransitionsList,
       required: true
@@ -67,7 +69,9 @@ export default {
       return this.row.getForeignFieldName(this.tableName);
     },
     selectedRows() {
-      return this.row.getForeignRows(this.tableName, this.transitionsList);
+      return this.row
+        .getForeignRows(this.tableName, this.transitionsList)
+        .filter(this.foreignFilter);
     },
     foreignTableNamesMap() {
       let map = {};
@@ -94,7 +98,8 @@ export default {
   methods: {
     addRow(ids) {
       let row = {
-        [this.parentFieldName]: this.row.id
+        [this.parentFieldName]: this.row.id,
+        ...this.addProps
       };
       for (const fieldName of this.selectFieldNames) {
         row[fieldName] = ids[this.foreignTableNamesMap[fieldName]];

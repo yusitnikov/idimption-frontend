@@ -21,6 +21,11 @@
       >
         <Icon type="external-link-alt" />
       </ButtonLink>
+      <EntitySubscriptionIcon
+        class="pull-right"
+        :row="updatedRow"
+        :transitionsList="transitionsList"
+      />
       <div class="pull-right">
         <slot name="actions" />
       </div>
@@ -56,6 +61,7 @@
 import EntityTransitionsList from "../EntityTransitionsList";
 import { EntityRow } from "../EntityRow";
 import { validateAllInputs } from "../misc";
+import EntitySubscriptionIcon from "./EntitySubscriptionIcon";
 import ButtonLink from "./ButtonLink";
 import PopupForm from "./PopupForm";
 import Icon from "./Icon";
@@ -65,6 +71,7 @@ import HighlightRowPropSelection from "./HighlightRowPropSelection";
 export default {
   name: "EntityBlock",
   components: {
+    EntitySubscriptionIcon,
     ButtonLink,
     PopupForm,
     Icon,
@@ -76,6 +83,10 @@ export default {
       type: EntityRow,
       required: true
     },
+    transitionsList: {
+      type: EntityTransitionsList,
+      required: true
+    },
     readOnly: Boolean,
     expandable: {
       type: Boolean,
@@ -85,11 +96,13 @@ export default {
   },
   data() {
     return {
-      transitionsList: new EntityTransitionsList(),
       expanded: false
     };
   },
   computed: {
+    updatedRow() {
+      return this.transitionsList.applyToRow(this.row);
+    },
     pageUrl() {
       return "/" + this.row.tableName + "/" + this.row.id;
     }

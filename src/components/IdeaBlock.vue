@@ -1,5 +1,11 @@
 <template>
-  <EntityBlock class="idea-block" :row="row" showUser :readOnly="readOnly">
+  <EntityBlock
+    class="idea-block"
+    :row="row"
+    showUser
+    :readOnly="readOnly"
+    :transitionsList="transitionsList"
+  >
     <template slot="actions">
       <span
         class="comments-count"
@@ -17,7 +23,7 @@
       <IdeaPropsLine :row="row" :showStatus="showStatus" showComments />
     </template>
 
-    <template #details="{ transitionsList }">
+    <template slot="details">
       <EditIdea
         :savedRow="row"
         :transitionsList="transitionsList"
@@ -30,6 +36,7 @@
 
 <script>
 import { canUserEditUsersData } from "../auth";
+import EntityTransitionsList from "../EntityTransitionsList";
 import { getRowById } from "../EntityHelper";
 import EntityBlock from "./EntityBlock";
 import Icon from "./Icon";
@@ -60,6 +67,10 @@ export default {
   props: {
     row: {
       type: Object,
+      required: true
+    },
+    transitionsList: {
+      type: EntityTransitionsList,
       required: true
     },
     showStatus: {

@@ -5,6 +5,8 @@
       <EntityById tableName="user" :id="row.userId" v-slot="{ displayText }">
         {{ displayText || "Guest" }}
       </EntityById>
+
+      <slot name="user" />
     </template>
     <!--suppress JSUnresolvedVariable -->
     <template v-if="row.createdAt">

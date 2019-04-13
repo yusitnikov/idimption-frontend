@@ -18,7 +18,11 @@
       <EntityById tableName="user" :id="row.userId" v-slot="{ avatarUrl }">
         <UserAvatarBlock :userId="row.userId" :avatarUrl="avatarUrl">
           <div class="header">
-            <EntityFromAt :row="row" showUser />
+            <EntityFromAt :row="row" showUser>
+              <template slot="user" v-if="getReplyToLabel(row)">
+                to {{ getReplyToLabel(row) }}
+              </template>
+            </EntityFromAt>
             <!-- eslint-disable-next-line -->
             <div class="line multi-line"><AutoLink :text="row.message" /></div>
 
@@ -30,7 +34,12 @@
             />
           </div>
 
-          <IdeaComments class="replies" :ideaId="ideaId" :parentId="row.id" />
+          <IdeaComments
+            class="replies"
+            :transitionsList="transitionsList"
+            :ideaId="ideaId"
+            :parentId="row.id"
+          />
         </UserAvatarBlock>
       </EntityById>
     </div>
@@ -39,6 +48,7 @@
 
 <script>
 import EntityTransitionsList from "../EntityTransitionsList";
+import { getRowById } from "../EntityHelper";
 import Guid from "guid";
 import EntityFromAt from "./EntityFromAt";
 import EntityById from "./EntityById";
@@ -56,6 +66,10 @@ export default {
     AutoLink
   },
   props: {
+    transitionsList: {
+      type: EntityTransitionsList,
+      default: () => new EntityTransitionsList()
+    },
     ideaId: {
       type: [String, Guid],
       required: true
@@ -65,11 +79,6 @@ export default {
       default: null
     }
   },
-  data() {
-    return {
-      transitionsList: new EntityTransitionsList()
-    };
-  },
   computed: {
     rows() {
       return this.transitionsList
@@ -77,6 +86,36 @@ export default {
         .reverse()
         .getRowsByFieldValue("ideaId", this.ideaId)
         .getRowsByFieldValue("parentId", this.parentId).rows;
+    },
+    parentComment() {
+      return this.parentId
+        ? this.transitionsList
+            .getTableData("ideacomment")
+            .getRowById(this.parentId)
+        : null;
+    },
+    replyUserId() {
+      return this.parentId ? this.parentComment.userId : null;
+    }
+  },
+  methods: {
+    getReplyToLabel(row) {
+      let userIds = [];
+      if (this.parentId) {
+        userIds.push(this.parentComment.userId);
+      }
+      userIds.push(
+        ...row.getForeignIds(
+          "ideacommentmention",
+          "userId",
+          this.transitionsList
+        )
+      );
+      return userIds
+        .map(userId =>
+          userId ? getRowById("user", userId).displayText : "Guest"
+        )
+        .join(", ");
     }
   }
 };
