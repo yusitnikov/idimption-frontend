@@ -4,31 +4,17 @@
     @click="showDetails"
   >
     <div class="actions pull-right">
-      <ButtonLink
-        class="pull-right"
-        align="right"
-        plain
-        @click="remove"
-        v-if="!readOnly"
-      >
-        <Icon type="trash-alt" />
-      </ButtonLink>
-      <ButtonLink
-        class="pull-right"
-        align="right"
-        :href="pageUrl"
-        @click="stopPropagation"
-      >
-        <Icon type="external-link-alt" />
-      </ButtonLink>
+      <slot name="actions" />
       <EntitySubscriptionIcon
-        class="pull-right"
         :row="updatedRow"
         :transitionsList="transitionsList"
       />
-      <div class="pull-right">
-        <slot name="actions" />
-      </div>
+      <ButtonLink :href="pageUrl" @click="stopPropagation">
+        <Icon type="external-link-alt" />
+      </ButtonLink>
+      <ButtonLink plain @click="remove" v-if="!readOnly">
+        <Icon type="trash-alt" />
+      </ButtonLink>
     </div>
 
     <div class="line summary">
@@ -143,10 +129,6 @@ export default {
   &.expandable {
     cursor: pointer;
   }
-}
-
-.pull-right {
-  margin-left: @button-distance;
 }
 
 .summary {

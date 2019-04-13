@@ -8,15 +8,17 @@
       v-if="expanded"
     />
     <div class="line" v-if="expanded">
-      to
-      <EntityById
-        tableName="user"
-        :id="replyUserId"
-        v-slot="{ displayText }"
-        v-if="parentId"
-      >
-        {{ displayText || "Guest" }}
-      </EntityById>
+      <span class="inline-item">
+        to
+        <EntityById
+          tableName="user"
+          :id="replyUserId"
+          v-slot="{ displayText }"
+          v-if="parentId"
+        >
+          {{ displayText || "Guest" }}
+        </EntityById>
+      </span>
       <!--suppress RequiredAttributes value (handled by v-model)-->
       <MultipleEntitySelect
         class="mention-users-select"

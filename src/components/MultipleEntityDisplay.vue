@@ -1,5 +1,5 @@
 <template>
-  <span class="multiple-entity-display">
+  <span class="multiple-entity-display inline-item">
     <Tag
       v-for="ids in normalizedValue"
       :key="JSON.stringify(ids)"
@@ -64,11 +64,3 @@ export default {
   }
 };
 </script>
-
-<style scoped lang="less">
-@import "../styles/essentials";
-
-.view-tag {
-  margin-right: @button-distance;
-}
-</style>

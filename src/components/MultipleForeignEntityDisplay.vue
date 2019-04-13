@@ -86,11 +86,3 @@ export default {
   }
 };
 </script>
-
-<style scoped lang="less">
-@import "../styles/essentials";
-
-.view-tag {
-  margin-right: @button-distance;
-}
-</style>

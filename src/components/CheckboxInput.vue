@@ -1,5 +1,5 @@
 <template>
-  <label class="checkbox-input">
+  <label class="checkbox-input inline-item">
     <input
       type="checkbox"
       :checked="value"

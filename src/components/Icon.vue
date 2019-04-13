@@ -1,5 +1,5 @@
 <template>
-  <i :class="['fas', 'fa-' + type]"></i>
+  <i :class="['icon', 'fas', 'fa-' + type]"></i>
 </template>
 
 <script>

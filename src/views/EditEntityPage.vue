@@ -1,9 +1,10 @@
 <template>
   <div class="edit-entity-page">
     <div class="back-button" v-if="showBack">
-      <ButtonLink :href="'/' + tableName"
-        ><Icon type="chevron-left" /> Back</ButtonLink
-      >
+      <ButtonLink :href="'/' + tableName">
+        <Icon type="chevron-left" />
+        <span>Back</span>
+      </ButtonLink>
     </div>
     <template v-if="row">
       <slot

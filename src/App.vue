@@ -20,10 +20,12 @@
     <template v-if="ready">
       <div id="nav">
         <div id="auth" class="pull-right">
-          Welcome,
-          <EntityById tableName="user" :id="userId" v-slot="{ displayText }">
-            {{ displayText || "Guest" }}
-          </EntityById>
+          <span class="inline-item">
+            Welcome,
+            <EntityById tableName="user" :id="userId" v-slot="{ displayText }">
+              {{ displayText || "Guest" }}
+            </EntityById>
+          </span>
           <Button @click="openLogin" v-if="!userId">
             <Icon type="sign-in-alt" />
             Login
@@ -44,12 +46,12 @@
       </div>
 
       <Alert type="warning" v-if="userId && !verifiedEmail">
-        <template v-if="!verificationEmailSent">
-          Please verify your email.
+        <span v-if="!verificationEmailSent">
+          <span class="inline-item">Please verify your email.</span>
           <Button @click="sendVerificationEmail">
             Send verification code
           </Button>
-        </template>
+        </span>
         <template v-else>
           Verification code sent, please check your email.
         </template>
@@ -87,12 +89,12 @@
         </FormRow>
 
         <div class="line next-section-start">
-          Don't have an account yet?
+          <span class="inline-item">Don't have an account yet?</span>
           <Button @click="switchToRegister">Register</Button>
         </div>
 
         <div class="line next-section-start">
-          Forgot password?
+          <span class="inline-item">Forgot password?</span>
           <Button @click="switchToResetPassword">Restore</Button>
         </div>
       </PopupForm>
@@ -130,7 +132,7 @@
         </FormRow>
 
         <div class="line next-section-start">
-          Already have an account?
+          <span class="inline-item">Already have an account?</span>
           <Button @click="switchToLogin">Login</Button>
         </div>
       </PopupForm>
@@ -397,12 +399,11 @@ h1 {
 
 .inline {
   display: inline !important;
-  .inline-align-modifiers;
 }
 
+.inline-block-container > *,
 .inline-block {
   display: inline-block !important;
-  .inline-align-modifiers;
 }
 
 .line {
@@ -443,10 +444,6 @@ h1 {
   }
 }
 
-.button {
-  .inline-align-modifiers;
-}
-
 .single-line {
   white-space: nowrap;
 }
@@ -465,5 +462,15 @@ h1 {
 
 .pull-right {
   float: right;
+}
+
+.inline-item:not(:last-child):not(.no-margin) {
+  &:not(.pull-right) {
+    margin-right: @button-distance;
+  }
+
+  &.pull-right {
+    margin-left: @button-distance;
+  }
 }
 </style>

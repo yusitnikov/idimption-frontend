@@ -1,6 +1,6 @@
 <template>
   <div :class="['alert', 'alert-' + type]">
-    <slot></slot>
+    <slot />
 
     <ButtonLink class="close" plain @click="$emit('close')" v-if="allowClose">
       &times;
@@ -59,10 +59,6 @@ export default {
     background-color: @error-background-color;
     border-color: @error-border-color;
     color: @error-color;
-  }
-
-  .button {
-    margin-left: @button-distance;
   }
 
   .close {

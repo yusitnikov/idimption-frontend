@@ -1,6 +1,7 @@
 <template>
   <div class="basic-search-box">
     <TextInput
+      class="no-margin"
       :value="value"
       :placeholder="placeholder"
       noValidation

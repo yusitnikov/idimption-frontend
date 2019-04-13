@@ -7,13 +7,13 @@
       </Button>
     </div>
 
-    <div class="line">
-      <span class="inline inline-left">
+    <div class="line inline-block-container">
+      <span class="inline-item">
         Filters:
       </span>
 
       <TextInput
-        class="free-text inline-block inline-block-left"
+        class="free-text"
         v-model="filterText"
         allowEmpty
         placeholder="Filter by free text..."
@@ -21,7 +21,7 @@
 
       <!--suppress RequiredAttributes value (v-model does it)-->
       <MultipleEntitySelect
-        class="filter-tags inline inline-left"
+        class="filter-tags"
         v-model="filterTags"
         plainValue
         alwaysOpened
@@ -34,7 +34,7 @@
 
       <!--suppress RequiredAttributes value (v-model does it)-->
       <MultipleEntitySelect
-        class="filter-categories inline inline-left"
+        class="filter-categories"
         v-model="filterCategories"
         plainValue
         alwaysOpened
@@ -47,7 +47,7 @@
 
       <!--suppress RequiredAttributes value (v-model does it)-->
       <MultipleEntitySelect
-        class="filter-users inline inline-left"
+        class="filter-users"
         v-model="filterUsers"
         plainValue
         alwaysOpened
@@ -61,7 +61,7 @@
 
       from
       <DateInput
-        class="filter-from-dt inline-block inline-block-left"
+        class="filter-from-dt"
         v-model="filterFromDate"
         allowEmpty
         placeholder="Filter by date..."
@@ -69,25 +69,19 @@
 
       to
       <DateInput
-        class="filter-to-dt inline-block inline-block-left"
+        class="filter-to-dt"
         v-model="filterToDate"
         allowEmpty
         placeholder="Filter by date..."
       />
 
       <!--suppress RequiredAttributes value (handled by v-model)-->
-      <CheckboxInput
-        class="filter-with-comments inline-block inline-block-left"
-        v-model="filterWithComments"
-      >
+      <CheckboxInput v-model="filterWithComments">
         with comments
       </CheckboxInput>
 
       <!--suppress RequiredAttributes value (handled by v-model)-->
-      <CheckboxInput
-        class="filter-with-votes inline-block inline-block-left"
-        v-model="filterWithVotes"
-      >
+      <CheckboxInput v-model="filterWithVotes">
         with votes
       </CheckboxInput>
     </div>

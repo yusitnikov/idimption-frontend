@@ -1,5 +1,5 @@
 <template>
-  <span :class="['button-link', 'button-' + align]">
+  <span class="button-link inline-item">
     <router-link
       :class="classes"
       :to="href"
@@ -22,11 +22,7 @@ export default {
     href: String,
     disabled: Boolean,
     plain: Boolean,
-    customColors: Boolean,
-    align: {
-      type: String,
-      default: "left"
-    }
+    customColors: Boolean
   },
   computed: {
     classes() {
@@ -49,7 +45,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @import "../styles/essentials";
 
 .button-link .link {
@@ -83,6 +79,10 @@ export default {
         color: inherit;
       }
     }
+  }
+
+  .icon + * {
+    margin-left: 4px;
   }
 }
 </style>

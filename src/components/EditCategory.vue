@@ -4,11 +4,12 @@
     :savedRow="savedRow"
     :showHeader="showHeader"
     :focusFirstInput="focusFirstInput"
+    showSubscriptions
   >
-    <template slot="title" v-if="ideaCount">
-      <ButtonLink align="right" :href="'/idea?cat=' + savedRow.id">
+    <template slot="entity-from-at" v-if="ideaCount">
+      <ButtonLink class="ideas-link" :href="'/idea?cat=' + savedRow.id">
         <Icon type="lightbulb" title="Ideas" />
-        {{ ideaCount }}
+        <span>{{ ideaCount }}</span>
       </ButtonLink>
     </template>
 
@@ -87,3 +88,9 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="less">
+.ideas-link {
+  font-weight: normal;
+}
+</style>

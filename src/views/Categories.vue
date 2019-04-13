@@ -7,13 +7,13 @@
       </Button>
     </div>
 
-    <div class="line">
-      <span class="inline inline-left">
+    <div class="line inline-block-container">
+      <span class="inline-item">
         Filters:
       </span>
 
       <TextInput
-        class="free-text inline-block inline-block-left"
+        class="free-text"
         v-model="filterText"
         allowEmpty
         placeholder="Filter by free text..."

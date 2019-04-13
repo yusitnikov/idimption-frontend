@@ -1,5 +1,5 @@
 <template>
-  <div class="text-input">
+  <div class="text-input inline-item">
     <input
       :type="type"
       class="input"

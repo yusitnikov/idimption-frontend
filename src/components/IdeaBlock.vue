@@ -8,7 +8,7 @@
   >
     <template slot="actions">
       <span
-        class="comments-count"
+        class="comments-count inline-item"
         :title="commentUsers.join('\n')"
         v-if="comments.length"
       >
@@ -16,7 +16,7 @@
         {{ comments.length }}
       </span>
 
-      <IdeaVote :ideaId="row.id" />
+      <EntityVote :row="row" />
     </template>
 
     <template slot="additionalInfo">
@@ -40,13 +40,13 @@ import EntityTransitionsList from "../EntityTransitionsList";
 import { getRowById } from "../EntityHelper";
 import EntityBlock from "./EntityBlock";
 import Icon from "./Icon";
-import IdeaVote from "./IdeaVote";
+import EntityVote from "./EntityVote";
 import IdeaPropsLine from "./IdeaPropsLine";
 import EditIdea from "./EditIdea";
 
 export default {
   name: "IdeaBlock",
-  components: { EntityBlock, Icon, IdeaVote, IdeaPropsLine, EditIdea },
+  components: { EntityBlock, Icon, EntityVote, IdeaPropsLine, EditIdea },
   computed: {
     readOnly() {
       return !canUserEditUsersData(this.row.userId);
@@ -93,10 +93,6 @@ export default {
   .summary-text {
     display: block;
     clear: both;
-  }
-
-  .comments-count {
-    margin-right: @button-distance;
   }
 }
 </style>

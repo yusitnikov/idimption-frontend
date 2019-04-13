@@ -1,10 +1,11 @@
 <template>
-  <div class="multiple-entity-select">
+  <div class="multiple-entity-select inline-item">
     <MultipleEntityDisplay
       :value="value"
       :tableNames="selectTableNames"
       :iconClass="iconClass"
       :iconTitle="iconTitle"
+      v-if="value.length"
     >
       <template #before="params">
         <slot name="before" v-bind="params" />
@@ -15,13 +16,13 @@
       <template #after="params">
         <slot name="after" v-bind="params" />
         {{ " " }}
-        <Button class="small" align="none" @click="() => removeRow(params.ids)">
+        <Button class="small no-margin" @click="() => removeRow(params.ids)">
           <Icon type="times" />
         </Button>
       </template>
     </MultipleEntityDisplay>
 
-    <span class="add-tag">
+    <span class="add-tag inline-item">
       <template v-if="adding || alwaysOpened">
         <span
           v-for="selectTableName in selectTableNames"

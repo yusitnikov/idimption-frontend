@@ -10,6 +10,7 @@
       :fieldNames="['tagId']"
       iconClass="tag"
       iconTitle="Tag"
+      v-if="row.getForeignRows('ideatag').length"
     />
 
     <MultipleForeignEntityDisplay
@@ -19,10 +20,9 @@
       iconClass="sitemap"
       iconTitle="Category"
       v-slot="{ id, displayText }"
+      v-if="row.getForeignRows('ideacategory').length"
     >
-      <ButtonLink :href="'/category/' + id" align="none">{{
-        displayText
-      }}</ButtonLink>
+      <ButtonLink :href="'/category/' + id">{{ displayText }}</ButtonLink>
     </MultipleForeignEntityDisplay>
 
     <MultipleForeignEntityDisplay
@@ -32,11 +32,10 @@
       iconClass="link"
       iconTitle="Relation"
       v-slot="{ tableName, id, displayText }"
+      v-if="row.getForeignRows('idearelation').length"
     >
       <template v-if="tableName === 'idea'">
-        <ButtonLink :href="'/idea/' + id" align="none">{{
-          displayText
-        }}</ButtonLink>
+        <ButtonLink :href="'/idea/' + id">{{ displayText }}</ButtonLink>
       </template>
       <template v-else>
         {{ displayText }}

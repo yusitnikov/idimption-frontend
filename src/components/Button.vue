@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    :class="['button', 'input', 'button-' + align]"
+    class="button input inline-item"
     :disabled="disabled"
     @click="onClick"
   >
@@ -13,11 +13,7 @@
 export default {
   name: "Button",
   props: {
-    disabled: Boolean,
-    align: {
-      type: String,
-      default: "left"
-    }
+    disabled: Boolean
   },
   methods: {
     onClick(event) {

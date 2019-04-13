@@ -1,5 +1,5 @@
 <template>
-  <div class="date-input">
+  <div class="date-input inline-item">
     <Datepicker
       v-bind="props"
       @input="$event => $emit('input', $event)"

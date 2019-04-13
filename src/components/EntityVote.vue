@@ -1,10 +1,10 @@
 <template>
-  <div class="idea-vote">
+  <div class="entity-vote inline-item">
     <ButtonLink
-      :class="
+      :class="[
+        'no-margin',
         currentVote && currentVote.isPositive ? 'vote-positive' : 'vote-none'
-      "
-      align="none"
+      ]"
       plain
       customColors
       :title="getVotesByIsPositive(true).join('\n')"
@@ -14,10 +14,10 @@
       {{ getVotesByIsPositive(true).length }}
     </ButtonLink>
     <ButtonLink
-      :class="
+      :class="[
+        'no-margin',
         currentVote && !currentVote.isPositive ? 'vote-negative' : 'vote-none'
-      "
-      align="none"
+      ]"
       plain
       customColors
       :title="getVotesByIsPositive(false).join('\n')"
@@ -35,15 +35,17 @@ import { openPopup } from "../storeProxy";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { EntityRow } from "../EntityRow";
 import { getRowById } from "../EntityHelper";
-import Guid from "guid";
 import ButtonLink from "./ButtonLink";
 import Icon from "./Icon";
 
 export default {
-  name: "IdeaVote",
+  name: "EntityVote",
   components: { ButtonLink, Icon },
   props: {
-    ideaId: [String, Guid]
+    row: {
+      type: EntityRow,
+      required: true
+    }
   },
   data() {
     return {
@@ -53,11 +55,17 @@ export default {
   computed: {
     ...mapState(["userId"]),
     ...mapGetters(["verifiedEmail"]),
+    foreignTableName() {
+      return this.row.tableName + "vote";
+    },
+    foreignFieldName() {
+      return this.row.tableName + "Id";
+    },
     allVotes() {
-      // noinspection JSUnresolvedVariable
-      return this.transitionsList
-        .getTableData("ideavote")
-        .getRowsByFieldValue("ideaId", this.ideaId);
+      return this.row.getForeignRows(
+        this.foreignTableName,
+        this.transitionsList
+      );
     },
     currentVote() {
       return this.allVotes.getRowByFieldValue("userId", this.userId);
@@ -94,9 +102,9 @@ export default {
       if (!vote) {
         this.transitionsList.addRow(
           new EntityRow(
-            "ideavote",
+            this.foreignTableName,
             {
-              ideaId: this.ideaId,
+              [this.foreignFieldName]: this.row.id,
               userId: this.userId,
               isPositive
             },
@@ -117,7 +125,7 @@ export default {
 <style lang="less">
 @import "../styles/essentials";
 
-.idea-vote {
+.entity-vote {
   display: inline;
   font-weight: normal;
 

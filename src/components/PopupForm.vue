@@ -11,10 +11,8 @@
         </div>
         <div class="footer">
           <div class="pull-right">
-            <Button align="right" @click="$emit('close')">{{
-              cancelLabel
-            }}</Button>
-            <Button align="right" @click="save">{{ okLabel }}</Button>
+            <Button @click="$emit('close')">{{ cancelLabel }}</Button>
+            <Button @click="save">{{ okLabel }}</Button>
           </div>
         </div>
       </div>

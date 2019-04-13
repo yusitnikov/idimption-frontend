@@ -1,8 +1,7 @@
 <template>
-  <div class="entity-subscription-icon">
+  <div class="entity-subscription-icon inline-item">
     <ButtonLink
       :class="currentIncludedClass"
-      align="none"
       plain
       customColors
       :title="title"

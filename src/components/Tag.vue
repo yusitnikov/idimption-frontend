@@ -1,5 +1,5 @@
 <template>
-  <span class="tag">
+  <span class="tag inline-item">
     <Icon :type="iconClass" :title="iconTitle" v-if="iconClass" />
     {{ " " }}
     <slot />
@@ -18,11 +18,3 @@ export default {
   }
 };
 </script>
-
-<style scoped lang="less">
-@import "../styles/essentials";
-
-.tag {
-  margin-right: @button-distance;
-}
-</style>

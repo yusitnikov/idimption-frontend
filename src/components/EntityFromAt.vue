@@ -1,25 +1,28 @@
 <template>
   <div class="entity-from-at line">
-    <template v-if="showUser">
-      from
-      <EntityById tableName="user" :id="row.userId" v-slot="{ displayText }">
-        {{ displayText || "Guest" }}
-      </EntityById>
+    <!--suppress JSUnresolvedVariable -->
+    <span class="inline-item" v-if="showUser || row.createdAt || row.updatedAt">
+      <template v-if="showUser">
+        from
+        <EntityById tableName="user" :id="row.userId" v-slot="{ displayText }">
+          {{ displayText || "Guest" }}
+        </EntityById>
 
-      <slot name="user" />
-    </template>
-    <!--suppress JSUnresolvedVariable -->
-    <template v-if="row.createdAt">
-      at
+        <slot name="user" />
+      </template>
       <!--suppress JSUnresolvedVariable -->
-      <DateTime :value="row.createdAt" />
-    </template>
-    <!--suppress JSUnresolvedVariable -->
-    <template v-if="row.updatedAt && row.updatedAt !== row.createdAt">
-      updated at
+      <template v-if="row.createdAt">
+        at
+        <!--suppress JSUnresolvedVariable -->
+        <DateTime :value="row.createdAt" />
+      </template>
       <!--suppress JSUnresolvedVariable -->
-      <DateTime :value="row.updatedAt" />
-    </template>
+      <template v-if="row.updatedAt && row.updatedAt !== row.createdAt">
+        updated at
+        <!--suppress JSUnresolvedVariable -->
+        <DateTime :value="row.updatedAt" />
+      </template>
+    </span>
 
     <slot />
   </div>

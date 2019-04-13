@@ -56,8 +56,8 @@
 
               <ButtonLink
                 v-if="row.hasChildren"
+                class="no-margin"
                 plain
-                align="none"
                 @click="event => toggleTreeItem(event, row.id)"
               >
                 <Icon

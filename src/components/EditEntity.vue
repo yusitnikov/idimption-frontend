@@ -3,7 +3,9 @@
     <template v-if="row">
       <template v-if="!isCreating">
         <h1 v-if="showHeader">
-          [{{ savedRow.id }}] <AutoLink :text="savedDisplayText" />
+          <span class="inline-item">
+            [{{ savedRow.id }}] <AutoLink :text="savedDisplayText" />
+          </span>
           <slot
             name="title"
             v-bind="row"
@@ -19,6 +21,12 @@
             :row="row"
             :isCreating="isCreating"
           />
+
+          <EntitySubscriptionIcon
+            :row="row"
+            :transitionsList="transitionsList"
+            v-if="showSubscriptions"
+          />
         </EntityFromAt>
       </template>
       <slot v-bind="row" :row="row" :isCreating="isCreating" :update="update" />
@@ -27,10 +35,11 @@
 </template>
 
 <script>
-import AutoLink from "./AutoLink";
-import EntityFromAt from "./EntityFromAt";
 import EntityTransitionsList from "../EntityTransitionsList";
 import { focusFirstInput, resetAllInputs } from "../misc";
+import AutoLink from "./AutoLink";
+import EntityFromAt from "./EntityFromAt";
+import EntitySubscriptionIcon from "./EntitySubscriptionIcon";
 
 const commonProps = {
   transitionsList: {
@@ -53,10 +62,11 @@ const commonProps = {
 
 export default {
   name: "EditEntity",
-  components: { AutoLink, EntityFromAt },
+  components: { AutoLink, EntityFromAt, EntitySubscriptionIcon },
   commonProps,
   props: {
     showUser: Boolean,
+    showSubscriptions: Boolean,
     ...commonProps
   },
   computed: {

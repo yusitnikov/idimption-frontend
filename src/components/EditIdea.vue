@@ -5,9 +5,10 @@
     :showHeader="showHeader"
     :focusFirstInput="focusFirstInput"
     showUser
+    showSubscriptions
   >
     <template #entity-from-at="{ row, isCreating }">
-      <IdeaVote class="header-vote" :ideaId="row.id" v-if="!isCreating" />
+      <EntityVote :row="row" v-if="!isCreating" />
     </template>
     <template #default="{ row, isCreating, update }">
       <div
@@ -59,9 +60,7 @@
             :addComponent="editCategoryComponent"
             v-slot="{ id, displayText }"
           >
-            <ButtonLink :href="'/category/' + id" align="none">{{
-              displayText
-            }}</ButtonLink>
+            <ButtonLink :href="'/category/' + id">{{ displayText }}</ButtonLink>
           </MultipleForeignEntitySelect>
         </FormRow>
         <FormRow label="Relations">
@@ -73,9 +72,7 @@
             v-slot="{ tableName, id, displayText }"
           >
             <template v-if="tableName === 'idea'">
-              <ButtonLink :href="'/idea/' + id" align="none">{{
-                displayText
-              }}</ButtonLink>
+              <ButtonLink :href="'/idea/' + id">{{ displayText }}</ButtonLink>
             </template>
             <template v-else>
               {{ displayText }}
@@ -94,7 +91,7 @@
 <script>
 import { mapGetters } from "vuex";
 import EditEntity from "./EditEntity";
-import IdeaVote from "./IdeaVote";
+import EntityVote from "./EntityVote";
 import IdeaPropsLine from "./IdeaPropsLine";
 import FormRow from "./FormRow";
 import EditCommonTextFields from "./EditCommonTextFields";
@@ -109,7 +106,7 @@ export default {
   name: "EditIdea",
   components: {
     EditEntity,
-    IdeaVote,
+    EntityVote,
     IdeaPropsLine,
     FormRow,
     EditCommonTextFields,
@@ -133,12 +130,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "../styles/essentials";
-
-.header-vote {
-  margin-left: @button-distance;
-}
-
 .readonly {
   .description {
     margin: 20px 0;
