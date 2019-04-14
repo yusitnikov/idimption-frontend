@@ -72,7 +72,7 @@
 
         <FormRow label="Login (email)">
           <TextInput
-            v-model="popupUserId"
+            v-model="popupEmail"
             @input="resetPopupError"
             isEmail
             key="login"
@@ -115,7 +115,7 @@
         </FormRow>
         <FormRow label="Login (email)">
           <TextInput
-            v-model="popupUserId"
+            v-model="popupEmail"
             @input="resetPopupError"
             isEmail
             key="login"
@@ -150,7 +150,7 @@
 
         <FormRow label="Login (email)">
           <TextInput
-            v-model="popupUserId"
+            v-model="popupEmail"
             @input="resetPopupError"
             isEmail
             :validationMessage="popupError"
@@ -176,7 +176,7 @@ import {
   switchPopupAction,
   closePopup
 } from "./storeProxy";
-import { sendVerificationEmail } from "./auth";
+import { getUser, sendVerificationEmail } from "./auth";
 import Icon from "./components/displayHelpers/Icon";
 import Alert from "./components/displayHelpers/Alert";
 import EntityById from "./components/displayHelpers/EntityById";
@@ -206,7 +206,7 @@ export default {
     return {
       verificationEmailSent: false,
       popupError: "",
-      popupUserId: "",
+      popupEmail: "",
       popupPassword: "",
       popupUserName: ""
     };
@@ -243,7 +243,7 @@ export default {
   methods: {
     resetPopup() {
       this.popupError = "";
-      this.popupUserId = "";
+      this.popupEmail = "";
       this.popupPassword = "";
       this.popupUserName = "";
     },
@@ -268,7 +268,7 @@ export default {
     },
     async doLogin() {
       try {
-        await login(this.popupUserId, this.popupPassword);
+        await login(this.popupEmail, this.popupPassword);
         this.verificationEmailSent = false;
         this.savePopupIfVerified();
       } catch (exception) {
@@ -277,11 +277,7 @@ export default {
     },
     async doRegister() {
       try {
-        await register(
-          this.popupUserId,
-          this.popupPassword,
-          this.popupUserName
-        );
+        await register(this.popupEmail, this.popupPassword, this.popupUserName);
         // Don't call savePopup(), cause still not verified the email
         this.cancelPopup();
         this.verificationEmailSent = true;
@@ -296,7 +292,7 @@ export default {
     },
     async doResetPassword() {
       try {
-        await sendVerificationEmail(this.popupUserId, true);
+        await sendVerificationEmail(this.popupEmail, true);
         // Don't call savePopup(), cause still not logged in
         this.cancelPopup();
         showNotification("Verification code sent, please check your email.");
@@ -305,7 +301,7 @@ export default {
       }
     },
     sendVerificationEmail() {
-      sendVerificationEmail(this.userId, false);
+      sendVerificationEmail(null, false);
       this.verificationEmailSent = true;
     },
     async savePopupIfVerified() {

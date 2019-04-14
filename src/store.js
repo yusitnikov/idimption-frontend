@@ -276,21 +276,21 @@ const store = new Vuex.Store({
         })
       );
     },
-    async [LOGIN_ACTION]({ commit, dispatch }, { userId, password }) {
-      await dispatch(CALL_API_ACTION, {
+    async [LOGIN_ACTION]({ commit, dispatch }, { email, password }) {
+      const userId = await dispatch(CALL_API_ACTION, {
         url: "/auth/login.php",
         formData: {
-          userId,
+          email,
           password
         }
       });
       commit(SET_USER_MUTATION, userId);
     },
-    async [REGISTER_ACTION]({ commit, dispatch }, { userId, password, name }) {
-      await dispatch(CALL_API_ACTION, {
+    async [REGISTER_ACTION]({ commit, dispatch }, { email, password, name }) {
+      const { userId } = await dispatch(CALL_API_ACTION, {
         url: "/auth/register.php",
         formData: {
-          userId,
+          email,
           password,
           name
         },

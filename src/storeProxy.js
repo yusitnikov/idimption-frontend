@@ -79,12 +79,12 @@ export function applyTransitions(transitionsList, showProgress = true) {
   });
 }
 
-export function login(userId, password) {
-  return callAction(LOGIN_ACTION, { userId, password });
+export function login(email, password) {
+  return callAction(LOGIN_ACTION, { email, password });
 }
 
-export function register(userId, password, name) {
-  return callAction(REGISTER_ACTION, { userId, password, name });
+export function register(email, password, name) {
+  return callAction(REGISTER_ACTION, { email, password, name });
 }
 
 export function logout() {

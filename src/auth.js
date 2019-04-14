@@ -25,8 +25,8 @@ export function canUserEditUsersData(userId) {
   return isUserAdmin() || (isUserVerified() && getUserId() === userId);
 }
 
-export function sendVerificationEmail(userId, resetPassword) {
-  return callApi("/auth/sendVerificationEmail.php", { userId, resetPassword });
+export function sendVerificationEmail(email, resetPassword) {
+  return callApi("/auth/sendVerificationEmail.php", { email, resetPassword });
 }
 
 export async function verifyEmail(code) {
