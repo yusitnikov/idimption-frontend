@@ -176,7 +176,7 @@ import {
   switchPopupAction,
   closePopup
 } from "./storeProxy";
-import { getUser, sendVerificationEmail } from "./auth";
+import { sendVerificationEmail } from "./auth";
 import Icon from "./components/displayHelpers/Icon";
 import Alert from "./components/displayHelpers/Alert";
 import EntityById from "./components/displayHelpers/EntityById";
