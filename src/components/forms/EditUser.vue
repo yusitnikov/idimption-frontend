@@ -15,10 +15,6 @@
       update
     }"
   >
-    <FormRow label="Login (email)" v-if="isCreating">
-      <TextInput :value="id" isEmail @input="id => update({ id })" />
-    </FormRow>
-
     <FormRow label="Name">
       <TextInput :value="name" @input="name => update({ name })" />
     </FormRow>
@@ -42,13 +38,6 @@
       </UserAvatarBlock>
     </FormRow>
 
-    <TextInput
-      type="hidden"
-      name="username"
-      :value="id"
-      noValidation
-      v-if="!isCreating"
-    />
     <FormRow class="next-section-start" label="New password">
       <TextInput
         type="password"
