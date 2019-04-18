@@ -4,7 +4,14 @@
       <thead>
         <tr>
           <th v-for="status in statuses" :key="status.id">
-            {{ status.summary }} ({{ getTableRowsByStatus(status.id).length }})
+            <div class="status-name">
+              {{ status.summary }}
+              ({{ getTableRowsByStatus(status.id).length }})
+            </div>
+            <div
+              class="status-description multi-line irrelevant"
+              v-text="status.description"
+            ></div>
           </th>
         </tr>
       </thead>
@@ -170,7 +177,16 @@ table {
   margin: -10px;
 
   th {
-    font-size: 130%;
+    vertical-align: top;
+
+    .status-name {
+      font-size: 130%;
+    }
+
+    .status-description {
+      margin-top: 3px;
+      font-weight: normal;
+    }
   }
 
   td {
