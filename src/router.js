@@ -35,7 +35,7 @@ const routes = [
     component: Category
   },
   {
-    path: "/auth/verify/:code/:resetPassword",
+    path: "/auth/verify/:code",
     name: "authVerify",
     component: AuthByCode,
     allowAnonymous: true

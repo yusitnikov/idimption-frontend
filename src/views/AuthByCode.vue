@@ -15,15 +15,17 @@ export default {
     };
   },
   async created() {
-    const { code, resetPassword } = this.$route.params;
-    const codeIsOk = await verifyEmail(code);
-    if (codeIsOk) {
-      showNotification("Email verified successfully.");
-      // noinspection JSUnresolvedVariable
-      if (resetPassword) {
-        this.$router.push("/profile");
-        return;
+    const {
+      params: { code },
+      query: { r }
+    } = this.$route;
+    const response = await verifyEmail(code);
+    if (response) {
+      if (response.verifiedNow) {
+        showNotification("Email verified successfully.");
       }
+      this.$router.push(r || "/");
+      return;
     } else {
       showNotification("This link has been expired.", "error");
       if (!getUserId()) {

@@ -18,46 +18,18 @@
     </FormRow>
 
     <template v-if="!row.subscribeToAll">
-      <FormRow :labelWidth="180" label="Subscribe to new ideas">
-        <Select
-          class="subscribe-to-new-ideas-select no-margin"
-          :value="row.subscribeToAllNewIdeas ? 'all' : 'custom'"
-          @input="
-            subscribeToAllNewIdeas =>
-              update({
-                subscribeToAllNewIdeas: subscribeToAllNewIdeas === 'all'
-              })
-          "
-          :options="subscribeToNewIdeasOptions"
-        />
-        <template v-if="!row.subscribeToAllNewIdeas">
-          <FormRow label="Categories" text>
-            You can manage category subscriptions on the
-            <router-link to="/category">categories page</router-link>
-          </FormRow>
-
-          <FormRow label="Tags">
-            <SubscriptionSelectRow
-              :row="row"
-              :transitionsList="transitionsList"
-              linkTableName="tagsubscription"
-              selectFieldName="tagId"
-            />
-          </FormRow>
-
-          <FormRow label="Users">
-            <SubscriptionSelectRow
-              :row="row"
-              :transitionsList="transitionsList"
-              linkTableName="usersubscription"
-              selectFieldName="dstUserId"
-              :filter="user => user.id !== userId"
-            />
-          </FormRow>
-        </template>
-      </FormRow>
-
       <FormRow :labelWidth="180" label="Subscribe to idea updates" text>
+        <div class="line">
+          <CheckboxInput
+            :value="row.subscribeToAllNewIdeas"
+            @input="
+              subscribeToAllNewIdeas => update({ subscribeToAllNewIdeas })
+            "
+          >
+            all new ideas
+          </CheckboxInput>
+        </div>
+
         <div class="line">
           <CheckboxInput
             :value="row.subscribeToUpdatesInMyIdeas"
@@ -69,17 +41,30 @@
             in my ideas
           </CheckboxInput>
         </div>
-        <div>
-          <CheckboxInput
-            :value="row.subscribeToUpdatesInIdeasWatching"
-            @input="
-              subscribeToUpdatesInIdeasWatching =>
-                update({ subscribeToUpdatesInIdeasWatching })
-            "
-          >
-            in ideas I'm watching
-          </CheckboxInput>
-        </div>
+
+        <FormRow label="In categories" text>
+          You can manage category subscriptions on the
+          <router-link to="/category">categories page</router-link>
+        </FormRow>
+
+        <FormRow label="With tags">
+          <SubscriptionSelectRow
+            :row="row"
+            :transitionsList="transitionsList"
+            linkTableName="tagsubscription"
+            selectFieldName="tagId"
+          />
+        </FormRow>
+
+        <FormRow label="From users">
+          <SubscriptionSelectRow
+            :row="row"
+            :transitionsList="transitionsList"
+            linkTableName="usersubscription"
+            selectFieldName="dstUserId"
+            :filter="user => user.id !== userId"
+          />
+        </FormRow>
       </FormRow>
 
       <FormRow :labelWidth="180" label="Subscribe to comments" text>
@@ -92,17 +77,6 @@
             "
           >
             to my ideas
-          </CheckboxInput>
-        </div>
-        <div class="line">
-          <CheckboxInput
-            :value="row.subscribeToCommentsOnIdeasWatching"
-            @input="
-              subscribeToCommentsOnIdeasWatching =>
-                update({ subscribeToCommentsOnIdeasWatching })
-            "
-          >
-            to ideas I'm watching
           </CheckboxInput>
         </div>
         <div class="line">
@@ -167,12 +141,10 @@
 
 <script>
 import { mapState } from "vuex";
-import { TableData } from "../../TableData";
 import { getTableFieldsArray, getForeignTableNames } from "../../EntityHelper";
 import EditEntity from "./generic/EditEntity";
 import FormRow from "./generic/FormRow";
 import SubscriptionSelectRow from "./SubscriptionSelectRow";
-import Select from "../inputs/Select";
 import CheckboxInput from "../inputs/CheckboxInput";
 import Button from "../Button";
 
@@ -183,20 +155,13 @@ export default {
     CheckboxInput,
     EditEntity,
     FormRow,
-    SubscriptionSelectRow,
-    Select
+    SubscriptionSelectRow
   },
   props: EditEntity.commonProps,
   computed: {
     ...mapState(["userId"]),
     row() {
       return this.transitionsList.applyToRow(this.savedRow);
-    },
-    subscribeToNewIdeasOptions() {
-      return new TableData([
-        { id: "all", displayText: "All" },
-        { id: "custom", displayText: "Custom" }
-      ]);
     }
   },
   methods: {
@@ -223,9 +188,3 @@ export default {
   }
 };
 </script>
-
-<style scoped lang="less">
-.subscribe-to-new-ideas-select {
-  width: 200px;
-}
-</style>

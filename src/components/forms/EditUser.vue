@@ -45,7 +45,9 @@
         :value="passwordHash || ''"
         allowEmpty
         :minLength="8"
-        @input="passwordHash => update({ passwordHash })"
+        @input="
+          passwordHash => update({ passwordHash: passwordHash || undefined })
+        "
       />
     </FormRow>
     <FormRow label="Confirm pass">

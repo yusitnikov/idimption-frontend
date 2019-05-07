@@ -11,6 +11,7 @@ import store, {
   OPEN_POPUP_ACTION,
   CLOSE_POPUP_ACTION
 } from "./store";
+import { TableData } from "./TableData";
 
 // region Getters
 
@@ -24,12 +25,12 @@ export function getTableSchema(tableName) {
 }
 
 export function getData() {
-  return getState().data;
+  return getState().data || {};
 }
 
 export function getTableData(tableDataOrName) {
   return typeof tableDataOrName === "string"
-    ? getData()[tableDataOrName]
+    ? getData()[tableDataOrName] || new TableData([])
     : tableDataOrName;
 }
 

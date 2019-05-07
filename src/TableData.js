@@ -52,7 +52,11 @@ export class TableData {
     for (const row of this.rows) {
       if (this.isMatchingRow(row) && callback(row)) {
         matchingRowIds.add(row.id);
-        for (let parent = row; parent; parent = parent.getParent(this)) {
+        for (
+          let parent = row;
+          parent;
+          parent = parent.getParent && parent.getParent(this)
+        ) {
           if (matchingChildrenIds.has(parent.id)) {
             break;
           } else {

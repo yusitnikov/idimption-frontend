@@ -32,9 +32,9 @@ export function sendVerificationEmail(email, resetPassword) {
 export async function verifyEmail(code) {
   try {
     const response = await callApi("/auth/verifyEmail.php", { code }, true);
-    const { userId } = response;
+    const { userId, verifiedNow } = response;
     setUser(userId);
-    return userId;
+    return { userId, verifiedNow };
   } catch (exception) {
     return null;
   }
