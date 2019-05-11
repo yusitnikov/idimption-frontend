@@ -32,7 +32,7 @@
         <FormRow label="Project" :text="row.isProject">
           <template v-if="row.isProject">
             This idea is a project.
-            <ProjectIdeas :row="row" />
+            <ProjectIdeas :row="row" v-if="!isCreating" />
           </template>
           <template v-else>
             <table class="project-row">
