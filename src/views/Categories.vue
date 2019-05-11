@@ -35,20 +35,14 @@ import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
 import TextInput from "../components/inputs/TextInput";
 import CategoryList from "../components/lists/CategoryList";
+import RouteQueryMixin from "../mixins/RouteQueryMixin";
 
 export default {
   name: "Categories",
   components: { Icon, Button, TextInput, CategoryList },
+  mixins: [RouteQueryMixin],
   computed: {
     ...mapGetters(["verifiedEmail"]),
-    routeQuery: {
-      get() {
-        return this.$route.query;
-      },
-      set(value) {
-        this.$router.replace({ query: value });
-      }
-    },
     filterText: {
       get() {
         return this.routeQuery.text || null;

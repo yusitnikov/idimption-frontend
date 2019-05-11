@@ -53,6 +53,7 @@ import PopupForm from "../../forms/generic/PopupForm";
 import Icon from "../../displayHelpers/Icon";
 import EntityFromAt from "../../displayHelpers/EntityFromAt";
 import HighlightRowPropSelection from "../../displayHelpers/HighlightRowPropSelection";
+import RouteQueryMixin from "../../../mixins/RouteQueryMixin";
 
 export default {
   name: "EntityBlock",
@@ -64,6 +65,7 @@ export default {
     EntityFromAt,
     HighlightRowPropSelection
   },
+  mixins: [RouteQueryMixin],
   props: {
     row: {
       type: EntityRow,
@@ -82,11 +84,21 @@ export default {
   },
   data() {
     return {
-      expanded: false,
       popupTransitionsList: new EntityTransitionsList()
     };
   },
   computed: {
+    expanded: {
+      get() {
+        return this.routeQuery.expanded === this.row.id;
+      },
+      set(value) {
+        this.routeQuery = {
+          ...this.routeQuery,
+          expanded: value ? this.row.id : undefined
+        };
+      }
+    },
     updatedRow() {
       return this.transitionsList.applyToRow(this.row);
     },

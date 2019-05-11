@@ -117,6 +117,7 @@ import TextInput from "../components/inputs/TextInput";
 import DateInput from "../components/inputs/DateInput";
 import CheckboxInput from "../components/inputs/CheckboxInput";
 import IdeaPanel from "../components/lists/IdeaPanel";
+import RouteQueryMixin from "../mixins/RouteQueryMixin";
 
 export default {
   name: "Ideas",
@@ -130,17 +131,10 @@ export default {
     CheckboxInput,
     IdeaPanel
   },
+  mixins: [RouteQueryMixin],
   computed: {
     ...mapState(["userId"]),
     ...mapGetters(["verifiedEmail"]),
-    routeQuery: {
-      get() {
-        return this.$route.query;
-      },
-      set(value) {
-        this.$router.replace({ query: value });
-      }
-    },
     filterProject: {
       get() {
         return this.routeQuery.project || null;
