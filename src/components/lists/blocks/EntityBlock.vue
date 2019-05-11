@@ -110,10 +110,12 @@ export default {
     showPopup() {
       if (this.expandable) {
         this.popupTransitionsList.reset();
+        // noinspection JSUnusedGlobalSymbols
         this.expanded = true;
       }
     },
     hidePopup() {
+      // noinspection JSUnusedGlobalSymbols
       this.expanded = false;
     },
     stopPropagation(event) {

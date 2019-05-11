@@ -27,6 +27,7 @@ export class EntityRow {
       }
     }
 
+    // noinspection JSIncompatibleTypesComparison
     if (this.id === null) {
       this.id = Guid.create();
     }
