@@ -144,7 +144,7 @@ export class EntityRow {
     }
     const rowFullId = row.getRowFullId(tableData).join(">");
     const thisFullId = this.getRowFullId(tableData).join(">");
-    return thisFullId.startsWith(rowFullId);
+    return thisFullId.startsWith(rowFullId + ">");
   }
 
   getSiblings(tableData = null) {
