@@ -1,5 +1,26 @@
 <template>
   <div class="idea-props-line">
+    <Tag
+      iconClass="folder-open"
+      iconTitle="Project"
+      v-if="row.isProject || row.projectId"
+    >
+      <template v-if="row.isProject">
+        it's a project
+      </template>
+      <template v-else>
+        <EntityById
+          tableName="idea"
+          :id="row.projectId"
+          #default="{ displayText }"
+        >
+          <ButtonLink :href="'/idea/' + row.projectId">{{
+            displayText
+          }}</ButtonLink>
+        </EntityById>
+      </template>
+    </Tag>
+
     <Tag iconClass="tasks" iconTitle="Status" v-if="showStatus">
       <EntityById tableName="ideastatus" :id="row.statusId" />
     </Tag>

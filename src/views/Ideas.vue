@@ -12,6 +12,16 @@
         Filters:
       </span>
 
+      <EntitySelect
+        class="filter-project"
+        v-model="filterProject"
+        tableName="idea"
+        allowEmpty
+        emptyLabel="No project"
+        emptyPlaceholder="No project"
+        :filter="idea => idea.isProject"
+      />
+
       <TextInput
         class="free-text"
         v-model="filterText"
@@ -101,6 +111,7 @@ import { getTableData } from "../storeProxy";
 import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
 import MultipleEntitySelect from "../components/inputs/MultipleEntitySelect";
+import EntitySelect from "../components/inputs/EntitySelect";
 import TextInput from "../components/inputs/TextInput";
 import DateInput from "../components/inputs/DateInput";
 import CheckboxInput from "../components/inputs/CheckboxInput";
@@ -112,6 +123,7 @@ export default {
     Icon,
     Button,
     MultipleEntitySelect,
+    EntitySelect,
     TextInput,
     DateInput,
     CheckboxInput,
@@ -126,6 +138,17 @@ export default {
       },
       set(value) {
         this.$router.replace({ query: value });
+      }
+    },
+    filterProject: {
+      get() {
+        return this.routeQuery.project || null;
+      },
+      set(value) {
+        this.routeQuery = {
+          ...this.routeQuery,
+          project: value || undefined
+        };
       }
     },
     filterText: {
@@ -279,6 +302,8 @@ export default {
     },
     shouldDisplayIdea(idea) {
       return (
+        (idea.id === this.filterProject ||
+          idea.projectId === this.filterProject) &&
         matchesFreeTextSearch(idea.summary, this.filterText) &&
         this.shouldDisplayIdeaByForeignIds(
           idea,

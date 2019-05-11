@@ -29,6 +29,55 @@
       >
         <EditCommonTextFields :row="row" :transitionsList="transitionsList" />
 
+        <FormRow label="Project" :text="row.isProject">
+          <template v-if="row.isProject">
+            This idea is a project.
+          </template>
+          <template v-else>
+            <table class="project-row">
+              <tbody>
+                <tr>
+                  <td>
+                    <EntitySelect
+                      :transitionsList="transitionsList"
+                      :value="row.projectId"
+                      @change="projectId => update({ projectId })"
+                      tableName="idea"
+                      allowEmpty
+                      emptyLabel="No project"
+                      emptyPlaceholder="No project"
+                      allowAdd
+                      allowAddEmpty
+                      :addDefaultValues="{ isProject: true }"
+                      :addComponent="editIdeaComponent"
+                      :filter="idea => idea.id !== row.id && !idea.projectId"
+                      sort
+                      sortField="isProject"
+                      :sortFunction="
+                        (a, b) => {
+                          return (
+                            (b.isProject ? 1 : 0) - (a.isProject ? 1 : 0) ||
+                            a.displayText.localeCompare(b.displayText)
+                          );
+                        }
+                      "
+                    />
+                  </td>
+                  <td class="convert-to-project">
+                    <Button
+                      @click="
+                        () => update({ isProject: true, projectId: null })
+                      "
+                    >
+                      Convert to a project
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+        </FormRow>
+
         <FormRow label="Status">
           <EntitySelect
             :transitionsList="transitionsList"
@@ -100,10 +149,12 @@ import ButtonLink from "../ButtonLink";
 import AutoLink from "../displayHelpers/AutoLink";
 import IdeaComments from "../lists/IdeaComments";
 import EditCategory from "./EditCategory";
+import Button from "../Button";
 
-export default {
+const EditIdea = {
   name: "EditIdea",
   components: {
+    Button,
     EditEntity,
     EntityVote,
     IdeaPropsLine,
@@ -121,18 +172,46 @@ export default {
   },
   computed: {
     ...mapGetters(["verifiedEmail"]),
+    editIdeaComponent() {
+      return EditIdea;
+    },
     editCategoryComponent() {
       return EditCategory;
     }
   }
 };
+
+export default EditIdea;
 </script>
 
 <style scoped lang="less">
+@import "../../styles/essentials";
+
 .readonly {
   .description {
     margin: 20px 0;
     font-size: 120%;
+  }
+}
+
+table.project-row {
+  border-collapse: collapse;
+  width: 100%;
+
+  &,
+  tbody,
+  tr,
+  td {
+    padding: 0;
+  }
+
+  .convert-to-project {
+    width: 1px;
+    white-space: nowrap;
+
+    .button {
+      margin-left: @button-distance;
+    }
   }
 }
 </style>

@@ -60,6 +60,7 @@ export default {
       type: String,
       default: "summary"
     },
+    addDefaultValues: Object,
     addComponent: Object,
     tableName: {
       type: String,
@@ -68,7 +69,12 @@ export default {
     sort: {
       type: Boolean,
       default: true
-    }
+    },
+    sortField: {
+      type: String,
+      default: "displayText"
+    },
+    sortFunction: Function
   },
   data() {
     return {
@@ -83,8 +89,10 @@ export default {
     updatedData() {
       let data = this.transitionsList.getTableData(this.tableName);
       if (this.sort) {
-        data = data.sort("displayText", (a, b) =>
-          a.displayText.localeCompare(b.displayText)
+        data = data.sort(
+          this.sortField,
+          this.sortFunction ||
+            ((a, b) => a[this.sortField].localeCompare(b[this.sortField]))
         );
       }
       return data;
@@ -116,7 +124,8 @@ export default {
       const row = new EntityRow(
         this.tableName,
         {
-          [this.addField]: text
+          [this.addField]: text,
+          ...this.addDefaultValues
         },
         true
       );
