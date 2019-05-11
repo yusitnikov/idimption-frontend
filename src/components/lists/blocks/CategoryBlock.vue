@@ -5,10 +5,10 @@
     :expandable="!readOnly"
     :transitionsList="transitionsList"
   >
-    <template slot="details">
+    <template #details="{ popupTransitionsList }">
       <EditCategory
         :savedRow="row"
-        :transitionsList="transitionsList"
+        :transitionsList="popupTransitionsList"
         :readOnly="readOnly"
         :showHeader="false"
       />

@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{ 'entity-block': true, block: true, expandable }"
-    @click="showDetails"
+    @click="showPopup"
   >
     <div class="actions pull-right">
       <slot name="actions" />
@@ -34,11 +34,11 @@
 
     <PopupForm
       :title="row.displayText"
-      @save="save"
-      @close="hideDetails"
+      @save="savePopup"
+      @close="hidePopup"
       v-if="expanded"
     >
-      <slot name="details" :transitionsList="transitionsList" />
+      <slot name="details" :popupTransitionsList="popupTransitionsList" />
     </PopupForm>
   </div>
 </template>
@@ -82,7 +82,8 @@ export default {
   },
   data() {
     return {
-      expanded: false
+      expanded: false,
+      popupTransitionsList: new EntityTransitionsList()
     };
   },
   computed: {
@@ -94,23 +95,24 @@ export default {
     }
   },
   methods: {
-    showDetails() {
+    showPopup() {
       if (this.expandable) {
+        this.popupTransitionsList.reset();
         this.expanded = true;
       }
     },
-    hideDetails() {
+    hidePopup() {
       this.expanded = false;
     },
     stopPropagation(event) {
       event.stopPropagation();
     },
-    async save() {
+    async savePopup() {
       if (!validateAllInputs(this)) {
         return;
       }
-      await this.transitionsList.save();
-      this.hideDetails();
+      await this.popupTransitionsList.save();
+      this.hidePopup();
     },
     remove(event) {
       this.stopPropagation(event);

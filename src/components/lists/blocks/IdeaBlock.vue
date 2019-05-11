@@ -23,10 +23,10 @@
       <IdeaPropsLine :row="row" :showStatus="showStatus" showComments />
     </template>
 
-    <template slot="details">
+    <template #details="{ popupTransitionsList }">
       <EditIdea
         :savedRow="row"
-        :transitionsList="transitionsList"
+        :transitionsList="popupTransitionsList"
         :readOnly="readOnly"
         :showHeader="false"
       />
