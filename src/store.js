@@ -8,6 +8,7 @@ import { notificationAnimationTimeout } from "./styles/essentials.less";
 Vue.use(Vuex);
 
 const SET_READY_MUTATION = "SET_READY";
+const SET_SESSION_MUTATION = "SET_SESSION";
 const SET_USER_MUTATION = "SET_USER";
 const ADD_LOADER_MUTATION = "ADD_LOADER";
 const REMOVE_LOADER_MUTATION = "REMOVE_LOADER";
@@ -51,6 +52,7 @@ window.addEventListener("resize", () => {
 const store = new Vuex.Store({
   state: {
     ready: false,
+    sessionId: localStorage.sessionId,
     userId: null,
     notificationAutoIncrementId: 0,
     notifications: [],
@@ -85,6 +87,10 @@ const store = new Vuex.Store({
   mutations: {
     [SET_READY_MUTATION](state) {
       state.ready = true;
+    },
+    [SET_SESSION_MUTATION](state, sessionId) {
+      state.sessionId = sessionId;
+      localStorage.sessionId = sessionId;
     },
     [SET_USER_MUTATION](state, userId) {
       state.userId = userId;
@@ -185,6 +191,10 @@ const store = new Vuex.Store({
         withCredentials: true
       };
       if (formData instanceof FormData) {
+        if (state.sessionId) {
+          formData.append("sessionId", state.sessionId);
+        }
+
         xhrConfig.headers = {
           "Content-Type": "multipart/form-data"
         };
@@ -192,6 +202,10 @@ const store = new Vuex.Store({
           xhrConfig.onUploadProgress = onUploadProgress;
         }
       } else {
+        if (state.sessionId) {
+          formData.sessionId = state.sessionId;
+        }
+
         formData = JSON.stringify(formData);
       }
       const loader = axios.post(getApiUrl(url), formData, xhrConfig);
@@ -218,6 +232,9 @@ const store = new Vuex.Store({
       }
 
       if (response.success) {
+        if (response.sessionId) {
+          commit(SET_SESSION_MUTATION, response.sessionId);
+        }
         if (returnsData) {
           commit(SET_DATA_MUTATION, response.result);
         }
