@@ -20,6 +20,7 @@
         emptyLabel="No project"
         emptyPlaceholder="No project"
         :filter="idea => idea.isProject"
+        :tipFunction="getProjectIdeaCount"
       />
 
       <TextInput
@@ -327,6 +328,13 @@ export default {
           idea.getForeignRows("ideacomment").length !== 0) &&
         (!this.filterWithVotes || idea.getForeignRows("ideavote").length !== 0)
       );
+    },
+    getProjectIdeaCountById(projectId) {
+      return getTableData("idea").getRowsByFieldValue("projectId", projectId)
+        .length;
+    },
+    getProjectIdeaCount(project) {
+      return this.getProjectIdeaCountById(project ? project.id : null);
     },
     getTagIdeaCount(tag) {
       return tag.getForeignRows("ideatag").length;

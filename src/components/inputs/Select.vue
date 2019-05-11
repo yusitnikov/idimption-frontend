@@ -187,6 +187,7 @@ export default {
         rows.push({
           id: "",
           text: this.emptyLabel,
+          tip: this.tipFunction ? this.tipFunction(null) : undefined,
           onClick: () => this.onSelect("")
         });
       }
