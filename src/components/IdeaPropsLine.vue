@@ -21,6 +21,8 @@
       </template>
     </Tag>
 
+    <ProjectIdeas :row="row" v-if="row.isProject" />
+
     <Tag iconClass="tasks" iconTitle="Status" v-if="showStatus">
       <EntityById tableName="ideastatus" :id="row.statusId" />
     </Tag>
@@ -70,10 +72,17 @@ import Tag from "./displayHelpers/Tag";
 import EntityById from "./displayHelpers/EntityById";
 import MultipleForeignEntityDisplay from "./displayHelpers/MultipleForeignEntityDisplay";
 import ButtonLink from "./ButtonLink";
+import ProjectIdeas from "./stats/ProjectIdeas";
 
 export default {
   name: "IdeaPropsLine",
-  components: { Tag, EntityById, MultipleForeignEntityDisplay, ButtonLink },
+  components: {
+    ProjectIdeas,
+    Tag,
+    EntityById,
+    MultipleForeignEntityDisplay,
+    ButtonLink
+  },
   props: {
     row: {
       type: Object,

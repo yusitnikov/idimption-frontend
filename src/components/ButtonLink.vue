@@ -4,7 +4,7 @@
       :class="classes"
       :to="href"
       :disabled="disabled"
-      @click="onClick"
+      @click.native="onClick"
       v-if="href"
     >
       <slot />

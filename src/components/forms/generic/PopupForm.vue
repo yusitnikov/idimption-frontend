@@ -55,6 +55,11 @@ export default {
 
     focusFirstInput(this);
   },
+  watch: {
+    $route() {
+      this.$emit("close");
+    }
+  },
   methods: {
     async save() {
       if (validateAllInputs(this)) {

@@ -32,6 +32,7 @@
         <FormRow label="Project" :text="row.isProject">
           <template v-if="row.isProject">
             This idea is a project.
+            <ProjectIdeas :row="row" />
           </template>
           <template v-else>
             <table class="project-row">
@@ -150,10 +151,12 @@ import AutoLink from "../displayHelpers/AutoLink";
 import IdeaComments from "../lists/IdeaComments";
 import EditCategory from "./EditCategory";
 import Button from "../Button";
+import ProjectIdeas from "../stats/ProjectIdeas";
 
 const EditIdea = {
   name: "EditIdea",
   components: {
+    ProjectIdeas,
     Button,
     EditEntity,
     EntityVote,
