@@ -1,10 +1,22 @@
 <template>
   <div class="ideas">
     <div class="line" v-if="!userId || verifiedEmail">
-      <Button @click="add">
+      <Button @click="showAdd">
         <Icon type="plus" />
         Add new idea
       </Button>
+
+      <PopupForm
+        title="Add new idea"
+        @save="saveAdd"
+        @close="hideAdd"
+        v-if="isAdding"
+      >
+        <EditIdea
+          :savedRow="addFormRow"
+          :transitionsList="popupTransitionsList"
+        />
+      </PopupForm>
     </div>
 
     <div class="line inline-block-container">
@@ -107,8 +119,15 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import { toArray, formatDate, matchesFreeTextSearch } from "../misc";
+import {
+  toArray,
+  formatDate,
+  matchesFreeTextSearch,
+  validateAllInputs
+} from "../misc";
 import { getTableData } from "../storeProxy";
+import EntityTransitionsList from "../EntityTransitionsList";
+import { EntityRow } from "../EntityRow";
 import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
 import MultipleEntitySelect from "../components/inputs/MultipleEntitySelect";
@@ -118,10 +137,14 @@ import DateInput from "../components/inputs/DateInput";
 import CheckboxInput from "../components/inputs/CheckboxInput";
 import IdeaPanel from "../components/lists/IdeaPanel";
 import RouteQueryMixin from "../mixins/RouteQueryMixin";
+import PopupForm from "../components/forms/generic/PopupForm";
+import EditIdea from "../components/forms/EditIdea";
 
 export default {
   name: "Ideas",
   components: {
+    PopupForm,
+    EditIdea,
     Icon,
     Button,
     MultipleEntitySelect,
@@ -132,6 +155,13 @@ export default {
     IdeaPanel
   },
   mixins: [RouteQueryMixin],
+  data() {
+    return {
+      isAdding: false,
+      popupTransitionsList: new EntityTransitionsList(),
+      addFormRow: null
+    };
+  },
   computed: {
     ...mapState(["userId"]),
     ...mapGetters(["verifiedEmail"]),
@@ -279,8 +309,27 @@ export default {
     }
   },
   methods: {
-    add() {
-      this.$router.push("/idea/add");
+    showAdd() {
+      this.addFormRow = new EntityRow(
+        "idea",
+        {
+          projectId: this.filterProject || null
+        },
+        true
+      );
+      this.popupTransitionsList.reset();
+      this.popupTransitionsList.addRow(this.addFormRow);
+      this.isAdding = true;
+    },
+    hideAdd() {
+      this.isAdding = false;
+    },
+    async saveAdd() {
+      if (!validateAllInputs(this)) {
+        return;
+      }
+      await this.popupTransitionsList.save();
+      this.hideAdd();
     },
     shouldDisplayIdeaByForeignIds(
       idea,

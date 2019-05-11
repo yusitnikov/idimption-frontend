@@ -14,7 +14,7 @@
       />
       <div class="footer next-section-start" v-if="!readOnly">
         <Button @click="save">Save</Button>
-        <Button @click="remove" v-if="allowRemove && !isCreating">
+        <Button @click="remove" v-if="allowRemove">
           Remove
         </Button>
       </div>
@@ -26,15 +26,13 @@
 </template>
 
 <script>
-import { showNotification } from "../storeProxy";
 import { getUserId, isUserVerified, canUserEditUsersData } from "../auth";
 import { validateAllInputs } from "../misc";
 import Button from "../components/Button";
 import ButtonLink from "../components/ButtonLink";
 import Icon from "../components/displayHelpers/Icon";
 import EntityTransitionsList from "../EntityTransitionsList";
-import { getOrCreateRowById, resolveGuid } from "../EntityHelper";
-import Guid from "guid";
+import { getRowById } from "../EntityHelper";
 
 export default {
   name: "EditEntityPage",
@@ -57,60 +55,36 @@ export default {
   },
   data() {
     return {
-      id: this.forcedId,
       transitionsList: new EntityTransitionsList()
     };
   },
-  created() {
-    if (this.forcedId) {
-      return;
-    }
-
-    // noinspection JSUnresolvedVariable
-    this.id = this.$route.params.id;
-    if (this.id === "add") {
-      this.id = Guid.create();
-      if (this.readOnly) {
-        showNotification("Access denied.", "error");
-        this.$router.push("/" + this.tableName);
-        return;
-      }
-      this.transitionsList.addRow(this.row);
-    }
-  },
   computed: {
-    isCreating() {
-      return Guid.isGuid(this.id);
-    },
     readOnly() {
       if (!this.allowAnonymous && !getUserId()) {
         return true;
       }
-      if (getUserId() && !isUserVerified()) {
+      if (!isUserVerified()) {
         return true;
       }
-      if (!this.isCreating) {
-        if (!isUserVerified()) {
-          return true;
-        }
-        if ("userId" in this.row && !canUserEditUsersData(this.row.userId)) {
-          return true;
-        }
+      // noinspection RedundantIfStatementJS
+      if ("userId" in this.row && !canUserEditUsersData(this.row.userId)) {
+        return true;
       }
       return false;
     },
+    id() {
+      // noinspection JSUnresolvedVariable
+      return this.forcedId || this.$route.params.id;
+    },
     row() {
-      return getOrCreateRowById(this.tableName, this.id);
+      return getRowById(this.tableName, this.id);
     }
   },
   methods: {
-    async save() {
-      if (!validateAllInputs(this)) {
-        return;
+    save() {
+      if (validateAllInputs(this)) {
+        this.transitionsList.save();
       }
-      await this.transitionsList.save();
-      await this.$nextTick();
-      this.id = resolveGuid(this.id);
     },
     remove() {
       if (!confirm("Are you sure?")) {

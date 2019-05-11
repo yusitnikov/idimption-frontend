@@ -1,10 +1,22 @@
 <template>
   <div class="categories">
     <div class="line" v-if="verifiedEmail">
-      <Button @click="add">
+      <Button @click="showAdd">
         <Icon type="plus" />
         Add new category
       </Button>
+
+      <PopupForm
+        title="Add new category"
+        @save="saveAdd"
+        @close="hideAdd"
+        v-if="isAdding"
+      >
+        <EditCategory
+          :savedRow="addFormRow"
+          :transitionsList="popupTransitionsList"
+        />
+      </PopupForm>
     </div>
 
     <div class="line inline-block-container">
@@ -30,17 +42,35 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { matchesFreeTextSearch } from "../misc";
+import { matchesFreeTextSearch, validateAllInputs } from "../misc";
+import EntityTransitionsList from "../EntityTransitionsList";
+import { EntityRow } from "../EntityRow";
 import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
 import TextInput from "../components/inputs/TextInput";
 import CategoryList from "../components/lists/CategoryList";
 import RouteQueryMixin from "../mixins/RouteQueryMixin";
+import PopupForm from "../components/forms/generic/PopupForm";
+import EditCategory from "../components/forms/EditCategory";
 
 export default {
   name: "Categories",
-  components: { Icon, Button, TextInput, CategoryList },
+  components: {
+    PopupForm,
+    EditCategory,
+    Icon,
+    Button,
+    TextInput,
+    CategoryList
+  },
   mixins: [RouteQueryMixin],
+  data() {
+    return {
+      isAdding: false,
+      popupTransitionsList: new EntityTransitionsList(),
+      addFormRow: null
+    };
+  },
   computed: {
     ...mapGetters(["verifiedEmail"]),
     filterText: {
@@ -63,8 +93,21 @@ export default {
     }
   },
   methods: {
-    add() {
-      this.$router.push("/category/add");
+    showAdd() {
+      this.addFormRow = new EntityRow("category", {}, true);
+      this.popupTransitionsList.reset();
+      this.popupTransitionsList.addRow(this.addFormRow);
+      this.isAdding = true;
+    },
+    hideAdd() {
+      this.isAdding = false;
+    },
+    async saveAdd() {
+      if (!validateAllInputs(this)) {
+        return;
+      }
+      await this.popupTransitionsList.save();
+      this.hideAdd();
     },
     shouldDisplayCategory(category) {
       return matchesFreeTextSearch(category.summary, this.filterText);

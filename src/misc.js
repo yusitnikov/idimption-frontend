@@ -106,18 +106,32 @@ export function timeout(millisecs = 1) {
   });
 }
 
-function _getAllInputs(component, resultsArray) {
+function getAllComponentInputs(component, resultsArray) {
   if (component.implementsInputInterface) {
     resultsArray.push(component);
   }
   for (const child of component.$children || []) {
-    _getAllInputs(child, resultsArray);
+    getAllComponentInputs(child, resultsArray);
+  }
+  for (const slotName in component.$slots) {
+    for (const slot of component.$slots[slotName] || []) {
+      getAllNodeInputs(slot, resultsArray);
+    }
+  }
+}
+
+function getAllNodeInputs(node, resultsArray) {
+  if (node.componentInstance) {
+    getAllComponentInputs(node.componentInstance, resultsArray);
+  }
+  for (const child of node.children || []) {
+    getAllNodeInputs(child, resultsArray);
   }
 }
 
 export function getAllInputs(form) {
   const results = [];
-  _getAllInputs(form, results);
+  getAllComponentInputs(form, results);
   return results;
 }
 
