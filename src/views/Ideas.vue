@@ -6,17 +6,18 @@
         Add new idea
       </Button>
 
-      <PopupForm
+      <AddEntityPopup
         title="Add new idea"
-        @save="saveAdd"
+        tableName="idea"
+        :defaultValues="{
+          projectId: this.filterProject || null
+        }"
         @close="hideAdd"
+        #default="{ addRow, addTransitionsList }"
         v-if="isAdding"
       >
-        <EditIdea
-          :savedRow="addFormRow"
-          :transitionsList="popupTransitionsList"
-        />
-      </PopupForm>
+        <EditIdea :savedRow="addRow" :transitionsList="addTransitionsList" />
+      </AddEntityPopup>
     </div>
 
     <div class="line inline-block-container">
@@ -119,15 +120,8 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import {
-  toArray,
-  formatDate,
-  matchesFreeTextSearch,
-  validateAllInputs
-} from "../misc";
+import { toArray, formatDate, matchesFreeTextSearch } from "../misc";
 import { getTableData } from "../storeProxy";
-import EntityTransitionsList from "../EntityTransitionsList";
-import { EntityRow } from "../EntityRow";
 import Icon from "../components/displayHelpers/Icon";
 import Button from "../components/Button";
 import MultipleEntitySelect from "../components/inputs/MultipleEntitySelect";
@@ -137,13 +131,13 @@ import DateInput from "../components/inputs/DateInput";
 import CheckboxInput from "../components/inputs/CheckboxInput";
 import IdeaPanel from "../components/lists/IdeaPanel";
 import RouteQueryMixin from "../mixins/RouteQueryMixin";
-import PopupForm from "../components/forms/generic/PopupForm";
+import AddEntityPopup from "../components/forms/generic/AddEntityPopup";
 import EditIdea from "../components/forms/EditIdea";
 
 export default {
   name: "Ideas",
   components: {
-    PopupForm,
+    AddEntityPopup,
     EditIdea,
     Icon,
     Button,
@@ -157,9 +151,7 @@ export default {
   mixins: [RouteQueryMixin],
   data() {
     return {
-      isAdding: false,
-      popupTransitionsList: new EntityTransitionsList(),
-      addFormRow: null
+      isAdding: false
     };
   },
   computed: {
@@ -310,26 +302,10 @@ export default {
   },
   methods: {
     showAdd() {
-      this.addFormRow = new EntityRow(
-        "idea",
-        {
-          projectId: this.filterProject || null
-        },
-        true
-      );
-      this.popupTransitionsList.reset();
-      this.popupTransitionsList.addRow(this.addFormRow);
       this.isAdding = true;
     },
     hideAdd() {
       this.isAdding = false;
-    },
-    async saveAdd() {
-      if (!validateAllInputs(this)) {
-        return;
-      }
-      await this.popupTransitionsList.save();
-      this.hideAdd();
     },
     shouldDisplayIdeaByForeignIds(
       idea,
