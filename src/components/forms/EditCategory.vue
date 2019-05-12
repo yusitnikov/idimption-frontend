@@ -44,11 +44,30 @@
           />
         </FormRow>
       </div>
+
+      <div class="next-section-start">
+        <Button @click="showAddIdea">
+          <Icon type="plus" />
+          Add new idea
+        </Button>
+
+        <AddEntityPopup
+          title="Add new idea"
+          tableName="idea"
+          :defaultForeignRows="getAddIdeaDefaultForeignRows"
+          @close="hideAddIdea"
+          #default="{ addRow, addTransitionsList }"
+          v-if="isAddingIdea"
+        >
+          <EditIdea :savedRow="addRow" :transitionsList="addTransitionsList" />
+        </AddEntityPopup>
+      </div>
     </template>
   </EditEntity>
 </template>
 
 <script>
+import { EntityRow } from "../../EntityRow";
 import EditEntity from "./generic/EditEntity";
 import ButtonLink from "../ButtonLink";
 import Icon from "../displayHelpers/Icon";
@@ -56,6 +75,8 @@ import FormRow from "./generic/FormRow";
 import EditCommonTextFields from "./generic/EditCommonTextFields";
 import EntitySelect from "../inputs/EntitySelect";
 import AutoLink from "../displayHelpers/AutoLink";
+import Button from "../Button";
+import AddEntityPopup from "./generic/AddEntityPopup";
 
 export default {
   name: "EditCategory",
@@ -66,11 +87,19 @@ export default {
     FormRow,
     EditCommonTextFields,
     EntitySelect,
-    AutoLink
+    AutoLink,
+    Button,
+    AddEntityPopup,
+    EditIdea: () => import("./EditIdea")
   },
   props: {
     ...EditEntity.commonProps,
     readOnly: Boolean
+  },
+  data() {
+    return {
+      isAddingIdea: false
+    };
   },
   computed: {
     ideaCount() {
@@ -81,6 +110,21 @@ export default {
     }
   },
   methods: {
+    getAddIdeaDefaultForeignRows(ideaId) {
+      return [
+        new EntityRow(
+          "ideacategory",
+          { ideaId, categoryId: this.savedRow.id },
+          true
+        )
+      ];
+    },
+    showAddIdea() {
+      this.isAddingIdea = true;
+    },
+    hideAddIdea() {
+      this.isAddingIdea = false;
+    },
     isAllowedParent(category) {
       return !category.isChild(this.savedRow);
     }
