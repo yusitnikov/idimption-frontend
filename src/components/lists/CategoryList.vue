@@ -40,7 +40,11 @@ export default {
   },
   computed: {
     filteredData() {
-      return (this.data || getTableData("category")).filter(this.filter);
+      return (this.data || getTableData("category"))
+        .sort("displayText", (a, b) => {
+          return a.displayText.localeCompare(b.displayText);
+        })
+        .filter(this.filter);
     },
     currentData() {
       return this.filteredData.getRowsByFieldValue("parentId", this.parentId);
